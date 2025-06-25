@@ -1,0 +1,6 @@
+*.db
+node_modules/
+.docusaurus/
+
+# default binary
+deepwiki-cli
