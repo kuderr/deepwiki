@@ -21,10 +21,10 @@ const (
 
 // LogConfig represents logging configuration
 type LogConfig struct {
-	Level      LogLevel `yaml:"level" json:"level"`
-	Format     string   `yaml:"format" json:"format"` // "text" or "json"
-	Output     string   `yaml:"output" json:"output"` // "stdout", "stderr", or file path
-	AddSource  bool     `yaml:"add_source" json:"addSource"`
+	Level      LogLevel `yaml:"level"       json:"level"`
+	Format     string   `yaml:"format"      json:"format"` // "text" or "json"
+	Output     string   `yaml:"output"      json:"output"` // "stdout", "stderr", or file path
+	AddSource  bool     `yaml:"add_source"  json:"addSource"`
 	TimeFormat string   `yaml:"time_format" json:"timeFormat"`
 }
 
@@ -62,11 +62,11 @@ func NewLogger(config *LogConfig) (*Logger, error) {
 	default:
 		// File output
 		dir := filepath.Dir(config.Output)
-		if err := os.MkdirAll(dir, 0755); err != nil {
+		if err := os.MkdirAll(dir, 0o755); err != nil {
 			return nil, err
 		}
 
-		file, err := os.OpenFile(config.Output, os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0644)
+		file, err := os.OpenFile(config.Output, os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0o644)
 		if err != nil {
 			return nil, err
 		}
@@ -172,7 +172,12 @@ func (l *Logger) LogScanResult(ctx context.Context, totalFiles, filteredFiles in
 }
 
 // LogAPICall logs an API call with timing
-func (l *Logger) LogAPICall(ctx context.Context, provider, model, operation string, duration time.Duration, tokens int) {
+func (l *Logger) LogAPICall(
+	ctx context.Context,
+	provider, model, operation string,
+	duration time.Duration,
+	tokens int,
+) {
 	l.Logger.LogAttrs(ctx, slog.LevelInfo, "api call completed",
 		slog.String("provider", provider),
 		slog.String("model", model),

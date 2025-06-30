@@ -148,8 +148,17 @@ type EmbeddingOptions struct {
 // Client interface defines the OpenAI client methods
 type Client interface {
 	// Chat completion methods
-	ChatCompletion(ctx context.Context, messages []Message, opts ...ChatCompletionOptions) (*ChatCompletionResponse, error)
-	ChatCompletionStream(ctx context.Context, messages []Message, handler StreamHandler, opts ...ChatCompletionOptions) error
+	ChatCompletion(
+		ctx context.Context,
+		messages []Message,
+		opts ...ChatCompletionOptions,
+	) (*ChatCompletionResponse, error)
+	ChatCompletionStream(
+		ctx context.Context,
+		messages []Message,
+		handler StreamHandler,
+		opts ...ChatCompletionOptions,
+	) error
 
 	// Embedding methods
 	CreateEmbeddings(ctx context.Context, texts []string, opts ...EmbeddingOptions) (*EmbeddingResponse, error)

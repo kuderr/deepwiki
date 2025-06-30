@@ -30,7 +30,11 @@ func NewOutputManager() *OutputManager {
 }
 
 // GenerateOutput generates output in the specified format using the registry
-func (om *OutputManager) GenerateOutput(structure *generator.WikiStructure, pages map[string]*generator.WikiPage, options outputgen.OutputOptions) (*outputgen.OutputResult, error) {
+func (om *OutputManager) GenerateOutput(
+	structure *generator.WikiStructure,
+	pages map[string]*generator.WikiPage,
+	options outputgen.OutputOptions,
+) (*outputgen.OutputResult, error) {
 	// Get the generator for the specified format
 	gen, err := om.registry.Get(options.Format)
 	if err != nil {

@@ -208,8 +208,13 @@ func GetLanguageByExtension(ext string) *LanguageInfo {
 		".scss": {Name: "Sass", Extensions: []string{".scss"}, Category: CategoryCode, Importance: 3},
 
 		// Build files
-		".dockerfile": {Name: "Dockerfile", Extensions: []string{".dockerfile"}, Category: CategoryBuild, Importance: 3},
-		".makefile":   {Name: "Makefile", Extensions: []string{".makefile"}, Category: CategoryBuild, Importance: 3},
+		".dockerfile": {
+			Name:       "Dockerfile",
+			Extensions: []string{".dockerfile"},
+			Category:   CategoryBuild,
+			Importance: 3,
+		},
+		".makefile": {Name: "Makefile", Extensions: []string{".makefile"}, Category: CategoryBuild, Importance: 3},
 
 		// Shell scripts
 		".sh":   {Name: "Shell", Extensions: []string{".sh"}, Category: CategoryCode, Importance: 3},

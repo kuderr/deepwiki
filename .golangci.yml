@@ -1,0 +1,43 @@
+version: 2
+
+run:
+  timeout: 3m
+
+linters:
+  enable:
+    - errcheck
+    - govet
+    - staticcheck
+    - unused
+
+  settings:
+    errcheck:
+      check-type-assertions: true
+      exclude-functions:
+        - io.Closer.Close
+        - (*database/sql.DB).Close
+        - (io.ReadCloser).Close
+        - (net/http.Response).Body.Close
+
+formatters:
+  enable:
+    - gofmt
+    - gofumpt
+    - gci
+    - golines
+  settings:
+    gofmt:
+      simplify: true
+    gofumpt:
+      extra-rules: true
+    gci:
+      sections:
+        - Standard
+        - Default
+        - Prefix(gitlab.tcsbank.ru/infra-dev/go-infracore)
+        - Prefix(gitlab.tcsbank.ru/infra-dev/deepwiki)
+    golines:
+      max-len: 120 # максимально допустимая длина строки
+      tab-len: 4 # длина табуляции в пробелах (обычно 4)
+      shorten-comments: true # (опционально) укорачивать длинные комментарии
+      reformat-tags: true # (опционально) рефлоу тэгов в struct

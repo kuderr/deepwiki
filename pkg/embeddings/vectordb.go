@@ -1,11 +1,8 @@
 package embeddings
 
 import (
-	"bytes"
-	"encoding/binary"
 	"encoding/json"
 	"fmt"
-	"math"
 	"sort"
 	"time"
 
@@ -33,7 +30,7 @@ func NewBoltVectorDB(config *EmbeddingConfig) (*BoltVectorDB, error) {
 		config = DefaultEmbeddingConfig()
 	}
 
-	db, err := bbolt.Open(config.StoragePath, 0600, &bbolt.Options{
+	db, err := bbolt.Open(config.StoragePath, 0o600, &bbolt.Options{
 		Timeout: time.Duration(config.Timeout) * time.Second,
 	})
 	if err != nil {
@@ -276,7 +273,6 @@ func (vdb *BoltVectorDB) Search(vector []float32, options *VectorSearchOptions) 
 			return nil
 		})
 	})
-
 	if err != nil {
 		return nil, err
 	}
@@ -367,7 +363,7 @@ func (vdb *BoltVectorDB) Close() error {
 }
 
 // getChunkContent retrieves the content for a specific chunk
-func (vdb *BoltVectorDB) getChunkContent(documentID string, chunkID string) (string, error) {
+func (vdb *BoltVectorDB) getChunkContent(documentID, chunkID string) (string, error) {
 	var content string
 
 	err := vdb.db.View(func(tx *bbolt.Tx) error {
@@ -481,37 +477,4 @@ func (vdb *BoltVectorDB) matchesFilters(embData *EmbeddingData, filters map[stri
 		}
 	}
 	return true
-}
-
-// floatToBytes converts float32 to bytes for storage
-func floatToBytes(f float32) []byte {
-	bits := math.Float32bits(f)
-	bytes := make([]byte, 4)
-	binary.LittleEndian.PutUint32(bytes, bits)
-	return bytes
-}
-
-// bytesToFloat converts bytes to float32
-func bytesToFloat(bytes []byte) float32 {
-	bits := binary.LittleEndian.Uint32(bytes)
-	return math.Float32frombits(bits)
-}
-
-// vectorToBytes converts vector to bytes for storage
-func vectorToBytes(vector []float32) []byte {
-	buf := new(bytes.Buffer)
-	for _, f := range vector {
-		binary.Write(buf, binary.LittleEndian, f)
-	}
-	return buf.Bytes()
-}
-
-// bytesToVector converts bytes to vector
-func bytesToVector(data []byte) []float32 {
-	reader := bytes.NewReader(data)
-	vector := make([]float32, len(data)/4)
-	for i := range vector {
-		binary.Read(reader, binary.LittleEndian, &vector[i])
-	}
-	return vector
 }

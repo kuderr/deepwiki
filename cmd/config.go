@@ -67,7 +67,7 @@ func runConfigInit(cmd *cobra.Command, args []string) error {
 	template := config.GenerateTemplate()
 
 	// Write to file
-	if err := os.WriteFile(filename, []byte(template), 0644); err != nil {
+	if err := os.WriteFile(filename, []byte(template), 0o644); err != nil {
 		return fmt.Errorf("failed to write configuration file: %w", err)
 	}
 

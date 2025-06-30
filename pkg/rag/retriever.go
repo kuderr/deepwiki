@@ -201,7 +201,10 @@ func (r *DefaultDocumentRetriever) RetrieveByTags(tags []string, maxResults int)
 }
 
 // RetrieveCodeExamples retrieves code examples for a specific language and concept
-func (r *DefaultDocumentRetriever) RetrieveCodeExamples(language string, concept string, maxResults int) ([]RetrievalResult, error) {
+func (r *DefaultDocumentRetriever) RetrieveCodeExamples(
+	language, concept string,
+	maxResults int,
+) ([]RetrievalResult, error) {
 	ctx := &RetrievalContext{
 		Query:      concept,
 		QueryType:  QueryTypeHybrid,
@@ -273,7 +276,11 @@ func (r *DefaultDocumentRetriever) RetrieveConfigFiles(configType string, maxRes
 }
 
 // RetrieveWithContext retrieves documents considering existing context
-func (r *DefaultDocumentRetriever) RetrieveWithContext(query string, context []RetrievalResult, maxResults int) ([]RetrievalResult, error) {
+func (r *DefaultDocumentRetriever) RetrieveWithContext(
+	query string,
+	context []RetrievalResult,
+	maxResults int,
+) ([]RetrievalResult, error) {
 	// Extract context terms and boost related content
 	contextTerms := r.extractContextTerms(context)
 
@@ -359,7 +366,10 @@ func (r *DefaultDocumentRetriever) RetrieveRelatedChunks(chunkID string, maxResu
 }
 
 // FilterResults filters results based on metadata filters
-func (r *DefaultDocumentRetriever) FilterResults(results []RetrievalResult, filters map[string]string) []RetrievalResult {
+func (r *DefaultDocumentRetriever) FilterResults(
+	results []RetrievalResult,
+	filters map[string]string,
+) []RetrievalResult {
 	if len(filters) == 0 {
 		return results
 	}
@@ -715,11 +725,14 @@ func (r *DefaultDocumentRetriever) isFunctionDefinition(content, language string
 	case "Python":
 		return strings.Contains(contentLower, "def ")
 	case "JavaScript", "TypeScript":
-		return strings.Contains(contentLower, "function ") || strings.Contains(contentLower, "const ") || strings.Contains(contentLower, "let ")
+		return strings.Contains(contentLower, "function ") || strings.Contains(contentLower, "const ") ||
+			strings.Contains(contentLower, "let ")
 	case "Java", "C#":
-		return strings.Contains(contentLower, "public ") || strings.Contains(contentLower, "private ") || strings.Contains(contentLower, "protected ")
+		return strings.Contains(contentLower, "public ") || strings.Contains(contentLower, "private ") ||
+			strings.Contains(contentLower, "protected ")
 	default:
-		return strings.Contains(contentLower, "function") || strings.Contains(contentLower, "def") || strings.Contains(contentLower, "func")
+		return strings.Contains(contentLower, "function") || strings.Contains(contentLower, "def") ||
+			strings.Contains(contentLower, "func")
 	}
 }
 
@@ -798,7 +811,10 @@ func (r *DefaultDocumentRetriever) extractContextTerms(context []RetrievalResult
 	return contextTerms
 }
 
-func (r *DefaultDocumentRetriever) filterByTimeWindow(results []RetrievalResult, timeWindow *TimeWindow) []RetrievalResult {
+func (r *DefaultDocumentRetriever) filterByTimeWindow(
+	results []RetrievalResult,
+	timeWindow *TimeWindow,
+) []RetrievalResult {
 	// Simple time filtering - would need to get file modification times
 	// For now, return all results
 	return results

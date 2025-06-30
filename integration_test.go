@@ -311,7 +311,7 @@ func main() {
 
 	// Create a package
 	pkgDir := filepath.Join(dir, "pkg", "utils")
-	os.MkdirAll(pkgDir, 0755)
+	os.MkdirAll(pkgDir, 0o755)
 
 	utilsGo := `package utils
 
@@ -376,7 +376,7 @@ if __name__ == "__main__":
 
 	// Create package
 	srcDir := filepath.Join(dir, "src")
-	os.MkdirAll(srcDir, 0755)
+	os.MkdirAll(srcDir, 0o755)
 
 	calculatorPy := `"""
 Calculator module providing basic math operations.
@@ -433,7 +433,7 @@ main();
 
 	// Create src directory
 	srcDir := filepath.Join(dir, "src")
-	os.MkdirAll(srcDir, 0755)
+	os.MkdirAll(srcDir, 0o755)
 
 	calculatorJs := `/**
  * Calculator class providing basic math operations.
@@ -467,11 +467,11 @@ module.exports = Calculator;
 
 func writeFile(t *testing.T, path, content string) {
 	dir := filepath.Dir(path)
-	if err := os.MkdirAll(dir, 0755); err != nil {
+	if err := os.MkdirAll(dir, 0o755); err != nil {
 		t.Fatalf("Failed to create directory %s: %v", dir, err)
 	}
 
-	if err := os.WriteFile(path, []byte(content), 0644); err != nil {
+	if err := os.WriteFile(path, []byte(content), 0o644); err != nil {
 		t.Fatalf("Failed to write file %s: %v", path, err)
 	}
 }

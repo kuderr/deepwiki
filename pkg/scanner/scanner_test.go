@@ -26,7 +26,7 @@ func createTestDirectory(t *testing.T) string {
 	}
 
 	for _, dir := range dirs {
-		if err := os.MkdirAll(filepath.Join(tempDir, dir), 0755); err != nil {
+		if err := os.MkdirAll(filepath.Join(tempDir, dir), 0o755); err != nil {
 			t.Fatalf("Failed to create directory %s: %v", dir, err)
 		}
 	}
@@ -52,7 +52,7 @@ func createTestDirectory(t *testing.T) string {
 
 	for filename, content := range files {
 		fullPath := filepath.Join(tempDir, filename)
-		if err := os.WriteFile(fullPath, []byte(content), 0644); err != nil {
+		if err := os.WriteFile(fullPath, []byte(content), 0o644); err != nil {
 			t.Fatalf("Failed to create file %s: %v", filename, err)
 		}
 	}
@@ -81,7 +81,6 @@ func TestScanDirectory_Basic(t *testing.T) {
 
 	scanner := NewScanner(DefaultScanOptions())
 	result, err := scanner.ScanDirectory(tempDir)
-
 	if err != nil {
 		t.Fatalf("ScanDirectory failed: %v", err)
 	}
@@ -123,7 +122,6 @@ func TestScanDirectory_FileTypes(t *testing.T) {
 
 	scanner := NewScanner(DefaultScanOptions())
 	result, err := scanner.ScanDirectory(tempDir)
-
 	if err != nil {
 		t.Fatalf("ScanDirectory failed: %v", err)
 	}
@@ -149,7 +147,6 @@ func TestScanDirectory_LanguageDetection(t *testing.T) {
 
 	scanner := NewScanner(DefaultScanOptions())
 	result, err := scanner.ScanDirectory(tempDir)
-
 	if err != nil {
 		t.Fatalf("ScanDirectory failed: %v", err)
 	}
@@ -177,7 +174,6 @@ func TestScanDirectory_Categories(t *testing.T) {
 
 	scanner := NewScanner(DefaultScanOptions())
 	result, err := scanner.ScanDirectory(tempDir)
-
 	if err != nil {
 		t.Fatalf("ScanDirectory failed: %v", err)
 	}
@@ -231,7 +227,6 @@ func TestScanOptions_MaxFiles(t *testing.T) {
 
 	scanner := NewScanner(options)
 	result, err := scanner.ScanDirectory(tempDir)
-
 	if err != nil {
 		t.Fatalf("ScanDirectory failed: %v", err)
 	}
@@ -250,7 +245,6 @@ func TestScanOptions_ExcludeDirectories(t *testing.T) {
 
 	scanner := NewScanner(options)
 	result, err := scanner.ScanDirectory(tempDir)
-
 	if err != nil {
 		t.Fatalf("ScanDirectory failed: %v", err)
 	}
@@ -272,7 +266,6 @@ func TestScanOptions_IncludeExtensions(t *testing.T) {
 
 	scanner := NewScanner(options)
 	result, err := scanner.ScanDirectory(tempDir)
-
 	if err != nil {
 		t.Fatalf("ScanDirectory failed: %v", err)
 	}
@@ -338,7 +331,6 @@ func TestScannerStats(t *testing.T) {
 
 	scanner := NewScanner(DefaultScanOptions())
 	_, err := scanner.ScanDirectory(tempDir)
-
 	if err != nil {
 		t.Fatalf("ScanDirectory failed: %v", err)
 	}

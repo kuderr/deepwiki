@@ -14,7 +14,6 @@ func TestNewClient(t *testing.T) {
 	t.Run("valid config", func(t *testing.T) {
 		config := DefaultConfig("test-api-key")
 		client, err := NewClient(config)
-
 		if err != nil {
 			t.Fatalf("NewClient failed: %v", err)
 		}

@@ -83,5 +83,9 @@ type IndexStats struct {
 
 // Manager interface defines the contract for output generation
 type Manager interface {
-	GenerateOutput(structure *generator.WikiStructure, pages map[string]*generator.WikiPage, options outputgen.OutputOptions) (*outputgen.OutputResult, error)
+	GenerateOutput(
+		structure *generator.WikiStructure,
+		pages map[string]*generator.WikiPage,
+		options outputgen.OutputOptions,
+	) (*outputgen.OutputResult, error)
 }

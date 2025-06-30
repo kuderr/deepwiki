@@ -6,29 +6,29 @@ import (
 
 // WikiStructure represents the overall structure of a wiki
 type WikiStructure struct {
-	ID          string     `json:"id" xml:"id"`
-	Title       string     `json:"title" xml:"title"`
+	ID          string     `json:"id"          xml:"id"`
+	Title       string     `json:"title"       xml:"title"`
 	Description string     `json:"description" xml:"description"`
-	Pages       []WikiPage `json:"pages" xml:"pages>page"`
-	CreatedAt   time.Time  `json:"createdAt" xml:"createdAt"`
-	Language    string     `json:"language" xml:"language"`
+	Pages       []WikiPage `json:"pages"       xml:"pages>page"`
+	CreatedAt   time.Time  `json:"createdAt"   xml:"createdAt"`
+	Language    string     `json:"language"    xml:"language"`
 	ProjectPath string     `json:"projectPath" xml:"projectPath"`
-	Version     string     `json:"version" xml:"version"`
+	Version     string     `json:"version"     xml:"version"`
 }
 
 // WikiPage represents a single wiki page
 type WikiPage struct {
-	ID           string    `json:"id" xml:"id"`
-	Title        string    `json:"title" xml:"title"`
-	Description  string    `json:"description" xml:"description"`
-	Content      string    `json:"content" xml:"content"`
-	FilePaths    []string  `json:"filePaths" xml:"filePaths>path"`
-	Importance   string    `json:"importance" xml:"importance"` // high, medium, low
-	ParentID     string    `json:"parentId,omitempty" xml:"parentId,omitempty"`
+	ID           string    `json:"id"                     xml:"id"`
+	Title        string    `json:"title"                  xml:"title"`
+	Description  string    `json:"description"            xml:"description"`
+	Content      string    `json:"content"                xml:"content"`
+	FilePaths    []string  `json:"filePaths"              xml:"filePaths>path"`
+	Importance   string    `json:"importance"             xml:"importance"` // high, medium, low
+	ParentID     string    `json:"parentId,omitempty"     xml:"parentId,omitempty"`
 	RelatedPages []string  `json:"relatedPages,omitempty" xml:"relatedPages>pageId,omitempty"`
-	CreatedAt    time.Time `json:"createdAt" xml:"createdAt"`
-	WordCount    int       `json:"wordCount" xml:"wordCount"`
-	SourceFiles  int       `json:"sourceFiles" xml:"sourceFiles"`
+	CreatedAt    time.Time `json:"createdAt"              xml:"createdAt"`
+	WordCount    int       `json:"wordCount"              xml:"wordCount"`
+	SourceFiles  int       `json:"sourceFiles"            xml:"sourceFiles"`
 }
 
 // GenerationOptions contains options for wiki generation

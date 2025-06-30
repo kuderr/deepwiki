@@ -239,7 +239,10 @@ func validateConfig(config *Config) error {
 		"simple-docusaurus3": true,
 	}
 	if !validFormats[config.Output.Format] {
-		return fmt.Errorf("invalid output format: %s (valid: markdown, json, docusaurus2, docusaurus3, simple-docusaurus2, simple-docusaurus3)", config.Output.Format)
+		return fmt.Errorf(
+			"invalid output format: %s (valid: markdown, json, docusaurus2, docusaurus3, simple-docusaurus2, simple-docusaurus3)",
+			config.Output.Format,
+		)
 	}
 
 	validLanguages := map[string]bool{
@@ -268,7 +271,7 @@ func SaveConfig(config *Config, filename string) error {
 		return err
 	}
 
-	return os.WriteFile(filename, data, 0644)
+	return os.WriteFile(filename, data, 0o644)
 }
 
 // GenerateTemplate generates a template configuration file

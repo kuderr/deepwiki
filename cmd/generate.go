@@ -115,7 +115,7 @@ func runGenerate(cmd *cobra.Command, args []string) error {
 
 	// Validate output directory
 	if cfg.Output.Directory != "" {
-		if err := os.MkdirAll(cfg.Output.Directory, 0755); err != nil {
+		if err := os.MkdirAll(cfg.Output.Directory, 0o755); err != nil {
 			return fmt.Errorf("failed to create output directory: %w", err)
 		}
 	}
@@ -379,7 +379,13 @@ func runGenerate(cmd *cobra.Command, args []string) error {
 
 	// Initialize RAG retriever
 	embeddingService := embeddings.NewEmbeddingService(embeddingGenerator, vectorDB, embeddingConfig)
-	ragRetriever := rag.NewDocumentRetriever(embeddingService, vectorDB, embeddingGenerator, processingResult.Documents, nil)
+	ragRetriever := rag.NewDocumentRetriever(
+		embeddingService,
+		vectorDB,
+		embeddingGenerator,
+		processingResult.Documents,
+		nil,
+	)
 
 	cliManager.CompletePhase("Phase 4", len(embeddingVectors), 0)
 	fmt.Printf("✅ Phase 4 completed: %d documents indexed in vector database\n", len(embeddingVectors))
@@ -496,11 +502,16 @@ func init() {
 	rootCmd.AddCommand(generateCmd)
 
 	// Persistent flags
-	generateCmd.Flags().StringVarP(&projectPath, "path", "p", "", "Path to the project directory (default: current directory)")
-	generateCmd.Flags().StringVarP(&outputDir, "output-dir", "o", "./docs", "Output directory for generated documentation")
-	generateCmd.Flags().StringVarP(&format, "format", "f", "markdown", "Output format: markdown, json, docusaurus2, docusaurus3, simple-docusaurus2, simple-docusaurus3")
-	generateCmd.Flags().BoolVarP(&comprehensive, "comprehensive", "c", true, "Generate comprehensive documentation (vs concise)")
-	generateCmd.Flags().StringVarP(&language, "language", "l", "en", "Language for generation: en, ja, zh, es, kr, vi")
+	generateCmd.Flags().
+		StringVarP(&projectPath, "path", "p", "", "Path to the project directory (default: current directory)")
+	generateCmd.Flags().
+		StringVarP(&outputDir, "output-dir", "o", "./docs", "Output directory for generated documentation")
+	generateCmd.Flags().
+		StringVarP(&format, "format", "f", "markdown", "Output format: markdown, json, docusaurus2, docusaurus3, simple-docusaurus2, simple-docusaurus3")
+	generateCmd.Flags().
+		BoolVarP(&comprehensive, "comprehensive", "c", true, "Generate comprehensive documentation (vs concise)")
+	generateCmd.Flags().
+		StringVarP(&language, "language", "l", "en", "Language for generation: en, ru, ja, zh, es, kr, vi")
 	generateCmd.Flags().StringVar(&openaiKey, "openai-key", "", "OpenAI API key (or use OPENAI_API_KEY env var)")
 	generateCmd.Flags().StringVarP(&model, "model", "m", "gpt-4o", "OpenAI model to use")
 	generateCmd.Flags().StringVar(&excludeDirs, "exclude-dirs", "", "Comma-separated list of directories to exclude")
@@ -508,7 +519,8 @@ func init() {
 	generateCmd.Flags().IntVar(&chunkSize, "chunk-size", 350, "Text chunk size for embeddings")
 	generateCmd.Flags().StringVar(&configFile, "config", "", "Configuration file path")
 	generateCmd.Flags().BoolVarP(&verbose, "verbose", "v", false, "Verbose output")
-	generateCmd.Flags().BoolVar(&dryRun, "dry-run", false, "Show what would be done without actually generating documentation")
+	generateCmd.Flags().
+		BoolVar(&dryRun, "dry-run", false, "Show what would be done without actually generating documentation")
 
 	// Mark required flags
 	// Note: OpenAI key will be checked in the run function to allow env var

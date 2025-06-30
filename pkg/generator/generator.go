@@ -33,7 +33,11 @@ func NewWikiGenerator(client openai.Client, retriever rag.DocumentRetriever, log
 }
 
 // GenerateWikiStructure generates the overall wiki structure for a project
-func (g *WikiGenerator) GenerateWikiStructure(ctx context.Context, files []scanner.FileInfo, options GenerationOptions) (*WikiStructure, error) {
+func (g *WikiGenerator) GenerateWikiStructure(
+	ctx context.Context,
+	files []scanner.FileInfo,
+	options GenerationOptions,
+) (*WikiStructure, error) {
 	g.logger.Info("Starting wiki structure generation",
 		"project", options.ProjectName,
 		"files", len(files),
@@ -75,7 +79,6 @@ func (g *WikiGenerator) GenerateWikiStructure(ctx context.Context, files []scann
 		MaxTokens:   4000,
 		Temperature: 0.1,
 	})
-
 	if err != nil {
 		return nil, fmt.Errorf("failed to call OpenAI API for structure generation: %w", err)
 	}
@@ -97,7 +100,12 @@ func (g *WikiGenerator) GenerateWikiStructure(ctx context.Context, files []scann
 }
 
 // GeneratePageContent generates content for a specific wiki page
-func (g *WikiGenerator) GeneratePageContent(ctx context.Context, page *WikiPage, structure *WikiStructure, options GenerationOptions) error {
+func (g *WikiGenerator) GeneratePageContent(
+	ctx context.Context,
+	page *WikiPage,
+	structure *WikiStructure,
+	options GenerationOptions,
+) error {
 	g.logger.Info("Generating content for page", "page", page.Title, "id", page.ID)
 
 	start := time.Now()
@@ -148,7 +156,6 @@ func (g *WikiGenerator) GeneratePageContent(ctx context.Context, page *WikiPage,
 		MaxTokens:   4000,
 		Temperature: 0.1,
 	})
-
 	if err != nil {
 		return fmt.Errorf("failed to call OpenAI API for page content generation: %w", err)
 	}
@@ -176,7 +183,11 @@ func (g *WikiGenerator) GeneratePageContent(ctx context.Context, page *WikiPage,
 }
 
 // GenerateWiki generates a complete wiki for the project
-func (g *WikiGenerator) GenerateWiki(ctx context.Context, files []scanner.FileInfo, options GenerationOptions) (*GenerationResult, error) {
+func (g *WikiGenerator) GenerateWiki(
+	ctx context.Context,
+	files []scanner.FileInfo,
+	options GenerationOptions,
+) (*GenerationResult, error) {
 	result := &GenerationResult{
 		GeneratedAt: time.Now(),
 		Pages:       make(map[string]*WikiPage),

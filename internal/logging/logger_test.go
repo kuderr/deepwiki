@@ -56,7 +56,6 @@ func TestNewLogger_DefaultConfig(t *testing.T) {
 }
 
 func TestNewLogger_TextFormat(t *testing.T) {
-
 	// Create a temporary file to capture output
 	tempDir, err := os.MkdirTemp("", "deepwiki-text-test-*")
 	if err != nil {

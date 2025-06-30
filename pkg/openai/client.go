@@ -64,7 +64,11 @@ func NewClient(config *Config) (*OpenAIClient, error) {
 }
 
 // ChatCompletion sends a chat completion request to OpenAI
-func (c *OpenAIClient) ChatCompletion(ctx context.Context, messages []Message, opts ...ChatCompletionOptions) (*ChatCompletionResponse, error) {
+func (c *OpenAIClient) ChatCompletion(
+	ctx context.Context,
+	messages []Message,
+	opts ...ChatCompletionOptions,
+) (*ChatCompletionResponse, error) {
 	// Apply options
 	options := ChatCompletionOptions{
 		MaxTokens:   c.config.MaxTokens,
@@ -134,7 +138,12 @@ func (c *OpenAIClient) ChatCompletion(ctx context.Context, messages []Message, o
 }
 
 // ChatCompletionStream sends a streaming chat completion request
-func (c *OpenAIClient) ChatCompletionStream(ctx context.Context, messages []Message, handler StreamHandler, opts ...ChatCompletionOptions) error {
+func (c *OpenAIClient) ChatCompletionStream(
+	ctx context.Context,
+	messages []Message,
+	handler StreamHandler,
+	opts ...ChatCompletionOptions,
+) error {
 	// Apply options
 	options := ChatCompletionOptions{
 		MaxTokens:   c.config.MaxTokens,
@@ -172,7 +181,11 @@ func (c *OpenAIClient) ChatCompletionStream(ctx context.Context, messages []Mess
 }
 
 // CreateEmbeddings creates embeddings for the given texts
-func (c *OpenAIClient) CreateEmbeddings(ctx context.Context, texts []string, opts ...EmbeddingOptions) (*EmbeddingResponse, error) {
+func (c *OpenAIClient) CreateEmbeddings(
+	ctx context.Context,
+	texts []string,
+	opts ...EmbeddingOptions,
+) (*EmbeddingResponse, error) {
 	if len(texts) == 0 {
 		return nil, fmt.Errorf("no texts provided")
 	}
@@ -231,7 +244,11 @@ func (c *OpenAIClient) CreateEmbeddings(ctx context.Context, texts []string, opt
 }
 
 // createEmbeddingsBatched handles large embedding requests by batching them
-func (c *OpenAIClient) createEmbeddingsBatched(ctx context.Context, texts []string, options EmbeddingOptions) (*EmbeddingResponse, error) {
+func (c *OpenAIClient) createEmbeddingsBatched(
+	ctx context.Context,
+	texts []string,
+	options EmbeddingOptions,
+) (*EmbeddingResponse, error) {
 	var allEmbeddings []Embedding
 	var totalUsage Usage
 
@@ -267,7 +284,11 @@ func (c *OpenAIClient) createEmbeddingsBatched(ctx context.Context, texts []stri
 }
 
 // doRequest performs an HTTP request to the OpenAI API
-func (c *OpenAIClient) doRequest(ctx context.Context, method, endpoint string, requestBody interface{}) ([]byte, error) {
+func (c *OpenAIClient) doRequest(
+	ctx context.Context,
+	method, endpoint string,
+	requestBody interface{},
+) ([]byte, error) {
 	var body io.Reader
 	if requestBody != nil {
 		jsonData, err := json.Marshal(requestBody)
@@ -340,7 +361,12 @@ func (c *OpenAIClient) doRequest(ctx context.Context, method, endpoint string, r
 }
 
 // doStreamRequest performs a streaming HTTP request
-func (c *OpenAIClient) doStreamRequest(ctx context.Context, method, endpoint string, requestBody interface{}, handler StreamHandler) error {
+func (c *OpenAIClient) doStreamRequest(
+	ctx context.Context,
+	method, endpoint string,
+	requestBody interface{},
+	handler StreamHandler,
+) error {
 	jsonData, err := json.Marshal(requestBody)
 	if err != nil {
 		return fmt.Errorf("failed to marshal request: %w", err)

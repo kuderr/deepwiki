@@ -299,7 +299,7 @@ func (cm *CacheManager) GetCachedWikiStructure(projectPath string) (*generator.W
 
 func (cm *CacheManager) initializeCache() error {
 	// Create cache directory
-	if err := os.MkdirAll(cm.cacheDir, 0755); err != nil {
+	if err := os.MkdirAll(cm.cacheDir, 0o755); err != nil {
 		return fmt.Errorf("failed to create cache directory: %w", err)
 	}
 
@@ -430,7 +430,7 @@ func (dc *DiskCache) Set(key string, data interface{}, ttl time.Duration) error 
 	filePath := filepath.Join(dc.baseDir, key+".json")
 
 	// Write to disk
-	if err := os.WriteFile(filePath, jsonData, 0644); err != nil {
+	if err := os.WriteFile(filePath, jsonData, 0o644); err != nil {
 		return err
 	}
 
@@ -560,5 +560,5 @@ func (dc *DiskCache) saveIndex() error {
 		return err
 	}
 
-	return os.WriteFile(dc.indexFile, data, 0644)
+	return os.WriteFile(dc.indexFile, data, 0o644)
 }

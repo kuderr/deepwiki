@@ -525,12 +525,18 @@ func (m *MockVectorDB) List() ([]string, error) {
 	return ids, nil
 }
 
-func (m *MockVectorDB) Search(vector []float32, options *embeddings.VectorSearchOptions) ([]embeddings.VectorSearchResult, error) {
+func (m *MockVectorDB) Search(
+	vector []float32,
+	options *embeddings.VectorSearchOptions,
+) ([]embeddings.VectorSearchResult, error) {
 	// Return empty results for mock
 	return []embeddings.VectorSearchResult{}, nil
 }
 
-func (m *MockVectorDB) SearchByText(text string, options *embeddings.VectorSearchOptions) ([]embeddings.VectorSearchResult, error) {
+func (m *MockVectorDB) SearchByText(
+	text string,
+	options *embeddings.VectorSearchOptions,
+) ([]embeddings.VectorSearchResult, error) {
 	return []embeddings.VectorSearchResult{}, nil
 }
 

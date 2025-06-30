@@ -29,11 +29,15 @@ func (jg *JSONGenerator) Description() string {
 }
 
 // Generate creates JSON output files
-func (jg *JSONGenerator) Generate(structure *generator.WikiStructure, pages map[string]*generator.WikiPage, options OutputOptions) (*OutputResult, error) {
+func (jg *JSONGenerator) Generate(
+	structure *generator.WikiStructure,
+	pages map[string]*generator.WikiPage,
+	options OutputOptions,
+) (*OutputResult, error) {
 	startTime := time.Now()
 
 	// Create output directory
-	if err := os.MkdirAll(options.Directory, 0755); err != nil {
+	if err := os.MkdirAll(options.Directory, 0o755); err != nil {
 		return nil, fmt.Errorf("failed to create output directory: %w", err)
 	}
 
@@ -66,7 +70,7 @@ func (jg *JSONGenerator) Generate(structure *generator.WikiStructure, pages map[
 
 	// Generate individual page JSON files
 	pagesDir := filepath.Join(options.Directory, "pages")
-	if err := os.MkdirAll(pagesDir, 0755); err != nil {
+	if err := os.MkdirAll(pagesDir, 0o755); err != nil {
 		errors = append(errors, fmt.Errorf("failed to create pages directory: %w", err))
 	} else {
 		for pageID, page := range pages {
@@ -107,7 +111,12 @@ func (jg *JSONGenerator) Generate(structure *generator.WikiStructure, pages map[
 	}, nil
 }
 
-func (jg *JSONGenerator) generateIndex(structure *generator.WikiStructure, pages map[string]*generator.WikiPage, filePath string, options OutputOptions) error {
+func (jg *JSONGenerator) generateIndex(
+	structure *generator.WikiStructure,
+	pages map[string]*generator.WikiPage,
+	filePath string,
+	options OutputOptions,
+) error {
 	// Build index structure
 	indexPages := make([]IndexPage, 0, len(pages))
 	stats := IndexStats{}
@@ -160,5 +169,5 @@ func (jg *JSONGenerator) writeJSONFile(data interface{}, filePath string) error 
 		return fmt.Errorf("failed to marshal JSON: %w", err)
 	}
 
-	return os.WriteFile(filePath, jsonData, 0644)
+	return os.WriteFile(filePath, jsonData, 0o644)
 }

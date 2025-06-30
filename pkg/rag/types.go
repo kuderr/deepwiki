@@ -137,7 +137,7 @@ type DocumentRetriever interface {
 	RetrieveByTags(tags []string, maxResults int) ([]RetrievalResult, error)
 
 	// Specialized retrieval methods
-	RetrieveCodeExamples(language string, concept string, maxResults int) ([]RetrievalResult, error)
+	RetrieveCodeExamples(language, concept string, maxResults int) ([]RetrievalResult, error)
 	RetrieveDocumentation(query string, maxResults int) ([]RetrievalResult, error)
 	RetrieveConfigFiles(configType string, maxResults int) ([]RetrievalResult, error)
 

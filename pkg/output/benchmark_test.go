@@ -73,9 +73,12 @@ func BenchmarkCacheManager_SetAndGet(b *testing.B) {
 	testPages := make([]*generator.WikiPage, 1000)
 	for i := 0; i < 1000; i++ {
 		testPages[i] = &generator.WikiPage{
-			ID:      fmt.Sprintf("page-%d", i),
-			Title:   fmt.Sprintf("Benchmark Page %d", i),
-			Content: fmt.Sprintf("Content for benchmark page %d with some additional text to make it more realistic", i),
+			ID:    fmt.Sprintf("page-%d", i),
+			Title: fmt.Sprintf("Benchmark Page %d", i),
+			Content: fmt.Sprintf(
+				"Content for benchmark page %d with some additional text to make it more realistic",
+				i,
+			),
 		}
 	}
 
@@ -172,7 +175,7 @@ func BenchmarkBatchProcessor(b *testing.B) {
 
 				processor := func(batch []string) error {
 					// Simulate processing
-					for _ = range batch {
+					for range batch {
 						time.Sleep(time.Microsecond * 10)
 					}
 					return nil

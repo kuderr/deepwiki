@@ -81,7 +81,7 @@ func (c *CLIManager) StartOperation(projectName, outputDir string) {
 }
 
 // StartPhase starts a new phase of the operation
-func (c *CLIManager) StartPhase(phaseName string, description string, total int) {
+func (c *CLIManager) StartPhase(phaseName, description string, total int) {
 	if !c.quietMode {
 		fmt.Printf("🔄 %s: %s\n", phaseName, description)
 	}
@@ -107,7 +107,7 @@ func (c *CLIManager) UpdatePhase(current int, message string) {
 }
 
 // CompletePhase completes the current phase
-func (c *CLIManager) CompletePhase(phaseName string, itemsProcessed int, errors int) {
+func (c *CLIManager) CompletePhase(phaseName string, itemsProcessed, errors int) {
 	phase := c.stats.Phases[phaseName]
 	phase.EndTime = time.Now()
 	phase.ItemsProcessed = itemsProcessed

@@ -71,7 +71,6 @@ func TestDefaultConfig(t *testing.T) {
 func TestLoadConfig_NoFile(t *testing.T) {
 	// Test loading config with no file (should use defaults)
 	config, err := LoadConfig("")
-
 	if err != nil {
 		t.Fatalf("LoadConfig failed: %v", err)
 	}
@@ -115,7 +114,7 @@ logging:
   format: "json"
 `
 
-	if err := os.WriteFile(configFile, []byte(configContent), 0644); err != nil {
+	if err := os.WriteFile(configFile, []byte(configContent), 0o644); err != nil {
 		t.Fatalf("Failed to write config file: %v", err)
 	}
 
@@ -357,7 +356,7 @@ openai:
   invalid yaml syntax here {{{ 
 `
 
-	if err := os.WriteFile(configFile, []byte(invalidYAML), 0644); err != nil {
+	if err := os.WriteFile(configFile, []byte(invalidYAML), 0o644); err != nil {
 		t.Fatalf("Failed to write invalid config file: %v", err)
 	}
 

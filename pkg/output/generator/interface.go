@@ -86,7 +86,11 @@ type NavigationItem struct {
 // FormatGenerator defines the interface for output format generators
 type FormatGenerator interface {
 	// Generate creates output files in the specific format
-	Generate(structure *generator.WikiStructure, pages map[string]*generator.WikiPage, options OutputOptions) (*OutputResult, error)
+	Generate(
+		structure *generator.WikiStructure,
+		pages map[string]*generator.WikiPage,
+		options OutputOptions,
+	) (*OutputResult, error)
 
 	// FormatType returns the format type this generator handles
 	FormatType() OutputFormat

@@ -18,7 +18,6 @@ import (
 // TextProcessor handles text processing and chunking
 type TextProcessor struct {
 	options *ProcessingOptions
-	mu      sync.RWMutex
 }
 
 // NewTextProcessor creates a new text processor with options
@@ -49,7 +48,11 @@ func (tp *TextProcessor) ProcessFiles(files []scanner.FileInfo) (*ProcessingResu
 }
 
 // processFilesSequential processes files one by one
-func (tp *TextProcessor) processFilesSequential(files []scanner.FileInfo, result *ProcessingResult, startTime time.Time) (*ProcessingResult, error) {
+func (tp *TextProcessor) processFilesSequential(
+	files []scanner.FileInfo,
+	result *ProcessingResult,
+	startTime time.Time,
+) (*ProcessingResult, error) {
 	for _, file := range files {
 		if file.IsDir || file.IsBinary || !file.IsText {
 			continue
@@ -75,7 +78,11 @@ func (tp *TextProcessor) processFilesSequential(files []scanner.FileInfo, result
 }
 
 // processFilesConcurrent processes files concurrently
-func (tp *TextProcessor) processFilesConcurrent(files []scanner.FileInfo, result *ProcessingResult, startTime time.Time) (*ProcessingResult, error) {
+func (tp *TextProcessor) processFilesConcurrent(
+	files []scanner.FileInfo,
+	result *ProcessingResult,
+	startTime time.Time,
+) (*ProcessingResult, error) {
 	// Filter files first
 	validFiles := make([]scanner.FileInfo, 0, len(files))
 	for _, file := range files {
@@ -216,7 +223,11 @@ func (tp *TextProcessor) ChunkText(content string, fileInfo scanner.FileInfo) ([
 }
 
 // chunkBySemanticBoundaries attempts to chunk code by semantic boundaries
-func (tp *TextProcessor) chunkBySemanticBoundaries(content string, langProcessor *LanguageSpecificProcessor, fileInfo scanner.FileInfo) []TextChunk {
+func (tp *TextProcessor) chunkBySemanticBoundaries(
+	content string,
+	langProcessor *LanguageSpecificProcessor,
+	fileInfo scanner.FileInfo,
+) []TextChunk {
 	lines := strings.Split(content, "\n")
 	chunks := make([]TextChunk, 0)
 
@@ -455,7 +466,9 @@ func (tp *TextProcessor) readFileContent(filePath string) ([]byte, error) {
 		return nil, err
 	}
 
-	if info.Size() > int64(tp.options.MaxChunkWords*10) { // TODO: Use more accurate file size limits based on content type
+	if info.Size() > int64(
+		tp.options.MaxChunkWords*10,
+	) { // TODO: Use more accurate file size limits based on content type
 		return nil, fmt.Errorf("file too large: %d bytes", info.Size())
 	}
 

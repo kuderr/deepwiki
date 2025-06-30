@@ -16,7 +16,11 @@ import (
 // MockOpenAIClient implements the openai.Client interface for testing
 type MockOpenAIClient struct{}
 
-func (m *MockOpenAIClient) ChatCompletion(ctx context.Context, messages []openai.Message, opts ...openai.ChatCompletionOptions) (*openai.ChatCompletionResponse, error) {
+func (m *MockOpenAIClient) ChatCompletion(
+	ctx context.Context,
+	messages []openai.Message,
+	opts ...openai.ChatCompletionOptions,
+) (*openai.ChatCompletionResponse, error) {
 	return &openai.ChatCompletionResponse{
 		Choices: []openai.Choice{
 			{Message: openai.Message{Content: "test response"}},
@@ -24,11 +28,20 @@ func (m *MockOpenAIClient) ChatCompletion(ctx context.Context, messages []openai
 	}, nil
 }
 
-func (m *MockOpenAIClient) ChatCompletionStream(ctx context.Context, messages []openai.Message, handler openai.StreamHandler, opts ...openai.ChatCompletionOptions) error {
+func (m *MockOpenAIClient) ChatCompletionStream(
+	ctx context.Context,
+	messages []openai.Message,
+	handler openai.StreamHandler,
+	opts ...openai.ChatCompletionOptions,
+) error {
 	return nil
 }
 
-func (m *MockOpenAIClient) CreateEmbeddings(ctx context.Context, texts []string, opts ...openai.EmbeddingOptions) (*openai.EmbeddingResponse, error) {
+func (m *MockOpenAIClient) CreateEmbeddings(
+	ctx context.Context,
+	texts []string,
+	opts ...openai.EmbeddingOptions,
+) (*openai.EmbeddingResponse, error) {
 	return nil, nil
 }
 
@@ -63,7 +76,10 @@ func (m *MockRAGRetriever) RetrieveByTags(tags []string, maxResults int) ([]rag.
 	return nil, nil
 }
 
-func (m *MockRAGRetriever) RetrieveCodeExamples(language string, concept string, maxResults int) ([]rag.RetrievalResult, error) {
+func (m *MockRAGRetriever) RetrieveCodeExamples(
+	language, concept string,
+	maxResults int,
+) ([]rag.RetrievalResult, error) {
 	return nil, nil
 }
 
@@ -75,7 +91,11 @@ func (m *MockRAGRetriever) RetrieveConfigFiles(configType string, maxResults int
 	return nil, nil
 }
 
-func (m *MockRAGRetriever) RetrieveWithContext(query string, context []rag.RetrievalResult, maxResults int) ([]rag.RetrievalResult, error) {
+func (m *MockRAGRetriever) RetrieveWithContext(
+	query string,
+	context []rag.RetrievalResult,
+	maxResults int,
+) ([]rag.RetrievalResult, error) {
 	return nil, nil
 }
 
@@ -83,7 +103,10 @@ func (m *MockRAGRetriever) RetrieveRelatedChunks(chunkID string, maxResults int)
 	return nil, nil
 }
 
-func (m *MockRAGRetriever) FilterResults(results []rag.RetrievalResult, filters map[string]string) []rag.RetrievalResult {
+func (m *MockRAGRetriever) FilterResults(
+	results []rag.RetrievalResult,
+	filters map[string]string,
+) []rag.RetrievalResult {
 	return results
 }
 

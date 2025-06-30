@@ -19,7 +19,11 @@ type ConcurrentProcessor struct {
 }
 
 // NewConcurrentProcessor creates a new concurrent processor
-func NewConcurrentProcessor(logger *slog.Logger, maxConcurrency int, tracker generator.ProgressTracker) *ConcurrentProcessor {
+func NewConcurrentProcessor(
+	logger *slog.Logger,
+	maxConcurrency int,
+	tracker generator.ProgressTracker,
+) *ConcurrentProcessor {
 	if maxConcurrency <= 0 {
 		maxConcurrency = runtime.NumCPU()
 	}
@@ -32,7 +36,11 @@ func NewConcurrentProcessor(logger *slog.Logger, maxConcurrency int, tracker gen
 }
 
 // ProcessPagesParallel processes multiple wiki pages concurrently
-func (cp *ConcurrentProcessor) ProcessPagesParallel(ctx context.Context, pages []*generator.WikiPage, processor func(*generator.WikiPage) error) error {
+func (cp *ConcurrentProcessor) ProcessPagesParallel(
+	ctx context.Context,
+	pages []*generator.WikiPage,
+	processor func(*generator.WikiPage) error,
+) error {
 	if len(pages) == 0 {
 		return nil
 	}
@@ -120,7 +128,12 @@ func NewBatchProcessor[T any](logger *slog.Logger, batchSize, concurrency int) *
 }
 
 // ProcessInBatches processes items in batches
-func (bp *BatchProcessor[T]) ProcessInBatches(ctx context.Context, items []T, processor func([]T) error, progressTracker generator.ProgressTracker) error {
+func (bp *BatchProcessor[T]) ProcessInBatches(
+	ctx context.Context,
+	items []T,
+	processor func([]T) error,
+	progressTracker generator.ProgressTracker,
+) error {
 	if len(items) == 0 {
 		return nil
 	}
@@ -203,7 +216,10 @@ func (bp *BatchProcessor[T]) ProcessInBatches(ctx context.Context, items []T, pr
 		}
 
 		if progressTracker != nil {
-			progressTracker.UpdateProgress(processedItems, fmt.Sprintf("Processed %d/%d items", processedItems, len(items)))
+			progressTracker.UpdateProgress(
+				processedItems,
+				fmt.Sprintf("Processed %d/%d items", processedItems, len(items)),
+			)
 		}
 
 		if err != nil {
@@ -297,7 +313,13 @@ func (mp *MemoryEfficientProcessor) SetMemoryLimit(limitMB int) {
 
 // Private methods
 
-func (cp *ConcurrentProcessor) worker(ctx context.Context, workerID int, jobs <-chan *generator.WikiPage, results chan<- error, processor func(*generator.WikiPage) error) {
+func (cp *ConcurrentProcessor) worker(
+	ctx context.Context,
+	workerID int,
+	jobs <-chan *generator.WikiPage,
+	results chan<- error,
+	processor func(*generator.WikiPage) error,
+) {
 	for page := range jobs {
 		select {
 		case <-ctx.Done():

@@ -140,7 +140,7 @@ func TestProcessFile(t *testing.T) {
 		"This should now meet the minimum word count requirements for creating chunks. " +
 		"We need to have sufficient content so that the chunking algorithm can create meaningful chunks."
 
-	err := os.WriteFile(testFile, []byte(testContent), 0644)
+	err := os.WriteFile(testFile, []byte(testContent), 0o644)
 	if err != nil {
 		t.Fatalf("Failed to create test file: %v", err)
 	}
@@ -195,15 +195,25 @@ func TestProcessFiles(t *testing.T) {
 		lang    string
 		cat     string
 	}{
-		{"test1.go", "package main\nfunc main() { fmt.Println(\"Hello\") }\nfunc add(a, b int) int { return a + b }", "Go", "code"},
+		{
+			"test1.go",
+			"package main\nfunc main() { fmt.Println(\"Hello\") }\nfunc add(a, b int) int { return a + b }",
+			"Go",
+			"code",
+		},
 		{"test2.py", "def hello():\n    print('Hello World')\n\ndef add(a, b):\n    return a + b", "Python", "code"},
-		{"readme.md", "# Test Project\nThis is a comprehensive test project for testing chunking functionality.", "Markdown", "docs"},
+		{
+			"readme.md",
+			"# Test Project\nThis is a comprehensive test project for testing chunking functionality.",
+			"Markdown",
+			"docs",
+		},
 	}
 
 	fileInfos := make([]scanner.FileInfo, len(files))
 	for i, file := range files {
 		testFile := filepath.Join(tempDir, file.name)
-		err := os.WriteFile(testFile, []byte(file.content), 0644)
+		err := os.WriteFile(testFile, []byte(file.content), 0o644)
 		if err != nil {
 			t.Fatalf("Failed to create test file %s: %v", file.name, err)
 		}
@@ -464,7 +474,7 @@ func BenchmarkProcessFiles(b *testing.B) {
 	for i := 0; i < 10; i++ {
 		content := "package main\nfunc test" + string(rune(i)) + "() { return }"
 		testFile := filepath.Join(tempDir, "test"+string(rune(i))+".go")
-		os.WriteFile(testFile, []byte(content), 0644)
+		os.WriteFile(testFile, []byte(content), 0o644)
 
 		fileInfos[i] = scanner.FileInfo{
 			Path:         "test" + string(rune(i)) + ".go",
