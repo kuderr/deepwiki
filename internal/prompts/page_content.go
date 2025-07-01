@@ -11,50 +11,41 @@ type PageContentData struct {
 }
 
 // PageContentPrompt is the template for generating wiki page content
-const PageContentPrompt = `You are an expert technical writer generating comprehensive documentation for the "{{.PageTitle}}" section of {{.ProjectName}}.
+const PageContentPrompt = `
+You are an expert technical writer and software architect.
+Your task is to generate a comprehensive and accurate technical wiki page about a specific feature, system, or module for the "{{.PageTitle}}" section of {{.ProjectName}}.
 
 Page Description: {{.PageDescription}}
 
-Generate a wiki page about "{{.PageTitle}}" based ONLY on these source files:
+Generate a wiki page about based ONLY on these source files:
 
 {{.RelevantFiles}}
 
 Requirements:
-1. **Start with a <details> block** listing ALL source files used (minimum 5 files when available):
-   <details>
-   <summary>📁 Source Files</summary>
-
-   - [filename1.ext](path/to/file1.ext)
-   - [filename2.ext](path/to/file2.ext)
-   - [filename3.ext](path/to/file3.ext)
-   - ...
-
-   </details>
-
-2. **Use extensive Mermaid diagrams** throughout the page:
+1. **Use extensive Mermaid diagrams** throughout the page:
    - Use flowchart TD for process flows and architecture
    - Use sequenceDiagram for interactions and API calls
    - Use classDiagram for object relationships and data structures
    - Use graph LR for dependencies and connections
    - Place diagrams strategically to illustrate concepts
 
-3. **Include comprehensive code snippets** with proper syntax highlighting:
+2. **Include comprehensive code snippets** with proper syntax highlighting:
    - Show key functions, classes, and configurations
    - Include usage examples where relevant
    - Use appropriate language tags (go, python, javascript, etc.)
 
-4. **Use markdown tables** for structured data:
+3. **Use markdown tables** for structured data:
    - Configuration options
    - API endpoints
    - Function parameters
    - Error codes
 
-5. **Ensure technical accuracy** - base all content on actual source code
+4. **Ensure technical accuracy** - base all content on actual source code
    - Don't assume functionality not shown in the files
    - Explain what the code actually does, not what it might do
    - Include error handling and edge cases when visible
 
-6. **Structure the content** with clear sections:
+5. **Structure the content** with clear sections:
    - Brief overview
    - Key concepts and architecture
    - Detailed implementation
@@ -62,7 +53,9 @@ Requirements:
    - Configuration and setup
    - Troubleshooting (if applicable)
 
-7. **Focus on the {{.Language}} audience** - adjust technical depth accordingly
+6. **Clarity and Conciseness:** Use clear, professional, and concise technical language suitable for other developers working on or learning about the project. Avoid unnecessary jargon, but use correct technical terms where appropriate.
+
+7. **Generate the content in {{.Language}} language**
 
 Write comprehensive, developer-focused documentation that thoroughly explains this aspect of the project.
 `

@@ -46,6 +46,7 @@ Go CLI tool reimplementation of deepwiki for local directory documentation gener
 - [ ] **Enhance ID generation with UUIDs or collision detection** in `pkg/generator/parser.go:151`
   - Replace simple string sanitization with more robust ID generation
   - Ensure uniqueness across wiki structures and prevent collisions
+- [ ] Make pages count configurable
 
 #### Code Quality & Architecture
 
