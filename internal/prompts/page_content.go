@@ -20,7 +20,7 @@ Your task is to generate a comprehensive and accurate technical wiki page about 
 Page Description: {{.PageDescription}}
 
 Generate a wiki page about based ONLY on these source files:
-<relevant_files>
+
 {{.RelevantFiles}}
 </relevant_files>
 
@@ -43,20 +43,20 @@ Requirements:
    - Include usage examples where relevant
    - Use appropriate language tags (go, python, javascript, etc.)
 
-4. **Use markdown tables** for structured data:
+3. **Use markdown tables** for structured data:
    - Configuration options
    - API endpoints
    - Function parameters
    - Error codes
 
-5. **Ensure technical accuracy** - base all content on actual source code
+4. **Ensure technical accuracy** - base all content on actual source code
    - Don't assume functionality not shown in the files
    - Don't make up information not based on the relevant files.
    - Don't make up recommendations not based on the relevant files
    - Explain what the code actually does, not what it might do
    - Include error handling and edge cases when visible
 
-6. **Structure the content** with clear sections:
+5. **Structure the content** with clear sections:
    - Brief overview
    - Key concepts and architecture
    - Detailed implementation
@@ -64,7 +64,9 @@ Requirements:
    - Configuration and setup
    - Troubleshooting (if applicable)
 
-7. **Focus on the {{.Language}} audience** - adjust technical depth accordingly
+6. **Clarity and Conciseness:** Use clear, professional, and concise technical language suitable for other developers working on or learning about the project. Avoid unnecessary jargon, but use correct technical terms where appropriate.
+
+7. **Generate the content in {{.Language}} language**
 
 Write comprehensive, developer-focused documentation that thoroughly explains this aspect of the project.
 `
