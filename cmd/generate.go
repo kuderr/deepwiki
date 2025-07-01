@@ -24,19 +24,18 @@ import (
 
 var (
 	// Command flags
-	projectPath   string
-	outputDir     string
-	format        string
-	comprehensive bool
-	language      string
-	openaiKey     string
-	model         string
-	excludeDirs   string
-	excludeFiles  string
-	chunkSize     int
-	configFile    string
-	verbose       bool
-	dryRun        bool
+	projectPath  string
+	outputDir    string
+	format       string
+	language     string
+	openaiKey    string
+	model        string
+	excludeDirs  string
+	excludeFiles string
+	chunkSize    int
+	configFile   string
+	verbose      bool
+	dryRun       bool
 )
 
 // generateCmd represents the generate command
@@ -58,7 +57,7 @@ and supports multiple languages.
 Examples:
   deepwiki-cli generate
   deepwiki-cli generate /path/to/project
-  deepwiki-cli generate --output-dir ./docs --comprehensive
+  deepwiki-cli generate --output-dir ./docs
   deepwiki-cli generate --format json --language ja`,
 	Args: cobra.MaximumNArgs(1),
 	RunE: runGenerate,
@@ -130,7 +129,6 @@ func runGenerate(cmd *cobra.Command, args []string) error {
 		slog.String("project_path", projectPath),
 		slog.String("output_dir", cfg.Output.Directory),
 		slog.String("format", cfg.Output.Format),
-		slog.Bool("comprehensive", cfg.Output.Comprehensive),
 		slog.String("language", cfg.Output.Language),
 	)
 
@@ -139,7 +137,6 @@ func runGenerate(cmd *cobra.Command, args []string) error {
 		fmt.Printf("  Project Path: %s\n", projectPath)
 		fmt.Printf("  Output Dir: %s\n", cfg.Output.Directory)
 		fmt.Printf("  Format: %s\n", cfg.Output.Format)
-		fmt.Printf("  Comprehensive: %t\n", cfg.Output.Comprehensive)
 		fmt.Printf("  Language: %s\n", cfg.Output.Language)
 		fmt.Printf("  Model: %s\n", cfg.OpenAI.Model)
 		fmt.Printf("  Embedding Model: %s\n", cfg.OpenAI.EmbeddingModel)
@@ -402,7 +399,6 @@ func runGenerate(cmd *cobra.Command, args []string) error {
 		ProjectName:     filepath.Base(projectPath),
 		ProjectPath:     projectPath,
 		Language:        cfg.Output.Language,
-		Comprehensive:   cfg.Output.Comprehensive,
 		OutputFormat:    cfg.Output.Format,
 		ProgressTracker: progressTracker,
 	}
@@ -481,9 +477,6 @@ func overrideConfigWithFlags(cfg *config.Config, cmd *cobra.Command) {
 	if chunkSize > 0 {
 		cfg.Processing.ChunkSize = chunkSize
 	}
-	if cmd.Flags().Changed("comprehensive") {
-		cfg.Output.Comprehensive = comprehensive
-	}
 
 	// Handle comma-separated exclude options
 	if excludeDirs != "" {
@@ -508,8 +501,6 @@ func init() {
 		StringVarP(&outputDir, "output-dir", "o", "./docs", "Output directory for generated documentation")
 	generateCmd.Flags().
 		StringVarP(&format, "format", "f", "markdown", "Output format: markdown, json, docusaurus2, docusaurus3, simple-docusaurus2, simple-docusaurus3")
-	generateCmd.Flags().
-		BoolVarP(&comprehensive, "comprehensive", "c", true, "Generate comprehensive documentation (vs concise)")
 	generateCmd.Flags().
 		StringVarP(&language, "language", "l", "en", "Language for generation: en, ru, ja, zh, es, kr, vi")
 	generateCmd.Flags().StringVar(&openaiKey, "openai-key", "", "OpenAI API key (or use OPENAI_API_KEY env var)")

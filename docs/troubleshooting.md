@@ -391,9 +391,6 @@ processing:
   chunk_size: 250 # Smaller chunks = fewer tokens
   max_files: 300 # Limit scope
 
-output:
-  comprehensive: false # Shorter documentation
-
 filters:
   exclude_dirs:
     - "tests"

@@ -86,7 +86,6 @@ openai:
 output:
   directory: "./documentation"
   language: "ja" # Japanese documentation
-  comprehensive: false # Concise documentation
 
 filters:
   exclude_dirs:
@@ -223,7 +222,6 @@ processing:
   max_files: 1500 # Handle more files
 
 output:
-  comprehensive: true # Detailed documentation
   language: "en"
 ```
 
@@ -295,7 +293,6 @@ jobs:
           deepwiki-cli generate \
             --output-dir ./docs \
             --format markdown \
-            --comprehensive \
             --verbose
 
       - name: Commit Documentation
@@ -350,7 +347,6 @@ For large codebases:
 ./deepwiki-cli generate \
   --model gpt-4o \
   --chunk-size 400 \
-  --comprehensive \
   --format markdown \
   --verbose
 ```

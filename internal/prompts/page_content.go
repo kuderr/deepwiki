@@ -43,23 +43,18 @@ Requirements:
    - Include usage examples where relevant
    - Use appropriate language tags (go, python, javascript, etc.)
 
-4. **Cite sources extensively** using this format: [filename.ext:line_numbers](#)
-   - Include specific line numbers or ranges
-   - Cite for every major statement or code reference
-   - Examples: [main.go:15-25](#), [config.py:42](#), [api.ts:108-120](#)
-
-5. **Use markdown tables** for structured data:
+4. **Use markdown tables** for structured data:
    - Configuration options
    - API endpoints
    - Function parameters
    - Error codes
 
-6. **Ensure technical accuracy** - base all content on actual source code
+5. **Ensure technical accuracy** - base all content on actual source code
    - Don't assume functionality not shown in the files
    - Explain what the code actually does, not what it might do
    - Include error handling and edge cases when visible
 
-7. **Structure the content** with clear sections:
+6. **Structure the content** with clear sections:
    - Brief overview
    - Key concepts and architecture
    - Detailed implementation
@@ -67,9 +62,10 @@ Requirements:
    - Configuration and setup
    - Troubleshooting (if applicable)
 
-8. **Focus on the {{.Language}} audience** - adjust technical depth accordingly
+7. **Focus on the {{.Language}} audience** - adjust technical depth accordingly
 
-Write comprehensive, developer-focused documentation that thoroughly explains this aspect of the project.`
+Write comprehensive, developer-focused documentation that thoroughly explains this aspect of the project.
+`
 
 // RegisterPageContentPrompt registers the page content prompt template
 func RegisterPageContentPrompt(tm *TemplateManager) error {

@@ -226,7 +226,6 @@ func TestGenerationOptions(t *testing.T) {
 		ProjectPath:    "/test/path",
 		Language:       "en",
 		OutputFormat:   "markdown",
-		Comprehensive:  true,
 		MaxConcurrency: 2,
 	}
 

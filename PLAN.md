@@ -1,6 +1,4 @@
-# Go CLI Tool Reimplementation Plan for DeepWiki
-
-Based on comprehensive analysis of the deepwiki project, here's a detailed plan for reimplementing it as a Go CLI tool.
+# Go CLI Tool Implementation Plan for DeepWiki
 
 ## Project Overview
 
@@ -16,7 +14,6 @@ deepwiki-cli [flags] [directory]
 Flags:
   --output-dir, -o     Output directory for generated docs (default: ./docs)
   --format, -f         Output format: markdown|json (default: markdown)
-  --comprehensive, -c  Generate comprehensive wiki (default: true)
   --language, -l       Language for generation: en|ja|zh|es|kr|vi (default: en)
   --openai-key         OpenAI API key (or use OPENAI_API_KEY env var)
   --model, -m          OpenAI model (default: gpt-4o)
@@ -289,7 +286,6 @@ filters:
 output:
   format: "markdown" # markdown, html, json
   directory: "./wiki"
-  comprehensive: true
   language: "en"
 
 embeddings:

@@ -107,7 +107,6 @@ processing:
 output:
   format: "json"
   language: "ja"
-  comprehensive: false
 
 logging:
   level: "debug"

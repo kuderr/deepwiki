@@ -37,7 +37,6 @@ type GenerationOptions struct {
 	ProjectPath     string
 	Language        string
 	OutputFormat    string
-	Comprehensive   bool
 	MaxConcurrency  int
 	ProgressTracker ProgressTracker
 }
