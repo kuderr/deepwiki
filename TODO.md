@@ -18,6 +18,18 @@ Go CLI tool reimplementation of deepwiki for local directory documentation gener
   - Consider language-specific token densities
 - [ ] **Fix citations** in ExtractSourceCitations and prompts: they are always with no ref in `[api.ts:108-120](#)`
   - [ ] And point somehow to real code?
+- [ ] **Different languages support** like russian, kazakstan, etc.
+
+#### Vector Database & Search
+
+- [x] **Optimize vector database storage** - ✅ COMPLETED
+  - ✅ Store content directly in EmbeddingVector and EmbeddingData
+  - ✅ Implemented efficient getChunkContent method
+  - ✅ Added IncludeContent option support in vector search
+- [x] **Implement proper SearchByText** - ✅ COMPLETED with SearchService
+  - ✅ Created integrated SearchService combining generator + database
+  - ✅ Added SearchByText, SearchSimilar, and SearchRelated methods
+  - [ ] Handle rate limiting and error recovery (future enhancement)
 
 #### RAG & Retrieval
 
