@@ -40,6 +40,7 @@ Go CLI tool reimplementation of deepwiki for local directory documentation gener
 - [ ] **Add file tree context for better page generation** in `pkg/generator/generator.go:130`
   - Include project file tree in page content prompts
   - Help AI understand project structure for better documentation
+  - Use scanner to get file tree, filter junk
 - [ ] **Improve file tree structure with proper hierarchy** in `pkg/generator/generator.go:251`
   - Build proper tree structure with correct indentation
   - Sort directories and files logically
