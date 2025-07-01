@@ -239,7 +239,6 @@ Go CLI tool reimplementation of deepwiki for local directory documentation gener
   - Consider language-specific token densities
 - [ ] **Fix citations** in ExtractSourceCitations and prompts: they are always with no ref in `[api.ts:108-120](#)`
   - [ ] And point somehow to real code?
-- [ ] **Different languages support** like russian, kazakstan, etc.
 
 #### Vector Database & Search
 
@@ -344,6 +343,7 @@ Go CLI tool reimplementation of deepwiki for local directory documentation gener
 - [ ] Watch mode for automatic regeneration
 - [ ] Custom template support
 - [ ] Diff mode to show changes between generations
+- [ ] docusaurus likec4 support
 
 ### Advanced Features
 
