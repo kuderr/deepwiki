@@ -46,9 +46,9 @@ type FiltersConfig struct {
 
 // OutputConfig contains output generation configuration
 type OutputConfig struct {
-	Format    string         `yaml:"format"`
-	Directory string         `yaml:"directory"`
-	Language  types.Language `yaml:"language"`
+	Format    string `yaml:"format"`
+	Directory string `yaml:"directory"`
+	Language  string `yaml:"language"`
 }
 
 // EmbeddingsConfig contains embedding generation configuration
@@ -91,7 +91,7 @@ func DefaultConfig() *Config {
 		Output: OutputConfig{
 			Format:    "markdown",
 			Directory: "./docs",
-			Language:  types.LanguageEnglish,
+			Language:  "en",
 		},
 		Embeddings: EmbeddingsConfig{
 			Enabled:    true,

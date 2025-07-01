@@ -43,20 +43,20 @@ Requirements:
    - Include usage examples where relevant
    - Use appropriate language tags (go, python, javascript, etc.)
 
-3. **Use markdown tables** for structured data:
+4. **Use markdown tables** for structured data:
    - Configuration options
    - API endpoints
    - Function parameters
    - Error codes
 
-4. **Ensure technical accuracy** - base all content on actual source code
+5. **Ensure technical accuracy** - base all content on actual source code
    - Don't assume functionality not shown in the files
    - Don't make up information not based on the relevant files.
    - Don't make up recommendations not based on the relevant files
    - Explain what the code actually does, not what it might do
    - Include error handling and edge cases when visible
 
-5. **Structure the content** with clear sections:
+6. **Structure the content** with clear sections:
    - Brief overview
    - Key concepts and architecture
    - Detailed implementation
@@ -64,11 +64,7 @@ Requirements:
    - Configuration and setup
    - Troubleshooting (if applicable)
 
-6. **Clarity and Conciseness:** Use clear, professional, and concise technical language suitable for other developers working on or learning about the project. Avoid unnecessary jargon, but use correct technical terms where appropriate.
-
-7. **IMPORTANT: Generate ALL content in {{.Language}} language** - This includes all text, explanations, comments, and documentation. The entire page must be written in {{.Language}}.
-
-8. **NEVER** write conclusions or summaries for whole page.
+7. **Focus on the {{.Language}} audience** - adjust technical depth accordingly
 
 Write comprehensive, developer-focused documentation that thoroughly explains this aspect of the project.
 `

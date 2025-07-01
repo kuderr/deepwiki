@@ -59,7 +59,7 @@ Examples:
   deepwiki-cli generate
   deepwiki-cli generate /path/to/project
   deepwiki-cli generate --output-dir ./docs
-  deepwiki-cli generate --format json --language Russian`,
+  deepwiki-cli generate --format json --language ja`,
 	Args: cobra.MaximumNArgs(1),
 	RunE: runGenerate,
 }
@@ -130,7 +130,7 @@ func runGenerate(cmd *cobra.Command, args []string) error {
 		slog.String("project_path", projectPath),
 		slog.String("output_dir", cfg.Output.Directory),
 		slog.String("format", cfg.Output.Format),
-		slog.String("language", cfg.Output.Language.String()),
+		slog.String("language", cfg.Output.Language),
 	)
 
 	if verbose {
@@ -138,7 +138,7 @@ func runGenerate(cmd *cobra.Command, args []string) error {
 		fmt.Printf("  Project Path: %s\n", projectPath)
 		fmt.Printf("  Output Dir: %s\n", cfg.Output.Directory)
 		fmt.Printf("  Format: %s\n", cfg.Output.Format)
-		fmt.Printf("  Language: %s\n", cfg.Output.Language.String())
+		fmt.Printf("  Language: %s\n", cfg.Output.Language)
 		fmt.Printf("  Model: %s\n", cfg.OpenAI.Model)
 		fmt.Printf("  Embedding Model: %s\n", cfg.OpenAI.EmbeddingModel)
 		fmt.Printf("  Chunk Size: %d\n", cfg.Processing.ChunkSize)
@@ -507,7 +507,7 @@ func init() {
 	generateCmd.Flags().
 		StringVarP(&format, "format", "f", "markdown", "Output format: markdown, json, docusaurus2, docusaurus3, simple-docusaurus2, simple-docusaurus3")
 	generateCmd.Flags().
-		StringVarP(&language, "language", "l", "en", "Language for generation: English/en, Russian/ru")
+		StringVarP(&language, "language", "l", "en", "Language for generation: en, ru, ja, zh, es, kr, vi")
 	generateCmd.Flags().StringVar(&openaiKey, "openai-key", "", "OpenAI API key (or use OPENAI_API_KEY env var)")
 	generateCmd.Flags().StringVarP(&model, "model", "m", "gpt-4o", "OpenAI model to use")
 	generateCmd.Flags().StringVar(&excludeDirs, "exclude-dirs", "", "Comma-separated list of directories to exclude")
