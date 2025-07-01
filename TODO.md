@@ -37,6 +37,10 @@ Go CLI tool reimplementation of deepwiki for local directory documentation gener
 - [ ] **Actually read and parse README file content** in `pkg/generator/generator.go:275`
   - Replace placeholder detection with actual file reading and parsing
   - Extract meaningful content for wiki structure generation
+- [ ] **Add file tree context for better page generation** in `pkg/generator/generator.go:130`
+  - Include project file tree in page content prompts
+  - Help AI understand project structure for better documentation
+  - Use scanner to get file tree, filter junk
 - [ ] **Improve file tree structure with proper hierarchy** in `pkg/generator/generator.go:251`
   - Build proper tree structure with correct indentation
   - Sort directories and files logically
