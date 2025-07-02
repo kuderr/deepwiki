@@ -276,28 +276,6 @@ func (d2g *Docusaurus2Generator) generatePage(
 	content.WriteString(page.Content)
 	content.WriteString("\n\n")
 
-	// Write metadata section
-	content.WriteString("## 📋 Page Information\n\n")
-	content.WriteString(fmt.Sprintf("- **Page ID**: `%s`\n", page.ID))
-	content.WriteString(fmt.Sprintf("- **Importance**: %s\n", page.Importance))
-	content.WriteString(fmt.Sprintf("- **Word Count**: %d\n", page.WordCount))
-	content.WriteString(fmt.Sprintf("- **Source Files**: %d\n", page.SourceFiles))
-	content.WriteString(fmt.Sprintf("- **Generated**: %s\n", page.CreatedAt.Format("2006-01-02 15:04:05")))
-
-	if len(page.FilePaths) > 0 {
-		content.WriteString("\n### Source Files\n\n")
-		for _, path := range page.FilePaths {
-			content.WriteString(fmt.Sprintf("- `%s`\n", path))
-		}
-	}
-
-	if len(page.RelatedPages) > 0 {
-		content.WriteString("\n### Related Pages\n\n")
-		for _, relatedID := range page.RelatedPages {
-			content.WriteString(fmt.Sprintf("- %s\n", relatedID))
-		}
-	}
-
 	return os.WriteFile(filePath, []byte(content.String()), 0o644)
 }
 

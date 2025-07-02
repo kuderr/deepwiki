@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"log/slog"
+	"os"
 	"path/filepath"
 	"strings"
 	"time"
@@ -35,21 +36,16 @@ func NewWikiGenerator(client openai.Client, retriever rag.DocumentRetriever, log
 // GenerateWikiStructure generates the overall wiki structure for a project
 func (g *WikiGenerator) GenerateWikiStructure(
 	ctx context.Context,
-	files []scanner.FileInfo,
+	fileTree string,
+	readmeContent string,
 	options GenerationOptions,
 ) (*WikiStructure, error) {
 	g.logger.Info("Starting wiki structure generation",
 		"project", options.ProjectName,
-		"files", len(files),
+		"fileTree", fileTree,
 		"language", options.Language)
 
 	start := time.Now()
-
-	// Build file tree representation
-	fileTree := g.buildFileTree(files, options.ProjectPath)
-
-	// Find and read README file
-	readmeContent := g.findReadmeContent(files)
 
 	// Prepare prompt data
 	promptData := prompts.WikiStructureData{
@@ -102,6 +98,7 @@ func (g *WikiGenerator) GenerateWikiStructure(
 // GeneratePageContent generates content for a specific wiki page
 func (g *WikiGenerator) GeneratePageContent(
 	ctx context.Context,
+	fileTree string,
 	page *WikiPage,
 	structure *WikiStructure,
 	options GenerationOptions,
@@ -135,7 +132,7 @@ func (g *WikiGenerator) GeneratePageContent(
 		RelevantFiles:   relevantFiles,
 		ProjectName:     options.ProjectName,
 		Language:        options.Language,
-		FileTree:        "", // TODO: Add file tree context for better page generation
+		FileTree:        fileTree,
 	}
 
 	// Execute the prompt
@@ -203,9 +200,12 @@ func (g *WikiGenerator) GenerateWiki(
 		options.ProgressTracker = &NoOpProgressTracker{}
 	}
 
+	fileTree := g.buildFileTree(files, options.ProjectPath)
+	readmeContent := g.findReadmeContent(files)
+
 	// Step 1: Generate wiki structure
 	options.ProgressTracker.StartTask("Generating wiki structure", 1)
-	structure, err := g.GenerateWikiStructure(ctx, files, options)
+	structure, err := g.GenerateWikiStructure(ctx, fileTree, readmeContent, options)
 	if err != nil {
 		result.Errors = append(result.Errors, fmt.Errorf("structure generation failed: %w", err))
 		return result, err
@@ -221,7 +221,7 @@ func (g *WikiGenerator) GenerateWiki(
 
 		options.ProgressTracker.UpdateProgress(i, fmt.Sprintf("Generating: %s", page.Title))
 
-		if err := g.GeneratePageContent(ctx, pagePtr, structure, options); err != nil {
+		if err := g.GeneratePageContent(ctx, fileTree, pagePtr, structure, options); err != nil {
 			errorMsg := fmt.Errorf("failed to generate content for page %s: %w", page.ID, err)
 			result.Errors = append(result.Errors, errorMsg)
 			g.logger.Error("Page generation failed", "page", page.ID, "error", err)
@@ -283,8 +283,12 @@ func (g *WikiGenerator) findReadmeContent(files []scanner.FileInfo) string {
 		filename := filepath.Base(file.Path)
 		for _, readmeName := range readmeNames {
 			if filename == readmeName {
-				// TODO: Actually read and parse README file content instead of just detecting it
-				return fmt.Sprintf("README file found: %s", file.Path)
+				// Actually read and return README file content
+				content, err := os.ReadFile(file.Path)
+				if err != nil {
+					return "No README file found."
+				}
+				return string(content)
 			}
 		}
 	}

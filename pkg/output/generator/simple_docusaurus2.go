@@ -210,13 +210,11 @@ func (sdg *SimpleDocusaurus2Generator) generatePage(
 
 	// Find this page in the navigation structure to determine position
 	var sidebarPosition int
-	var currentItem NavigationItem
 	found := false
 
 	for importance, items := range navStructure {
 		for _, item := range items {
 			if item.ID == page.ID {
-				currentItem = item
 				found = true
 
 				// Calculate sidebar position based on importance and position within group
@@ -298,56 +296,6 @@ func (sdg *SimpleDocusaurus2Generator) generatePage(
 	// Write main content
 	content.WriteString(page.Content)
 	content.WriteString("\n\n")
-
-	// Write metadata section
-	content.WriteString("## 📋 Page Information\n\n")
-	content.WriteString(fmt.Sprintf("- **Page ID**: `%s`\n", page.ID))
-	content.WriteString(fmt.Sprintf("- **Importance**: %s\n", page.Importance))
-	content.WriteString(fmt.Sprintf("- **Word Count**: %d\n", page.WordCount))
-	content.WriteString(fmt.Sprintf("- **Source Files**: %d\n", page.SourceFiles))
-	content.WriteString(fmt.Sprintf("- **Generated**: %s\n", page.CreatedAt.Format("2006-01-02 15:04:05")))
-
-	if len(page.FilePaths) > 0 {
-		content.WriteString("\n### Source Files\n\n")
-		for _, path := range page.FilePaths {
-			content.WriteString(fmt.Sprintf("- `%s`\n", path))
-		}
-	}
-
-	if len(page.RelatedPages) > 0 {
-		content.WriteString("\n### Related Pages\n\n")
-		for _, relatedID := range page.RelatedPages {
-			// Try to find the related page to create a proper link
-			for _, items := range navStructure {
-				for _, item := range items {
-					if item.ID == relatedID {
-						content.WriteString(fmt.Sprintf("- [%s](./%s)\n", item.Title, item.FileName))
-						goto nextRelated
-					}
-				}
-			}
-			// Fallback if not found in navigation
-			content.WriteString(fmt.Sprintf("- %s\n", relatedID))
-		nextRelated:
-		}
-	}
-
-	// Add navigation section
-	content.WriteString("\n## 🧭 Navigation\n\n")
-	content.WriteString("- [🏠 Home](./intro) - Return to the documentation home page\n")
-
-	// Add quick links to other sections
-	if currentItem.Importance != "high" && len(navStructure["high"]) > 0 {
-		content.WriteString(
-			"- [🔥 Essential Documentation](./intro#-essential-documentation) - Most important information\n",
-		)
-	}
-	if currentItem.Importance != "medium" && len(navStructure["medium"]) > 0 {
-		content.WriteString("- [📋 Core Documentation](./intro#-core-documentation) - Main functionality\n")
-	}
-	if currentItem.Importance != "low" && len(navStructure["low"]) > 0 {
-		content.WriteString("- [📝 Additional Information](./intro#-additional-information) - Supplementary materials\n")
-	}
 
 	return os.WriteFile(filePath, []byte(content.String()), 0o644)
 }

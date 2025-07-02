@@ -20,8 +20,14 @@ Your task is to generate a comprehensive and accurate technical wiki page about 
 Page Description: {{.PageDescription}}
 
 Generate a wiki page about based ONLY on these source files:
-
+<relevant_files>
 {{.RelevantFiles}}
+</relevant_files>
+
+The complete file tree:
+<file_tree>
+{{.FileTree}}
+</file_tree>
 
 Requirements:
 1. **Use extensive Mermaid diagrams** throughout the page:
