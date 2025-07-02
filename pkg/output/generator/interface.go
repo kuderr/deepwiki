@@ -4,6 +4,7 @@ import (
 	"time"
 
 	"github.com/deepwiki-cli/deepwiki-cli/pkg/generator"
+	"github.com/deepwiki-cli/deepwiki-cli/pkg/types"
 )
 
 // OutputFormat represents the supported output formats
@@ -20,11 +21,11 @@ const (
 
 // OutputOptions contains configuration for output generation
 type OutputOptions struct {
-	Format      OutputFormat `json:"format"`
-	Directory   string       `json:"directory"`
-	Language    string       `json:"language"`
-	ProjectName string       `json:"projectName"`
-	ProjectPath string       `json:"projectPath"`
+	Format      OutputFormat   `json:"format"`
+	Directory   string         `json:"directory"`
+	Language    types.Language `json:"language"`
+	ProjectName string         `json:"projectName"`
+	ProjectPath string         `json:"projectPath"`
 }
 
 // OutputResult represents the result of output generation
@@ -46,7 +47,7 @@ type WikiIndex struct {
 	Sections    map[string][]IndexPage `json:"sections,omitempty"`
 	GeneratedAt time.Time              `json:"generatedAt"`
 	Version     string                 `json:"version"`
-	Language    string                 `json:"language"`
+	Language    types.Language         `json:"language"`
 	ProjectPath string                 `json:"projectPath"`
 	Stats       IndexStats             `json:"stats"`
 }

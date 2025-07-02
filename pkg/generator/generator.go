@@ -56,6 +56,7 @@ func (g *WikiGenerator) GenerateWikiStructure(
 		FileTree:    fileTree,
 		ReadmeFile:  readmeContent,
 		ProjectName: options.ProjectName,
+		Language:    options.Language,
 	}
 
 	// Execute the prompt

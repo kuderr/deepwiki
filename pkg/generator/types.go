@@ -2,6 +2,8 @@ package generator
 
 import (
 	"time"
+	
+	"github.com/deepwiki-cli/deepwiki-cli/pkg/types"
 )
 
 // WikiStructure represents the overall structure of a wiki
@@ -11,7 +13,7 @@ type WikiStructure struct {
 	Description string     `json:"description" xml:"description"`
 	Pages       []WikiPage `json:"pages"       xml:"pages>page"`
 	CreatedAt   time.Time  `json:"createdAt"   xml:"createdAt"`
-	Language    string     `json:"language"    xml:"language"`
+	Language    types.Language `json:"language"    xml:"language"`
 	ProjectPath string     `json:"projectPath" xml:"projectPath"`
 	Version     string     `json:"version"     xml:"version"`
 }
@@ -35,7 +37,7 @@ type WikiPage struct {
 type GenerationOptions struct {
 	ProjectName     string
 	ProjectPath     string
-	Language        string
+	Language        types.Language
 	OutputFormat    string
 	MaxConcurrency  int
 	ProgressTracker ProgressTracker
