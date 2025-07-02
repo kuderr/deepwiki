@@ -46,8 +46,8 @@ type FiltersConfig struct {
 
 // OutputConfig contains output generation configuration
 type OutputConfig struct {
-	Format    string        `yaml:"format"`
-	Directory string        `yaml:"directory"`
+	Format    string         `yaml:"format"`
+	Directory string         `yaml:"directory"`
 	Language  types.Language `yaml:"language"`
 }
 
@@ -247,7 +247,11 @@ func validateConfig(config *Config) error {
 	}
 
 	if !config.Output.Language.IsValid() {
-		return fmt.Errorf("invalid language: %s (valid: %s)", config.Output.Language, strings.Join(types.AllLanguageCodes(), ", "))
+		return fmt.Errorf(
+			"invalid language: %s (valid: %s)",
+			config.Output.Language,
+			strings.Join(types.AllLanguageCodes(), ", "),
+		)
 	}
 
 	// Validate embeddings configuration
