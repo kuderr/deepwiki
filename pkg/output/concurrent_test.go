@@ -5,6 +5,7 @@ import (
 	"errors"
 	"log/slog"
 	"os"
+	"sync"
 	"testing"
 	"time"
 
@@ -38,8 +39,11 @@ func TestConcurrentProcessor_ProcessPagesParallel(t *testing.T) {
 	}
 
 	processed := make(map[string]bool)
+	var mu sync.Mutex
 	processor := func(page *generator.WikiPage) error {
+		mu.Lock()
 		processed[page.ID] = true
+		mu.Unlock()
 		time.Sleep(10 * time.Millisecond) // Simulate work
 		return nil
 	}
@@ -52,7 +56,10 @@ func TestConcurrentProcessor_ProcessPagesParallel(t *testing.T) {
 
 	// Verify all pages were processed
 	for _, page := range pages {
-		if !processed[page.ID] {
+		mu.Lock()
+		wasProcessed := processed[page.ID]
+		mu.Unlock()
+		if !wasProcessed {
 			t.Errorf("Page %s was not processed", page.ID)
 		}
 	}

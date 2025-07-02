@@ -4,6 +4,7 @@ import (
 	"context"
 	"log/slog"
 	"os"
+	"path/filepath"
 	"strings"
 	"testing"
 	"time"
@@ -165,16 +166,26 @@ func TestBuildFileTree(t *testing.T) {
 func TestFindReadmeContent(t *testing.T) {
 	generator := &WikiGenerator{}
 
+	// Create temporary directory and README file
+	tempDir := t.TempDir()
+	readmePath := filepath.Join(tempDir, "README.md")
+	readmeContent := "# Test Project\n\nThis is a test README.md file for testing."
+	
+	err := os.WriteFile(readmePath, []byte(readmeContent), 0644)
+	if err != nil {
+		t.Fatalf("Failed to create test README file: %v", err)
+	}
+
 	files := []scanner.FileInfo{
-		{Path: "main.go"},
-		{Path: "README.md"},
-		{Path: "src/app.go"},
+		{Path: filepath.Join(tempDir, "main.go")},
+		{Path: readmePath},
+		{Path: filepath.Join(tempDir, "src/app.go")},
 	}
 
 	content := generator.findReadmeContent(files)
 
-	if !strings.Contains(content, "README.md") {
-		t.Error("Expected README content to mention README.md file")
+	if content != readmeContent {
+		t.Errorf("Expected README content to be %q, got %q", readmeContent, content)
 	}
 }
 
