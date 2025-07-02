@@ -2,20 +2,20 @@ package generator
 
 import (
 	"time"
-
-	"github.com/kuderr/deepwiki/pkg/types"
+	
+	"github.com/deepwiki-cli/deepwiki-cli/pkg/types"
 )
 
 // WikiStructure represents the overall structure of a wiki
 type WikiStructure struct {
-	ID          string         `json:"id"          xml:"id"`
-	Title       string         `json:"title"       xml:"title"`
-	Description string         `json:"description" xml:"description"`
-	Pages       []WikiPage     `json:"pages"       xml:"pages>page"`
-	CreatedAt   time.Time      `json:"createdAt"   xml:"createdAt"`
+	ID          string     `json:"id"          xml:"id"`
+	Title       string     `json:"title"       xml:"title"`
+	Description string     `json:"description" xml:"description"`
+	Pages       []WikiPage `json:"pages"       xml:"pages>page"`
+	CreatedAt   time.Time  `json:"createdAt"   xml:"createdAt"`
 	Language    types.Language `json:"language"    xml:"language"`
-	ProjectPath string         `json:"projectPath" xml:"projectPath"`
-	Version     string         `json:"version"     xml:"version"`
+	ProjectPath string     `json:"projectPath" xml:"projectPath"`
+	Version     string     `json:"version"     xml:"version"`
 }
 
 // WikiPage represents a single wiki page

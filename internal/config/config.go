@@ -6,8 +6,8 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/kuderr/deepwiki/internal/logging"
-	"github.com/kuderr/deepwiki/pkg/types"
+	"github.com/deepwiki-cli/deepwiki-cli/internal/logging"
+	"github.com/deepwiki-cli/deepwiki-cli/pkg/types"
 	"gopkg.in/yaml.v3"
 )
 
@@ -46,9 +46,9 @@ type FiltersConfig struct {
 
 // OutputConfig contains output generation configuration
 type OutputConfig struct {
-	Format    string `yaml:"format"`
-	Directory string `yaml:"directory"`
-	Language  string `yaml:"language"`
+	Format    string        `yaml:"format"`
+	Directory string        `yaml:"directory"`
+	Language  types.Language `yaml:"language"`
 }
 
 // EmbeddingsConfig contains embedding generation configuration
@@ -91,7 +91,7 @@ func DefaultConfig() *Config {
 		Output: OutputConfig{
 			Format:    "markdown",
 			Directory: "./docs",
-			Language:  "en",
+			Language:  types.LanguageEnglish,
 		},
 		Embeddings: EmbeddingsConfig{
 			Enabled:    true,
@@ -247,11 +247,7 @@ func validateConfig(config *Config) error {
 	}
 
 	if !config.Output.Language.IsValid() {
-		return fmt.Errorf(
-			"invalid language: %s (valid: %s)",
-			config.Output.Language,
-			strings.Join(types.AllLanguageCodes(), ", "),
-		)
+		return fmt.Errorf("invalid language: %s (valid: %s)", config.Output.Language, strings.Join(types.AllLanguageCodes(), ", "))
 	}
 
 	// Validate embeddings configuration

@@ -1,6 +1,6 @@
 package prompts
 
-import "github.com/kuderr/deepwiki/pkg/types"
+import "github.com/deepwiki-cli/deepwiki-cli/pkg/types"
 
 // PageContentData contains data for page content generation
 type PageContentData struct {
@@ -66,7 +66,7 @@ Requirements:
 
 6. **Clarity and Conciseness:** Use clear, professional, and concise technical language suitable for other developers working on or learning about the project. Avoid unnecessary jargon, but use correct technical terms where appropriate.
 
-7. **Generate the content in {{.Language}} language**
+7. **IMPORTANT: Generate ALL content in {{.Language.String()}} language** - This includes all text, explanations, comments, and documentation. The entire page must be written in {{.Language.String()}}.
 
 Write comprehensive, developer-focused documentation that thoroughly explains this aspect of the project.
 `
