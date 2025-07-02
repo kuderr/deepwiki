@@ -50,7 +50,7 @@ Requirements:
 4. Ensure comprehensive coverage without redundancy
 5. Focus on technical documentation that developers would need
 6. Pages should not repeat information from other pages.
-7. **IMPORTANT: Generate ALL content in {{.Language.String()}} language**
+7. **IMPORTANT: Generate ALL content in {{.Language}} language**
 
 
 Return your response in this XML format:

@@ -106,7 +106,7 @@ processing:
 
 output:
   format: "json"
-  language: "ja"
+  language: "Russian"
 
 logging:
   level: "debug"

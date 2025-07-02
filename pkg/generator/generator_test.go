@@ -170,8 +170,8 @@ func TestFindReadmeContent(t *testing.T) {
 	tempDir := t.TempDir()
 	readmePath := filepath.Join(tempDir, "README.md")
 	readmeContent := "# Test Project\n\nThis is a test README.md file for testing."
-
-	err := os.WriteFile(readmePath, []byte(readmeContent), 0o644)
+	
+	err := os.WriteFile(readmePath, []byte(readmeContent), 0644)
 	if err != nil {
 		t.Fatalf("Failed to create test README file: %v", err)
 	}
