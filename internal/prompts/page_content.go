@@ -20,7 +20,7 @@ Your task is to generate a comprehensive and accurate technical wiki page about 
 Page Description: {{.PageDescription}}
 
 Generate a wiki page about based ONLY on these source files:
-
+<relevant_files>
 {{.RelevantFiles}}
 </relevant_files>
 
