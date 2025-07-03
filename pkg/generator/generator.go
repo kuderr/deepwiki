@@ -278,7 +278,6 @@ func (g *WikiGenerator) buildFileTree(files []scanner.FileInfo, basePath string)
 // findReadmeContent finds and reads README file content
 func (g *WikiGenerator) findReadmeContent(files []scanner.FileInfo) string {
 	readmeNames := []string{"README.md", "readme.md", "README", "readme", "README.txt"}
-
 	for _, file := range files {
 		filename := filepath.Base(file.Path)
 		for _, readmeName := range readmeNames {

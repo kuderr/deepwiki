@@ -36,6 +36,7 @@ Requirements:
    - Use classDiagram for object relationships and data structures
    - Use graph LR for dependencies and connections
    - Place diagrams strategically to illustrate concepts
+   - Use only valid Mermaid syntax
 
 2. **Include comprehensive code snippets** with proper syntax highlighting:
    - Show key functions, classes, and configurations
@@ -50,6 +51,8 @@ Requirements:
 
 4. **Ensure technical accuracy** - base all content on actual source code
    - Don't assume functionality not shown in the files
+   - Don't make up information not based on the relevant files.
+   - Don't make up recommendations not based on the relevant files
    - Explain what the code actually does, not what it might do
    - Include error handling and edge cases when visible
 
@@ -64,6 +67,8 @@ Requirements:
 6. **Clarity and Conciseness:** Use clear, professional, and concise technical language suitable for other developers working on or learning about the project. Avoid unnecessary jargon, but use correct technical terms where appropriate.
 
 7. **IMPORTANT: Generate ALL content in {{.Language}} language** - This includes all text, explanations, comments, and documentation. The entire page must be written in {{.Language}}.
+
+8. **NEVER** write conclusions or summaries for whole page.
 
 Write comprehensive, developer-focused documentation that thoroughly explains this aspect of the project.
 `

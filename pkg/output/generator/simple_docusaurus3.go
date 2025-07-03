@@ -161,7 +161,7 @@ func (sdg *SimpleDocusaurus3Generator) generateIntro(
 		content.WriteString("### 🔥 Essential Documentation\n\n")
 		content.WriteString("Start here for the most important information about this project.\n\n")
 		for _, item := range items {
-			content.WriteString(fmt.Sprintf("- [%s](./%s) - Essential information\n", item.Title, item.FileName))
+			content.WriteString(fmt.Sprintf("- [%s](./%s)\n", item.Title, item.FileName))
 		}
 		content.WriteString("\n")
 	}
@@ -171,7 +171,7 @@ func (sdg *SimpleDocusaurus3Generator) generateIntro(
 		content.WriteString("### 📋 Core Documentation\n\n")
 		content.WriteString("Detailed documentation covering the main features and functionality.\n\n")
 		for _, item := range items {
-			content.WriteString(fmt.Sprintf("- [%s](./%s) - Core functionality\n", item.Title, item.FileName))
+			content.WriteString(fmt.Sprintf("- [%s](./%s)\n", item.Title, item.FileName))
 		}
 		content.WriteString("\n")
 	}
@@ -181,7 +181,7 @@ func (sdg *SimpleDocusaurus3Generator) generateIntro(
 		content.WriteString("### 📝 Additional Information\n\n")
 		content.WriteString("Supplementary documentation and reference materials.\n\n")
 		for _, item := range items {
-			content.WriteString(fmt.Sprintf("- [%s](./%s) - Additional details\n", item.Title, item.FileName))
+			content.WriteString(fmt.Sprintf("- [%s](./%s)\n", item.Title, item.FileName))
 		}
 		content.WriteString("\n")
 	}
