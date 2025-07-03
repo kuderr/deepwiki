@@ -5,6 +5,7 @@
 DeepWiki CLI is a powerful Go-based command-line tool that automatically generates comprehensive, structured documentation for your local projects using AI. It analyzes your codebase, understands the architecture, and creates detailed wiki-style documentation with minimal manual effort.
 
 [![Go Version](https://img.shields.io/badge/go-1.24+-blue.svg)](https://golang.org)
+[![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/kuderr/deepwiki)
 
 ## ✨ Features
 
