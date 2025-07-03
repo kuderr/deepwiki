@@ -8,7 +8,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/deepwiki-cli/deepwiki-cli/pkg/generator"
+	"github.com/kuderr/deepwiki/pkg/generator"
 )
 
 // MarkdownGenerator generates markdown output files

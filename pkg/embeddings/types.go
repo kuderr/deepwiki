@@ -4,7 +4,7 @@ import (
 	"errors"
 	"time"
 
-	"github.com/deepwiki-cli/deepwiki-cli/pkg/processor"
+	"github.com/kuderr/deepwiki/pkg/processor"
 )
 
 // Common errors

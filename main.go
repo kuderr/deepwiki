@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/deepwiki-cli/deepwiki-cli/cmd"
+	"github.com/kuderr/deepwiki/cmd"
 )
 
 func main() {

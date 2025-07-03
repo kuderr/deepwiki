@@ -1,8 +1,8 @@
 package output
 
 import (
-	"github.com/deepwiki-cli/deepwiki-cli/pkg/generator"
-	outputgen "github.com/deepwiki-cli/deepwiki-cli/pkg/output/generator"
+	"github.com/kuderr/deepwiki/pkg/generator"
+	outputgen "github.com/kuderr/deepwiki/pkg/output/generator"
 )
 
 // Manager interface defines the contract for output generation

@@ -7,7 +7,7 @@ import (
 	"path/filepath"
 	"time"
 
-	"github.com/deepwiki-cli/deepwiki-cli/pkg/generator"
+	"github.com/kuderr/deepwiki/pkg/generator"
 )
 
 // JSONGenerator generates JSON output files

@@ -8,7 +8,7 @@ import (
 	"sync"
 	"time"
 
-	"github.com/deepwiki-cli/deepwiki-cli/pkg/generator"
+	"github.com/kuderr/deepwiki/pkg/generator"
 )
 
 // ConcurrentProcessor provides concurrent processing capabilities

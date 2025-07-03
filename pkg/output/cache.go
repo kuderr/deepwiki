@@ -11,7 +11,7 @@ import (
 	"sync"
 	"time"
 
-	"github.com/deepwiki-cli/deepwiki-cli/pkg/generator"
+	"github.com/kuderr/deepwiki/pkg/generator"
 )
 
 // CacheManager manages caching for repeated operations

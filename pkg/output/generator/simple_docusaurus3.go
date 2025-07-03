@@ -8,7 +8,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/deepwiki-cli/deepwiki-cli/pkg/generator"
+	"github.com/kuderr/deepwiki/pkg/generator"
 )
 
 // SimpleDocusaurus3Generator generates Docusaurus v3-compatible markdown files with proper frontmatter

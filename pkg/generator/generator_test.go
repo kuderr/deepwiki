@@ -9,9 +9,9 @@ import (
 	"testing"
 	"time"
 
-	"github.com/deepwiki-cli/deepwiki-cli/pkg/openai"
-	"github.com/deepwiki-cli/deepwiki-cli/pkg/rag"
-	"github.com/deepwiki-cli/deepwiki-cli/pkg/scanner"
+	"github.com/kuderr/deepwiki/pkg/openai"
+	"github.com/kuderr/deepwiki/pkg/rag"
+	"github.com/kuderr/deepwiki/pkg/scanner"
 )
 
 // MockOpenAIClient implements the openai.Client interface for testing
@@ -170,8 +170,8 @@ func TestFindReadmeContent(t *testing.T) {
 	tempDir := t.TempDir()
 	readmePath := filepath.Join(tempDir, "README.md")
 	readmeContent := "# Test Project\n\nThis is a test README.md file for testing."
-	
-	err := os.WriteFile(readmePath, []byte(readmeContent), 0644)
+
+	err := os.WriteFile(readmePath, []byte(readmeContent), 0o644)
 	if err != nil {
 		t.Fatalf("Failed to create test README file: %v", err)
 	}

@@ -9,12 +9,12 @@ import (
 	"testing"
 	"time"
 
-	"github.com/deepwiki-cli/deepwiki-cli/internal/config"
-	"github.com/deepwiki-cli/deepwiki-cli/internal/logging"
-	"github.com/deepwiki-cli/deepwiki-cli/pkg/generator"
-	"github.com/deepwiki-cli/deepwiki-cli/pkg/output"
-	outputgen "github.com/deepwiki-cli/deepwiki-cli/pkg/output/generator"
-	"github.com/deepwiki-cli/deepwiki-cli/pkg/scanner"
+	"github.com/kuderr/deepwiki/internal/config"
+	"github.com/kuderr/deepwiki/internal/logging"
+	"github.com/kuderr/deepwiki/pkg/generator"
+	"github.com/kuderr/deepwiki/pkg/output"
+	outputgen "github.com/kuderr/deepwiki/pkg/output/generator"
+	"github.com/kuderr/deepwiki/pkg/scanner"
 )
 
 // TestIntegration_BasicFlow tests the basic integration flow

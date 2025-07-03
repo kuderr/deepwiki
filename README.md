@@ -42,7 +42,7 @@ cd deepwiki-cli
 go build -o deepwiki-cli
 
 # Or install directly
-go install github.com/deepwiki-cli/deepwiki-cli@latest
+go install github.com/kuderr/deepwiki@latest
 ```
 
 ## Quick Start

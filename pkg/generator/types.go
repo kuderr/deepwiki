@@ -3,7 +3,7 @@ package generator
 import (
 	"time"
 
-	"github.com/deepwiki-cli/deepwiki-cli/pkg/types"
+	"github.com/kuderr/deepwiki/pkg/types"
 )
 
 // WikiStructure represents the overall structure of a wiki

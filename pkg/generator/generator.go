@@ -9,10 +9,10 @@ import (
 	"strings"
 	"time"
 
-	"github.com/deepwiki-cli/deepwiki-cli/internal/prompts"
-	"github.com/deepwiki-cli/deepwiki-cli/pkg/openai"
-	"github.com/deepwiki-cli/deepwiki-cli/pkg/rag"
-	"github.com/deepwiki-cli/deepwiki-cli/pkg/scanner"
+	"github.com/kuderr/deepwiki/internal/prompts"
+	"github.com/kuderr/deepwiki/pkg/openai"
+	"github.com/kuderr/deepwiki/pkg/rag"
+	"github.com/kuderr/deepwiki/pkg/scanner"
 )
 
 // WikiGenerator generates wiki structures and content

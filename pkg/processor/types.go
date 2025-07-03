@@ -3,7 +3,7 @@ package processor
 import (
 	"time"
 
-	"github.com/deepwiki-cli/deepwiki-cli/pkg/scanner"
+	"github.com/kuderr/deepwiki/pkg/scanner"
 )
 
 // TextChunk represents a chunk of text with metadata

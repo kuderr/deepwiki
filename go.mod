@@ -1,4 +1,4 @@
-module github.com/deepwiki-cli/deepwiki-cli
+module github.com/kuderr/deepwiki
 
 go 1.24.3
 

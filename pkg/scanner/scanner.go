@@ -12,7 +12,7 @@ import (
 	"time"
 	"unicode/utf8"
 
-	"github.com/deepwiki-cli/deepwiki-cli/internal/logging"
+	"github.com/kuderr/deepwiki/internal/logging"
 )
 
 // Scanner handles directory scanning and file analysis

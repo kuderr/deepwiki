@@ -6,8 +6,8 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/deepwiki-cli/deepwiki-cli/internal/logging"
-	"github.com/deepwiki-cli/deepwiki-cli/pkg/types"
+	"github.com/kuderr/deepwiki/internal/logging"
+	"github.com/kuderr/deepwiki/pkg/types"
 	"gopkg.in/yaml.v3"
 )
 
