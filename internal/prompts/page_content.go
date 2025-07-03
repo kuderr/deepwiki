@@ -1,6 +1,6 @@
 package prompts
 
-import "github.com/deepwiki-cli/deepwiki-cli/pkg/types"
+import "github.com/kuderr/deepwiki/pkg/types"
 
 // PageContentData contains data for page content generation
 type PageContentData struct {

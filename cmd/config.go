@@ -94,14 +94,16 @@ func runConfigValidate(cmd *cobra.Command, args []string) error {
 	fmt.Println("✅ Configuration is valid!")
 
 	// Show some key settings
-	fmt.Printf("Model: %s\n", cfg.OpenAI.Model)
-	fmt.Printf("Embedding Model: %s\n", cfg.OpenAI.EmbeddingModel)
+	fmt.Printf("LLM Provider: %s\n", cfg.Providers.LLM.Provider)
+	fmt.Printf("LLM Model: %s\n", cfg.Providers.LLM.Model)
+	fmt.Printf("Embedding Provider: %s\n", cfg.Providers.Embedding.Provider)
+	fmt.Printf("Embedding Model: %s\n", cfg.Providers.Embedding.Model)
 	fmt.Printf("Output Format: %s\n", cfg.Output.Format)
 	fmt.Printf("Language: %s\n", cfg.Output.Language)
 	fmt.Printf("Chunk Size: %d\n", cfg.Processing.ChunkSize)
 
 	// Check for API key
-	if cfg.OpenAI.APIKey == "" {
+	if cfg.Providers.LLM.APIKey == "" {
 		fmt.Println("⚠️  Warning: No OpenAI API key configured")
 		fmt.Println("   Set OPENAI_API_KEY environment variable or add it to the config file")
 	} else {

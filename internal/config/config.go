@@ -6,28 +6,22 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/deepwiki-cli/deepwiki-cli/internal/logging"
-	"github.com/deepwiki-cli/deepwiki-cli/pkg/types"
+	"github.com/kuderr/deepwiki/internal/logging"
+	"github.com/kuderr/deepwiki/internal/providers"
+	"github.com/kuderr/deepwiki/pkg/embedding"
+	"github.com/kuderr/deepwiki/pkg/llm"
+	"github.com/kuderr/deepwiki/pkg/types"
 	"gopkg.in/yaml.v3"
 )
 
 // Config represents the complete configuration for deepwiki-cli
 type Config struct {
-	OpenAI     OpenAIConfig      `yaml:"openai"`
+	Providers  ProviderConfig    `yaml:"providers"`
 	Processing ProcessingConfig  `yaml:"processing"`
 	Filters    FiltersConfig     `yaml:"filters"`
 	Output     OutputConfig      `yaml:"output"`
 	Embeddings EmbeddingsConfig  `yaml:"embeddings"`
 	Logging    logging.LogConfig `yaml:"logging"`
-}
-
-// OpenAIConfig contains OpenAI API configuration
-type OpenAIConfig struct {
-	APIKey         string  `yaml:"api_key"`
-	Model          string  `yaml:"model"`
-	EmbeddingModel string  `yaml:"embedding_model"`
-	MaxTokens      int     `yaml:"max_tokens"`
-	Temperature    float32 `yaml:"temperature"`
 }
 
 // ProcessingConfig contains text processing configuration
@@ -61,13 +55,7 @@ type EmbeddingsConfig struct {
 // DefaultConfig returns a configuration with sensible defaults
 func DefaultConfig() *Config {
 	return &Config{
-		OpenAI: OpenAIConfig{
-			APIKey:         "",
-			Model:          "gpt-4o",
-			EmbeddingModel: "text-embedding-3-small",
-			MaxTokens:      4000,
-			Temperature:    0.1,
-		},
+		Providers: *DefaultProviderConfig(),
 		Processing: ProcessingConfig{
 			ChunkSize:    350,
 			ChunkOverlap: 100,
@@ -161,16 +149,38 @@ func loadFromFile(config *Config, filename string) error {
 
 // loadFromEnv loads configuration from environment variables
 func loadFromEnv(config *Config) {
+	// LLM Provider configuration
+	if provider := os.Getenv("DEEPWIKI_LLM_PROVIDER"); provider != "" {
+		config.Providers.LLM.Provider = provider
+	}
+
 	if apiKey := os.Getenv("OPENAI_API_KEY"); apiKey != "" {
-		config.OpenAI.APIKey = apiKey
+		config.Providers.LLM.APIKey = apiKey
 	}
 
-	if model := os.Getenv("DEEPWIKI_MODEL"); model != "" {
-		config.OpenAI.Model = model
+	if apiKey := os.Getenv("ANTHROPIC_API_KEY"); apiKey != "" {
+		config.Providers.LLM.APIKey = apiKey
 	}
 
-	if embModel := os.Getenv("DEEPWIKI_EMBEDDING_MODEL"); embModel != "" {
-		config.OpenAI.EmbeddingModel = embModel
+	if model := os.Getenv("DEEPWIKI_LLM_MODEL"); model != "" {
+		config.Providers.LLM.Model = model
+	}
+
+	// Embedding Provider configuration
+	if provider := os.Getenv("DEEPWIKI_EMBEDDING_PROVIDER"); provider != "" {
+		config.Providers.Embedding.Provider = provider
+	}
+
+	if apiKey := os.Getenv("VOYAGE_API_KEY"); apiKey != "" {
+		config.Providers.Embedding.APIKey = apiKey
+	}
+
+	if model := os.Getenv("DEEPWIKI_EMBEDDING_MODEL"); model != "" {
+		config.Providers.Embedding.Model = model
+	}
+
+	if baseURL := os.Getenv("OLLAMA_BASE_URL"); baseURL != "" {
+		config.Providers.Embedding.BaseURL = baseURL
 	}
 
 	if outputDir := os.Getenv("DEEPWIKI_OUTPUT_DIR"); outputDir != "" {
@@ -200,21 +210,30 @@ func loadFromEnv(config *Config) {
 
 // validateConfig validates the configuration values
 func validateConfig(config *Config) error {
-	// Validate OpenAI configuration
-	if config.OpenAI.Model == "" {
-		return fmt.Errorf("OpenAI model is required")
+	// Validate LLM provider configuration
+	if config.Providers.LLM.Provider == "" {
+		return fmt.Errorf("LLM provider is required")
 	}
 
-	if config.OpenAI.EmbeddingModel == "" {
-		return fmt.Errorf("OpenAI embedding model is required")
+	if config.Providers.LLM.Model == "" {
+		return fmt.Errorf("LLM model is required")
 	}
 
-	if config.OpenAI.MaxTokens <= 0 {
-		return fmt.Errorf("max tokens must be positive")
+	if config.Providers.LLM.MaxTokens <= 0 {
+		return fmt.Errorf("LLM max tokens must be positive")
 	}
 
-	if config.OpenAI.Temperature < 0 || config.OpenAI.Temperature > 2 {
-		return fmt.Errorf("temperature must be between 0 and 2")
+	if config.Providers.LLM.Temperature < 0 || config.Providers.LLM.Temperature > 2 {
+		return fmt.Errorf("LLM temperature must be between 0 and 2")
+	}
+
+	// Validate embedding provider configuration
+	if config.Providers.Embedding.Provider == "" {
+		return fmt.Errorf("embedding provider is required")
+	}
+
+	if config.Providers.Embedding.Model == "" {
+		return fmt.Errorf("embedding model is required")
 	}
 
 	// Validate processing configuration
@@ -298,4 +317,24 @@ func GenerateTemplate() string {
 `
 
 	return template
+}
+
+// GetLLMProvider creates and returns an LLM provider from the configuration
+func (c *Config) GetLLMProvider() (llm.Provider, error) {
+	llmConfig, err := c.Providers.LLM.ToLLMConfig()
+	if err != nil {
+		return nil, fmt.Errorf("invalid LLM configuration: %w", err)
+	}
+
+	return providers.NewLLMProvider(llmConfig)
+}
+
+// GetEmbeddingProvider creates and returns an embedding provider from the configuration
+func (c *Config) GetEmbeddingProvider() (embedding.Provider, error) {
+	embeddingConfig, err := c.Providers.Embedding.ToEmbeddingConfig()
+	if err != nil {
+		return nil, fmt.Errorf("invalid embedding configuration: %w", err)
+	}
+
+	return providers.NewEmbeddingProvider(embeddingConfig)
 }

@@ -3,8 +3,8 @@ package generator
 import (
 	"time"
 
-	"github.com/deepwiki-cli/deepwiki-cli/pkg/generator"
-	"github.com/deepwiki-cli/deepwiki-cli/pkg/types"
+	"github.com/kuderr/deepwiki/pkg/generator"
+	"github.com/kuderr/deepwiki/pkg/types"
 )
 
 // OutputFormat represents the supported output formats
