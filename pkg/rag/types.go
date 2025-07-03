@@ -3,7 +3,7 @@ package rag
 import (
 	"time"
 
-	"github.com/deepwiki-cli/deepwiki-cli/pkg/processor"
+	"github.com/kuderr/deepwiki/pkg/processor"
 )
 
 // RetrievalContext represents the context for document retrieval

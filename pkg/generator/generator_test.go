@@ -4,13 +4,14 @@ import (
 	"context"
 	"log/slog"
 	"os"
+	"path/filepath"
 	"strings"
 	"testing"
 	"time"
 
-	"github.com/deepwiki-cli/deepwiki-cli/pkg/openai"
-	"github.com/deepwiki-cli/deepwiki-cli/pkg/rag"
-	"github.com/deepwiki-cli/deepwiki-cli/pkg/scanner"
+	"github.com/kuderr/deepwiki/pkg/openai"
+	"github.com/kuderr/deepwiki/pkg/rag"
+	"github.com/kuderr/deepwiki/pkg/scanner"
 )
 
 // MockOpenAIClient implements the openai.Client interface for testing
@@ -165,16 +166,26 @@ func TestBuildFileTree(t *testing.T) {
 func TestFindReadmeContent(t *testing.T) {
 	generator := &WikiGenerator{}
 
+	// Create temporary directory and README file
+	tempDir := t.TempDir()
+	readmePath := filepath.Join(tempDir, "README.md")
+	readmeContent := "# Test Project\n\nThis is a test README.md file for testing."
+
+	err := os.WriteFile(readmePath, []byte(readmeContent), 0o644)
+	if err != nil {
+		t.Fatalf("Failed to create test README file: %v", err)
+	}
+
 	files := []scanner.FileInfo{
-		{Path: "main.go"},
-		{Path: "README.md"},
-		{Path: "src/app.go"},
+		{Path: filepath.Join(tempDir, "main.go")},
+		{Path: readmePath},
+		{Path: filepath.Join(tempDir, "src/app.go")},
 	}
 
 	content := generator.findReadmeContent(files)
 
-	if !strings.Contains(content, "README.md") {
-		t.Error("Expected README content to mention README.md file")
+	if content != readmeContent {
+		t.Errorf("Expected README content to be %q, got %q", readmeContent, content)
 	}
 }
 
@@ -226,7 +237,6 @@ func TestGenerationOptions(t *testing.T) {
 		ProjectPath:    "/test/path",
 		Language:       "en",
 		OutputFormat:   "markdown",
-		Comprehensive:  true,
 		MaxConcurrency: 2,
 	}
 

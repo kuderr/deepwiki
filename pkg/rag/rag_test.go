@@ -4,8 +4,8 @@ import (
 	"testing"
 	"time"
 
-	"github.com/deepwiki-cli/deepwiki-cli/pkg/embeddings"
-	"github.com/deepwiki-cli/deepwiki-cli/pkg/processor"
+	"github.com/kuderr/deepwiki/pkg/embeddings"
+	"github.com/kuderr/deepwiki/pkg/processor"
 )
 
 func TestDefaultRAGConfig(t *testing.T) {

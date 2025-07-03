@@ -1,19 +1,19 @@
 package prompts
 
+import "github.com/kuderr/deepwiki/pkg/types"
+
 // WikiStructureData contains data for wiki structure generation
 type WikiStructureData struct {
 	FileTree    string
 	ReadmeFile  string
 	ProjectName string
-	Language    string
+	Language    types.Language
 }
 
-// TODO(kuderr): make pages count configurable
-
 // WikiStructurePrompt is the template for generating wiki structure
-const WikiStructurePrompt = `You are an expert technical writer creating a comprehensive wiki structure for a software project.
+const WikiStructurePrompt = `You are an expert technical writer creating a comprehensive wiki structure for a software project {{.ProjectName}}.
 
-Analyze this local directory and create a 5 page wiki structure for it.
+Analyze this local directory and create a wiki structure for it.
 
 1. The complete file tree:
 <file_tree>
@@ -25,10 +25,15 @@ Analyze this local directory and create a 5 page wiki structure for it.
 {{.ReadmeFile}}
 </readme>
 
-Project Name: {{.ProjectName}}
-Target Language: {{.Language}}
+When designing the wiki structure, include pages that would benefit from visual diagrams, such as:
+- Architecture overviews
+- Data flow descriptions
+- Component relationships
+- Process workflows
+- State machines
+- Class hierarchies
 
-Create a structured wiki with covering these essential areas:
+Depending on a project create a structured wiki covering all essential aspects, which you consider necessary:
 - **Overview and Introduction**: Project purpose, key features, getting started
 - **System Architecture**: High-level design, components, data flow
 - **Core Features**: Main functionality, use cases, examples
@@ -44,6 +49,9 @@ Requirements:
 3. Include importance levels: "high" (core functionality), "medium" (important features), "low" (auxiliary)
 4. Ensure comprehensive coverage without redundancy
 5. Focus on technical documentation that developers would need
+6. Pages should not repeat information from other pages.
+7. **IMPORTANT: Generate ALL content in {{.Language}} language**
+
 
 Return your response in this XML format:
 <wiki_structure>

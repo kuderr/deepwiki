@@ -58,7 +58,6 @@ func TestWikiStructurePrompt(t *testing.T) {
 		FileTree:    "src/\n  main.go\n  config.go\n",
 		ReadmeFile:  "# Test Project\nThis is a test project.",
 		ProjectName: "test-project",
-		Language:    "en",
 	}
 
 	result, err := ExecuteWikiStructurePrompt(data)

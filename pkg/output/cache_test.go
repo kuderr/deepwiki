@@ -6,7 +6,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/deepwiki-cli/deepwiki-cli/pkg/generator"
+	"github.com/kuderr/deepwiki/pkg/generator"
 )
 
 func TestNewCacheManager(t *testing.T) {
@@ -214,6 +214,7 @@ func TestCacheManager_CacheWikiStructure(t *testing.T) {
 		ID:          "test-wiki",
 		Title:       "Test Wiki",
 		Description: "Test description",
+		Language:    "English", // types.LanguageEnglish
 	}
 
 	projectPath := "/test/project"
@@ -226,6 +227,12 @@ func TestCacheManager_CacheWikiStructure(t *testing.T) {
 	cachedStructure, found := cm.GetCachedWikiStructure(projectPath)
 	if !found {
 		t.Error("Should have found cached wiki structure")
+		return
+	}
+
+	if cachedStructure == nil {
+		t.Error("Cached structure should not be nil")
+		return
 	}
 
 	if cachedStructure.ID != structure.ID {

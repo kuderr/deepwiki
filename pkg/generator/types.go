@@ -2,18 +2,20 @@ package generator
 
 import (
 	"time"
+
+	"github.com/kuderr/deepwiki/pkg/types"
 )
 
 // WikiStructure represents the overall structure of a wiki
 type WikiStructure struct {
-	ID          string     `json:"id"          xml:"id"`
-	Title       string     `json:"title"       xml:"title"`
-	Description string     `json:"description" xml:"description"`
-	Pages       []WikiPage `json:"pages"       xml:"pages>page"`
-	CreatedAt   time.Time  `json:"createdAt"   xml:"createdAt"`
-	Language    string     `json:"language"    xml:"language"`
-	ProjectPath string     `json:"projectPath" xml:"projectPath"`
-	Version     string     `json:"version"     xml:"version"`
+	ID          string         `json:"id"          xml:"id"`
+	Title       string         `json:"title"       xml:"title"`
+	Description string         `json:"description" xml:"description"`
+	Pages       []WikiPage     `json:"pages"       xml:"pages>page"`
+	CreatedAt   time.Time      `json:"createdAt"   xml:"createdAt"`
+	Language    types.Language `json:"language"    xml:"language"`
+	ProjectPath string         `json:"projectPath" xml:"projectPath"`
+	Version     string         `json:"version"     xml:"version"`
 }
 
 // WikiPage represents a single wiki page
@@ -35,9 +37,8 @@ type WikiPage struct {
 type GenerationOptions struct {
 	ProjectName     string
 	ProjectPath     string
-	Language        string
+	Language        types.Language
 	OutputFormat    string
-	Comprehensive   bool
 	MaxConcurrency  int
 	ProgressTracker ProgressTracker
 }

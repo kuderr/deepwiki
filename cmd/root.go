@@ -30,10 +30,7 @@ structured wiki-style documentation with:
 Example usage:
   deepwiki-cli generate
   deepwiki-cli generate --path /path/to/project
-  deepwiki-cli generate --output-dir ./docs --comprehensive`,
-	// Uncomment the following line if your bare application
-	// has an action associated with it:
-	// Run: func(cmd *cobra.Command, args []string) { },
+  deepwiki-cli generate --output-dir ./docs`,
 }
 
 // Execute adds all child commands to the root command and sets flags appropriately.

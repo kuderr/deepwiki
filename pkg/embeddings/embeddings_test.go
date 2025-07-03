@@ -5,7 +5,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/deepwiki-cli/deepwiki-cli/pkg/processor"
+	"github.com/kuderr/deepwiki/pkg/processor"
 )
 
 func TestDefaultEmbeddingConfig(t *testing.T) {

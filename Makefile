@@ -17,6 +17,10 @@ lint: check-format
 	@echo "🚜 Linter goes brrrrrr..."
 	@go tool golangci-lint run ./...
 
+gogen:
+	@echo "🔧 Generating code..."
+	@go generate ./...
+
 test:
 	@echo "🏃 Running tests..."
 	@CGO_ENABLED=1 go tool gotestdox --tags=test --race --vet= --count=1 ./...

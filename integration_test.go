@@ -5,15 +5,16 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"sync/atomic"
 	"testing"
 	"time"
 
-	"github.com/deepwiki-cli/deepwiki-cli/internal/config"
-	"github.com/deepwiki-cli/deepwiki-cli/internal/logging"
-	"github.com/deepwiki-cli/deepwiki-cli/pkg/generator"
-	"github.com/deepwiki-cli/deepwiki-cli/pkg/output"
-	outputgen "github.com/deepwiki-cli/deepwiki-cli/pkg/output/generator"
-	"github.com/deepwiki-cli/deepwiki-cli/pkg/scanner"
+	"github.com/kuderr/deepwiki/internal/config"
+	"github.com/kuderr/deepwiki/internal/logging"
+	"github.com/kuderr/deepwiki/pkg/generator"
+	"github.com/kuderr/deepwiki/pkg/output"
+	outputgen "github.com/kuderr/deepwiki/pkg/output/generator"
+	"github.com/kuderr/deepwiki/pkg/scanner"
 )
 
 // TestIntegration_BasicFlow tests the basic integration flow
@@ -168,9 +169,9 @@ func TestIntegration_ConcurrentProcessing(t *testing.T) {
 	// Create mock pages for concurrent processing
 	pages := createMockPages(10)
 
-	processedCount := 0
+	var processedCount int64
 	processFunc := func(page *generator.WikiPage) error {
-		processedCount++
+		atomic.AddInt64(&processedCount, 1)
 		time.Sleep(10 * time.Millisecond) // Simulate work
 		return nil
 	}
@@ -181,8 +182,8 @@ func TestIntegration_ConcurrentProcessing(t *testing.T) {
 		t.Fatalf("Concurrent processing failed: %v", err)
 	}
 
-	if processedCount != len(pages) {
-		t.Errorf("Expected to process %d pages, got %d", len(pages), processedCount)
+	if atomic.LoadInt64(&processedCount) != int64(len(pages)) {
+		t.Errorf("Expected to process %d pages, got %d", len(pages), atomic.LoadInt64(&processedCount))
 	}
 }
 

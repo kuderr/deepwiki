@@ -40,8 +40,8 @@ func TestDefaultConfig(t *testing.T) {
 		t.Errorf("Expected default format 'markdown', got '%s'", config.Output.Format)
 	}
 
-	if config.Output.Language != "en" {
-		t.Errorf("Expected default language 'en', got '%s'", config.Output.Language)
+	if config.Output.Language != "English" {
+		t.Errorf("Expected default language 'English', got '%s'", config.Output.Language)
 	}
 
 	// Test Filters defaults
@@ -106,8 +106,7 @@ processing:
 
 output:
   format: "json"
-  language: "ja"
-  comprehensive: false
+  language: "Russian"
 
 logging:
   level: "debug"
@@ -141,8 +140,8 @@ logging:
 		t.Errorf("Expected format 'json', got '%s'", config.Output.Format)
 	}
 
-	if config.Output.Language != "ja" {
-		t.Errorf("Expected language 'ja', got '%s'", config.Output.Language)
+	if config.Output.Language != "Russian" {
+		t.Errorf("Expected language 'Russian', got '%s'", config.Output.Language)
 	}
 
 	if config.Logging.Level != "debug" {

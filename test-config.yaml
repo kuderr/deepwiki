@@ -52,27 +52,25 @@ filters:
         - bin
         - obj
     exclude_files:
-        - '*.min.js'
-        - '*.pyc'
-        - '*.class'
+        - "*.min.js"
+        - "*.pyc"
+        - "*.class"
         - package-lock.json
         - yarn.lock
-        - '*.exe'
-        - '*.dll'
-        - '*.so'
-        - '*.dylib'
-        - '*.a'
-        - '*.o'
+        - "*.exe"
+        - "*.dll"
+        - "*.so"
+        - "*.dylib"
+        - "*.a"
+        - "*.o"
 output:
     format: markdown
     directory: ./docs
-    comprehensive: true
     language: en
 embeddings:
     enabled: true
     dimensions: 256
     top_k: 20
-
 # Environment variables that can be used:
 # OPENAI_API_KEY - OpenAI API key
 # DEEPWIKI_MODEL - OpenAI model name

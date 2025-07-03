@@ -12,7 +12,7 @@ import (
 	"unicode"
 	"unicode/utf8"
 
-	"github.com/deepwiki-cli/deepwiki-cli/pkg/scanner"
+	"github.com/kuderr/deepwiki/pkg/scanner"
 )
 
 // TextProcessor handles text processing and chunking

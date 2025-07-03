@@ -6,7 +6,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/deepwiki-cli/deepwiki-cli/pkg/scanner"
+	"github.com/kuderr/deepwiki/pkg/scanner"
 )
 
 func TestNewTextProcessor(t *testing.T) {

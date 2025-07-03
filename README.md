@@ -42,7 +42,7 @@ cd deepwiki-cli
 go build -o deepwiki-cli
 
 # Or install directly
-go install github.com/deepwiki-cli/deepwiki-cli@latest
+go install github.com/kuderr/deepwiki@latest
 ```
 
 ## Quick Start
@@ -57,7 +57,7 @@ deepwiki-cli generate
 deepwiki-cli generate /path/to/project
 
 # With custom options
-deepwiki-cli generate --output-dir ./docs --language ja --comprehensive
+deepwiki-cli generate --output-dir ./docs --language ja
 ```
 
 ### 2. Configuration
@@ -110,7 +110,6 @@ filters:
 output:
   format: "markdown"
   directory: "./docs"
-  comprehensive: true
   language: "en"
 
 logging:
@@ -127,7 +126,6 @@ deepwiki-cli generate [flags]
 Flags:
   -o, --output-dir string      Output directory (default "./docs")
   -f, --format string         Output format: markdown, json (default "markdown")
-  -c, --comprehensive         Generate comprehensive docs (default true)
   -l, --language string       Language: en, ja, zh, es, kr, vi (default "en")
   -m, --model string          OpenAI model (default "gpt-4o")
       --openai-key string     OpenAI API key

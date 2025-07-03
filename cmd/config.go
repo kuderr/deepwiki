@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/deepwiki-cli/deepwiki-cli/internal/config"
+	"github.com/kuderr/deepwiki/internal/config"
 	"github.com/spf13/cobra"
 )
 

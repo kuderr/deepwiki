@@ -6,7 +6,7 @@ import (
 	"strings"
 	"time"
 
-	outputgen "github.com/deepwiki-cli/deepwiki-cli/pkg/output/generator"
+	outputgen "github.com/kuderr/deepwiki/pkg/output/generator"
 )
 
 // CLIManager manages the command-line interface experience

@@ -11,7 +11,7 @@ import (
 	"sync"
 	"time"
 
-	"github.com/deepwiki-cli/deepwiki-cli/pkg/generator"
+	"github.com/kuderr/deepwiki/pkg/generator"
 )
 
 // CacheManager manages caching for repeated operations
@@ -322,9 +322,12 @@ func (cm *CacheManager) copyData(src, dst interface{}) error {
 	// For now, use JSON serialization as a simple approach
 	data, err := json.Marshal(src)
 	if err != nil {
-		return err
+		return fmt.Errorf("failed to marshal data: %w", err)
 	}
-	return json.Unmarshal(data, dst)
+	if err := json.Unmarshal(data, dst); err != nil {
+		return fmt.Errorf("failed to unmarshal data: %w", err)
+	}
+	return nil
 }
 
 func (cm *CacheManager) generateHash(data interface{}) string {

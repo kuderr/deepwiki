@@ -6,7 +6,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/deepwiki-cli/deepwiki-cli/pkg/openai"
+	"github.com/kuderr/deepwiki/pkg/openai"
 )
 
 // OpenAIEmbeddingGenerator implements EmbeddingGenerator using OpenAI API

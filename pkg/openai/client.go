@@ -13,7 +13,7 @@ import (
 	"sync"
 	"time"
 
-	"github.com/deepwiki-cli/deepwiki-cli/internal/logging"
+	"github.com/kuderr/deepwiki/internal/logging"
 	"golang.org/x/time/rate"
 )
 

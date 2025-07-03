@@ -6,7 +6,8 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/deepwiki-cli/deepwiki-cli/internal/logging"
+	"github.com/kuderr/deepwiki/internal/logging"
+	"github.com/kuderr/deepwiki/pkg/types"
 	"gopkg.in/yaml.v3"
 )
 
@@ -45,10 +46,9 @@ type FiltersConfig struct {
 
 // OutputConfig contains output generation configuration
 type OutputConfig struct {
-	Format        string `yaml:"format"`
-	Directory     string `yaml:"directory"`
-	Comprehensive bool   `yaml:"comprehensive"`
-	Language      string `yaml:"language"`
+	Format    string         `yaml:"format"`
+	Directory string         `yaml:"directory"`
+	Language  types.Language `yaml:"language"`
 }
 
 // EmbeddingsConfig contains embedding generation configuration
@@ -89,10 +89,9 @@ func DefaultConfig() *Config {
 			},
 		},
 		Output: OutputConfig{
-			Format:        "markdown",
-			Directory:     "./docs",
-			Comprehensive: true,
-			Language:      "en",
+			Format:    "markdown",
+			Directory: "./docs",
+			Language:  types.LanguageEnglish,
 		},
 		Embeddings: EmbeddingsConfig{
 			Enabled:    true,
@@ -183,7 +182,9 @@ func loadFromEnv(config *Config) {
 	}
 
 	if lang := os.Getenv("DEEPWIKI_LANGUAGE"); lang != "" {
-		config.Output.Language = lang
+		if parsedLang, err := types.ParseLanguageWithCode(lang); err == nil {
+			config.Output.Language = parsedLang
+		}
 	}
 
 	if excludeDirs := os.Getenv("DEEPWIKI_EXCLUDE_DIRS"); excludeDirs != "" {
@@ -245,11 +246,12 @@ func validateConfig(config *Config) error {
 		)
 	}
 
-	validLanguages := map[string]bool{
-		"en": true, "ja": true, "zh": true, "es": true, "kr": true, "vi": true,
-	}
-	if !validLanguages[config.Output.Language] {
-		return fmt.Errorf("invalid language: %s (valid: en, ja, zh, es, kr, vi)", config.Output.Language)
+	if !config.Output.Language.IsValid() {
+		return fmt.Errorf(
+			"invalid language: %s (valid: %s)",
+			config.Output.Language,
+			strings.Join(types.AllLanguageCodes(), ", "),
+		)
 	}
 
 	// Validate embeddings configuration
@@ -290,7 +292,7 @@ func GenerateTemplate() string {
 # DEEPWIKI_EMBEDDING_MODEL - OpenAI embedding model name
 # DEEPWIKI_OUTPUT_DIR - Output directory
 # DEEPWIKI_FORMAT - Output format (markdown, json)
-# DEEPWIKI_LANGUAGE - Output language (en, ja, zh, es, kr, vi)
+# DEEPWIKI_LANGUAGE - Output language (English/en, Russian/ru)
 # DEEPWIKI_EXCLUDE_DIRS - Additional directories to exclude (comma-separated)
 # DEEPWIKI_EXCLUDE_FILES - Additional files to exclude (comma-separated)
 `
