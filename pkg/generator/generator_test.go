@@ -119,10 +119,6 @@ func (m *MockRAGRetriever) GetRetrievalStats() *rag.RetrievalStats {
 	return nil
 }
 
-func (m *MockRAGRetriever) ClearCache() error {
-	return nil
-}
-
 func TestNewWikiGenerator(t *testing.T) {
 	client := &MockLLMProvider{}
 	retriever := &MockRAGRetriever{}

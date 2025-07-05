@@ -25,74 +25,6 @@ func TestDefaultRAGConfig(t *testing.T) {
 	}
 }
 
-func TestInMemoryCache(t *testing.T) {
-	cache := NewInMemoryCache(3) // Small cache for testing
-
-	// Test empty cache
-	if cache.Size() != 0 {
-		t.Errorf("Expected empty cache, got size %d", cache.Size())
-	}
-
-	// Test setting and getting
-	results := []RetrievalResult{
-		{
-			DocumentID: "doc1",
-			ChunkID:    "chunk1",
-			Content:    "test content",
-			Score:      0.9,
-		},
-	}
-
-	cache.Set("key1", results, time.Hour)
-
-	retrieved, found := cache.Get("key1")
-	if !found {
-		t.Error("Expected to find cached result")
-	}
-	if len(retrieved) != 1 {
-		t.Errorf("Expected 1 result, got %d", len(retrieved))
-	}
-	if retrieved[0].DocumentID != "doc1" {
-		t.Errorf("Expected doc1, got %s", retrieved[0].DocumentID)
-	}
-
-	// Test cache miss
-	_, found = cache.Get("nonexistent")
-	if found {
-		t.Error("Expected cache miss for nonexistent key")
-	}
-
-	// Test expiration
-	cache.Set("expire", results, time.Millisecond)
-	time.Sleep(2 * time.Millisecond)
-	_, found = cache.Get("expire")
-	if found {
-		t.Error("Expected expired entry to not be found")
-	}
-
-	// Test eviction (cache size is 3)
-	cache.Set("key1", results, time.Hour)
-	cache.Set("key2", results, time.Hour)
-	cache.Set("key3", results, time.Hour)
-	cache.Set("key4", results, time.Hour) // Should evict oldest
-
-	if cache.Size() > 3 {
-		t.Errorf("Cache size should not exceed limit, got %d", cache.Size())
-	}
-
-	// Test stats
-	stats := cache.Stats()
-	if stats["size"].(int) != cache.Size() {
-		t.Error("Stats size should match actual size")
-	}
-
-	// Test clear
-	cache.Clear()
-	if cache.Size() != 0 {
-		t.Errorf("Expected empty cache after clear, got size %d", cache.Size())
-	}
-}
-
 func TestDocumentRetriever(t *testing.T) {
 	// Create test documents
 	docs := []processor.Document{
@@ -154,7 +86,6 @@ func TestDocumentRetriever(t *testing.T) {
 	mockVectorDB := &MockVectorDB{}
 
 	config := DefaultRAGConfig()
-	config.CacheResults = false // Disable cache for simpler testing
 
 	retriever := NewDocumentRetriever(nil, mockVectorDB, mockEmbGen, docs, config)
 
@@ -584,7 +515,6 @@ func TestCompleteWorkflow(t *testing.T) {
 
 	// Create components
 	config := DefaultRAGConfig()
-	config.CacheResults = true
 
 	mockEmbGen := &MockEmbeddingGenerator{}
 	mockVectorDB := &MockVectorDB{}
@@ -626,37 +556,5 @@ func TestCompleteWorkflow(t *testing.T) {
 				t.Error("Result should have non-negative score")
 			}
 		}
-	}
-
-	// Test caching
-	if config.CacheResults {
-		ctx := &RetrievalContext{
-			Query:      "cached query",
-			QueryType:  QueryTypeKeyword,
-			MaxResults: 5,
-		}
-
-		// First call
-		_, err := retriever.RetrieveRelevantDocuments(ctx)
-		if err != nil {
-			t.Errorf("First call failed: %v", err)
-		}
-
-		// Second call should hit cache
-		_, err = retriever.RetrieveRelevantDocuments(ctx)
-		if err != nil {
-			t.Errorf("Second call failed: %v", err)
-		}
-
-		stats := retriever.GetRetrievalStats()
-		if stats.TotalQueries < 2 {
-			t.Errorf("Expected at least 2 queries, got %d", stats.TotalQueries)
-		}
-	}
-
-	// Test cache clearing
-	err := retriever.ClearCache()
-	if err != nil {
-		t.Errorf("Failed to clear cache: %v", err)
 	}
 }

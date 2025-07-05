@@ -62,50 +62,6 @@ func BenchmarkOutputManager_GenerateJSON(b *testing.B) {
 	}
 }
 
-// BenchmarkCacheManager_SetAndGet benchmarks cache operations
-func BenchmarkCacheManager_SetAndGet(b *testing.B) {
-	logger := slog.New(slog.NewTextHandler(os.Stdout, nil))
-	tempDir := b.TempDir()
-
-	cm := NewCacheManager(logger, tempDir, true)
-
-	// Create test data
-	testPages := make([]*generator.WikiPage, 1000)
-	for i := 0; i < 1000; i++ {
-		testPages[i] = &generator.WikiPage{
-			ID:    fmt.Sprintf("page-%d", i),
-			Title: fmt.Sprintf("Benchmark Page %d", i),
-			Content: fmt.Sprintf(
-				"Content for benchmark page %d with some additional text to make it more realistic",
-				i,
-			),
-		}
-	}
-
-	b.ResetTimer()
-
-	b.Run("Set", func(b *testing.B) {
-		for i := 0; i < b.N; i++ {
-			page := testPages[i%len(testPages)]
-			cm.CacheWikiPage(page.ID, page)
-		}
-	})
-
-	b.Run("Get", func(b *testing.B) {
-		// Pre-populate cache
-		for _, page := range testPages[:100] {
-			cm.CacheWikiPage(page.ID, page)
-		}
-
-		b.ResetTimer()
-
-		for i := 0; i < b.N; i++ {
-			pageID := fmt.Sprintf("page-%d", i%100)
-			cm.GetCachedWikiPage(pageID)
-		}
-	})
-}
-
 // BenchmarkConcurrentProcessor_ProcessPages benchmarks concurrent processing
 func BenchmarkConcurrentProcessor_ProcessPages(b *testing.B) {
 	logger := slog.New(slog.NewTextHandler(os.Stdout, nil))

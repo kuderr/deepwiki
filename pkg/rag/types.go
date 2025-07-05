@@ -98,9 +98,7 @@ type RAGConfig struct {
 	MaxSimilarResults  int     `json:"maxSimilarResults"`  // Max similar results to include
 
 	// Performance settings
-	CacheResults      bool          `json:"cacheResults"`      // Whether to cache results
-	CacheTTL          time.Duration `json:"cacheTTL"`          // Cache time-to-live
-	ConcurrentQueries int           `json:"concurrentQueries"` // Max concurrent queries
+	ConcurrentQueries int `json:"concurrentQueries"` // Max concurrent queries
 }
 
 // DefaultRAGConfig returns default RAG configuration
@@ -123,8 +121,6 @@ func DefaultRAGConfig() *RAGConfig {
 		MinImportance:      1,
 		DiversityThreshold: 0.9,
 		MaxSimilarResults:  3,
-		CacheResults:       true,
-		CacheTTL:           30 * time.Minute,
 		ConcurrentQueries:  5,
 	}
 }
@@ -151,14 +147,11 @@ type DocumentRetriever interface {
 
 	// Utilities
 	GetRetrievalStats() *RetrievalStats
-	ClearCache() error
 }
 
 // RetrievalStats represents statistics about retrieval operations
 type RetrievalStats struct {
 	TotalQueries       int                `json:"totalQueries"`       // Total number of queries
-	CacheHits          int                `json:"cacheHits"`          // Number of cache hits
-	CacheMisses        int                `json:"cacheMisses"`        // Number of cache misses
 	AverageQueryTime   time.Duration      `json:"averageQueryTime"`   // Average query execution time
 	AverageResultCount float64            `json:"averageResultCount"` // Average number of results returned
 	MostCommonQueries  []QueryStats       `json:"mostCommonQueries"`  // Most common query patterns
@@ -234,14 +227,4 @@ type CodeExample struct {
 	Context     string   `json:"context"`     // Surrounding context
 	Tags        []string `json:"tags"`        // Tags/keywords
 	Complexity  int      `json:"complexity"`  // Complexity score (1-5)
-}
-
-// RetrievalCache interface for caching retrieval results
-type RetrievalCache interface {
-	Get(key string) ([]RetrievalResult, bool)
-	Set(key string, results []RetrievalResult, ttl time.Duration)
-	Delete(key string)
-	Clear()
-	Size() int
-	Stats() map[string]interface{}
 }

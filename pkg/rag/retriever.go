@@ -18,7 +18,6 @@ type DefaultDocumentRetriever struct {
 	embeddingGen     embeddings.EmbeddingGenerator
 	documents        []processor.Document
 	config           *RAGConfig
-	cache            RetrievalCache
 	stats            *RetrievalStats
 	mu               sync.RWMutex
 }
@@ -47,11 +46,6 @@ func NewDocumentRetriever(
 		},
 	}
 
-	// Initialize cache if enabled
-	if config.CacheResults {
-		retriever.cache = NewInMemoryCache(1000) // Default cache size
-	}
-
 	return retriever
 }
 
@@ -61,16 +55,6 @@ func (r *DefaultDocumentRetriever) RetrieveRelevantDocuments(ctx *RetrievalConte
 	defer func() {
 		r.updateStats("RetrieveRelevantDocuments", time.Since(startTime))
 	}()
-
-	// Check cache first
-	if r.cache != nil {
-		cacheKey := r.generateCacheKey(ctx)
-		if cached, found := r.cache.Get(cacheKey); found {
-			r.stats.CacheHits++
-			return cached, nil
-		}
-		r.stats.CacheMisses++
-	}
 
 	var results []RetrievalResult
 	var err error
@@ -120,12 +104,6 @@ func (r *DefaultDocumentRetriever) RetrieveRelevantDocuments(ctx *RetrievalConte
 	// Add context if enabled
 	if r.config.IncludeContext {
 		results = r.enrichWithContext(results)
-	}
-
-	// Cache results
-	if r.cache != nil {
-		cacheKey := r.generateCacheKey(ctx)
-		r.cache.Set(cacheKey, results, r.config.CacheTTL)
 	}
 
 	return results, nil
@@ -455,14 +433,6 @@ func (r *DefaultDocumentRetriever) GetRetrievalStats() *RetrievalStats {
 	return &stats
 }
 
-// ClearCache clears the retrieval cache
-func (r *DefaultDocumentRetriever) ClearCache() error {
-	if r.cache != nil {
-		r.cache.Clear()
-	}
-	return nil
-}
-
 // Helper methods
 
 // retrieveSemantic performs semantic search using embeddings
@@ -763,11 +733,6 @@ func (r *DefaultDocumentRetriever) matchesStructuralQuery(content, query, langua
 }
 
 // Additional helper functions
-
-func (r *DefaultDocumentRetriever) generateCacheKey(ctx *RetrievalContext) string {
-	// TODO: Use hash-based cache keys and include all relevant context parameters
-	return fmt.Sprintf("%s_%s_%d_%f", ctx.Query, ctx.QueryType, ctx.MaxResults, ctx.MinScore)
-}
 
 func (r *DefaultDocumentRetriever) enrichWithDocumentInfo(result *RetrievalResult) {
 	// Find the source document and enrich the result

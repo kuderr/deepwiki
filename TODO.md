@@ -28,9 +28,6 @@ Go CLI tool reimplementation of deepwiki for local directory documentation gener
 - [ ] **Implement proper context enrichment** in `pkg/rag/retriever.go:771`
   - Add surrounding chunks, function context, class hierarchy
   - Include line numbers and code structure information
-- [ ] **Use hash-based cache keys** in `pkg/rag/retriever.go:755`
-  - Include all relevant context parameters in cache key
-  - Prevent cache collisions and improve hit rates
 
 #### Wiki Generation & Content Processing
 

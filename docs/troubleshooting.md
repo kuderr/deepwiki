@@ -358,9 +358,6 @@ advanced:
 
 rate_limiting:
   requests_per_second: 3 # If your plan allows
-
-cache:
-  enabled: true
 ```
 
 #### Issue: "High token usage/costs"
@@ -817,9 +814,6 @@ git commit -m "Add DeepWiki configuration"
 ```bash
 # Update DeepWiki CLI regularly
 go install github.com/your-org/deepwiki-cli@latest
-
-# Clean cache periodically
-rm -rf .deepwiki-cache
 
 # Review and update configuration
 deepwiki-cli config validate

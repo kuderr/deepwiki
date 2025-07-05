@@ -82,7 +82,6 @@ type EmbeddingConfig struct {
 
 	// Storage settings
 	StoragePath string `json:"storagePath"` // Path to vector database file
-	CacheSize   int    `json:"cacheSize"`   // Memory cache size
 	Compress    bool   `json:"compress"`    // Whether to compress vectors
 }
 
@@ -96,7 +95,6 @@ func DefaultEmbeddingConfig() *EmbeddingConfig {
 		MaxRetries:  3,
 		Timeout:     30,
 		StoragePath: "./embeddings.db",
-		CacheSize:   1000,
 		Compress:    false,
 	}
 }

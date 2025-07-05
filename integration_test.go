@@ -223,48 +223,6 @@ func TestIntegration_MemoryManagement(t *testing.T) {
 	}
 }
 
-// TestIntegration_CacheSystem tests the caching system
-func TestIntegration_CacheSystem(t *testing.T) {
-	if testing.Short() {
-		t.Skip("Skipping integration test in short mode")
-	}
-
-	logger, _ := logging.NewLogger(nil)
-	defer logger.Close()
-
-	tempDir := t.TempDir()
-	cacheManager := output.NewCacheManager(logger.Logger, tempDir, true)
-
-	// Test wiki page caching
-	testPage := &generator.WikiPage{
-		ID:      "test-page",
-		Title:   "Test Page",
-		Content: "This is test content",
-	}
-
-	// Cache the page
-	err := cacheManager.CacheWikiPage(testPage.ID, testPage)
-	if err != nil {
-		t.Fatalf("Failed to cache wiki page: %v", err)
-	}
-
-	// Retrieve from cache
-	cachedPage, found := cacheManager.GetCachedWikiPage(testPage.ID)
-	if !found {
-		t.Error("Should have found cached page")
-	}
-
-	if cachedPage.ID != testPage.ID {
-		t.Errorf("Expected page ID %s, got %s", testPage.ID, cachedPage.ID)
-	}
-
-	// Test cache stats
-	stats := cacheManager.GetStats()
-	if stats.MemoryEntries == 0 {
-		t.Error("Expected at least one memory entry")
-	}
-}
-
 // Helper functions
 
 func createTestProject(t *testing.T, projectType string) string {

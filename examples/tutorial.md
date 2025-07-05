@@ -351,18 +351,6 @@ For large codebases:
   --verbose
 ```
 
-### Caching for Development
-
-Enable caching for repeated runs:
-
-```yaml
-cache:
-  enabled: true
-  directory: "./.deepwiki-cache"
-  max_age: "24h"
-  max_size: "100MB"
-```
-
 ## Tutorial 8: Troubleshooting Common Issues
 
 ### Issue 1: API Rate Limits
@@ -437,7 +425,6 @@ export GOMAXPROCS=2
 - Start with smaller models (gpt-4o-mini) for testing
 - Use filtering to reduce the amount of code processed
 - Monitor token usage in verbose mode
-- Cache results during development
 
 ### 5. Quality Optimization
 
