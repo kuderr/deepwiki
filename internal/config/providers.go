@@ -25,20 +25,20 @@ type LLMConfig struct {
 	MaxRetries     int     `yaml:"max_retries"`
 	RetryDelay     string  `yaml:"retry_delay"` // Duration string like "1s"
 	RateLimitRPS   float64 `yaml:"rate_limit_rps"`
-	BaseURL        string  `yaml:"base_url,omitempty"` // For custom endpoints
+	BaseURL        string  `yaml:"base_url"` // For custom endpoints
 }
 
 // EmbeddingConfig contains embedding provider configuration
 type EmbeddingConfig struct {
 	Provider       string  `yaml:"provider"` // "openai", "voyage", or "ollama"
-	APIKey         string  `yaml:"api_key,omitempty"`
+	APIKey         string  `yaml:"api_key"`
 	Model          string  `yaml:"model"`
 	RequestTimeout string  `yaml:"request_timeout"` // Duration string like "30s"
 	MaxRetries     int     `yaml:"max_retries"`
 	RetryDelay     string  `yaml:"retry_delay"` // Duration string like "1s"
 	RateLimitRPS   float64 `yaml:"rate_limit_rps"`
-	BaseURL        string  `yaml:"base_url,omitempty"`   // For custom endpoints (Ollama)
-	Dimensions     int     `yaml:"dimensions,omitempty"` // For some providers
+	BaseURL        string  `yaml:"base_url"`   // For custom endpoints (Ollama)
+	Dimensions     int     `yaml:"dimensions"` // For some providers
 }
 
 // DefaultProviderConfig returns default provider configuration

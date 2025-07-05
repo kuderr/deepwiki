@@ -28,7 +28,6 @@ var (
 	outputDir    string
 	format       string
 	language     string
-	openaiKey    string
 	model        string
 	excludeDirs  string
 	excludeFiles string
@@ -472,9 +471,7 @@ func overrideConfigWithFlags(cfg *config.Config, cmd *cobra.Command) {
 			fmt.Printf("Warning: Invalid language flag '%s', using default. %s\n", language, err.Error())
 		}
 	}
-	if openaiKey != "" {
-		cfg.Providers.LLM.APIKey = openaiKey
-	}
+
 	if model != "" {
 		cfg.Providers.LLM.Model = model
 	}
@@ -507,8 +504,7 @@ func init() {
 		StringVarP(&format, "format", "f", "markdown", "Output format: markdown, json, docusaurus2, docusaurus3, simple-docusaurus2, simple-docusaurus3")
 	generateCmd.Flags().
 		StringVarP(&language, "language", "l", "en", "Language for generation: English/en, Russian/ru")
-	generateCmd.Flags().StringVar(&openaiKey, "openai-key", "", "OpenAI API key (or use OPENAI_API_KEY env var)")
-	generateCmd.Flags().StringVarP(&model, "model", "m", "gpt-4o", "OpenAI model to use")
+	generateCmd.Flags().StringVarP(&model, "model", "m", "", "LLM model to use for doc generation")
 	generateCmd.Flags().StringVar(&excludeDirs, "exclude-dirs", "", "Comma-separated list of directories to exclude")
 	generateCmd.Flags().StringVar(&excludeFiles, "exclude-files", "", "Comma-separated patterns for files to exclude")
 	generateCmd.Flags().IntVar(&chunkSize, "chunk-size", 350, "Text chunk size for embeddings")
@@ -516,7 +512,4 @@ func init() {
 	generateCmd.Flags().BoolVarP(&verbose, "verbose", "v", false, "Verbose output")
 	generateCmd.Flags().
 		BoolVar(&dryRun, "dry-run", false, "Show what would be done without actually generating documentation")
-
-	// Mark required flags
-	// Note: OpenAI key will be checked in the run function to allow env var
 }

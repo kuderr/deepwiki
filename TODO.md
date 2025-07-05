@@ -88,12 +88,10 @@ Go CLI tool reimplementation of deepwiki for local directory documentation gener
 - [ ] **Create usage examples** for different scenarios
 - [ ] **Implement debugging and profiling tools**
 - [ ] **Add metrics and monitoring capabilities**
-- [ ] **Sample config** deepwiki-cli config init creates full default config
+- [ ] **Improve cli** ux/ui
 
 #### Advanced Features
 
-- [ ] **Implement custom embedding models** support
-- [ ] **Add multi-language query support**
 - [ ] **Create plugin system** for custom processors
 - [ ] **Implement distributed processing** for large projects
 
@@ -103,7 +101,6 @@ Go CLI tool reimplementation of deepwiki for local directory documentation gener
 
 ### Nice-to-Have Features
 
-- [ ] HTML output with static site generation
 - [ ] Interactive CLI with prompts for configuration
 - [ ] Plugin system for custom processors
 - [ ] Integration with popular documentation sites
@@ -114,8 +111,6 @@ Go CLI tool reimplementation of deepwiki for local directory documentation gener
 
 ### Advanced Features
 
-- [ ] Support for additional LLM providers (if needed)
-- [ ] Custom embedding models
 - [ ] Advanced filtering with regex patterns
 - [ ] Integration with git for change tracking
 - [ ] API server mode for team usage

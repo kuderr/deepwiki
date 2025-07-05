@@ -61,7 +61,6 @@ func (g *WikiGenerator) GenerateWikiStructure(
 		return nil, fmt.Errorf("failed to generate structure prompt: %w", err)
 	}
 
-	g.logger.Info("Generated structure prompt", "prompt", prompt)
 	g.logger.Debug("Generated structure prompt", "length", len(prompt))
 
 	// Call LLM API

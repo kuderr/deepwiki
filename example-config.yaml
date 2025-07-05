@@ -1,0 +1,104 @@
+# DeepWiki CLI Configuration File
+# This file contains default values for all configuration options.
+# You can override any value here or use environment variables.
+
+providers:
+  llm:
+    provider: openai
+    api_key: ""
+    model: gpt-4o
+    max_tokens: 4000
+    temperature: 0.1
+    request_timeout: 3m
+    max_retries: 3
+    retry_delay: 1s
+    rate_limit_rps: 2
+    base_url: ""
+  embedding:
+    provider: openai
+    api_key: ""
+    model: text-embedding-3-small
+    request_timeout: 30s
+    max_retries: 3
+    retry_delay: 1s
+    rate_limit_rps: 10
+    base_url: ""
+    dimensions: 0
+processing:
+  chunk_size: 350
+  chunk_overlap: 100
+  max_files: 1000
+filters:
+  include_extensions:
+    - .go
+    - .py
+    - .js
+    - .ts
+    - .java
+    - .cpp
+    - .c
+    - .h
+    - .hpp
+    - .rs
+    - .jsx
+    - .tsx
+    - .html
+    - .css
+    - .php
+    - .swift
+    - .cs
+    - .md
+    - .txt
+    - .rst
+    - .json
+    - .yaml
+    - .yml
+  exclude_dirs:
+    - node_modules
+    - .git
+    - dist
+    - build
+    - target
+    - .next
+    - __pycache__
+    - .venv
+    - venv
+    - vendor
+    - .cargo
+    - bin
+    - obj
+  exclude_files:
+    - "*.min.js"
+    - "*.pyc"
+    - "*.class"
+    - package-lock.json
+    - yarn.lock
+    - "*.exe"
+    - "*.dll"
+    - "*.so"
+    - "*.dylib"
+    - "*.a"
+    - "*.o"
+output:
+  format: markdown
+  directory: ./docs
+  language: English
+embeddings:
+  enabled: true
+  dimensions: 256
+  top_k: 20
+logging:
+  level: info
+  format: text
+  output: stderr
+  add_source: false
+  time_format: 2006-01-02T15:04:05Z07:00
+# Environment variables that can be used:
+# OPENAI_API_KEY - OpenAI API key
+# DEEPWIKI_MODEL - OpenAI model name
+# DEEPWIKI_EMBEDDING_MODEL - OpenAI embedding model name
+# DEEPWIKI_OUTPUT_DIR - Output directory
+# DEEPWIKI_FORMAT - Output format (markdown, json)
+# DEEPWIKI_LANGUAGE - Output language (English/en, Russian/ru)
+# DEEPWIKI_EXCLUDE_DIRS - Additional directories to exclude (comma-separated)
+# DEEPWIKI_EXCLUDE_FILES - Additional files to exclude (comma-separated)

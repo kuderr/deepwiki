@@ -305,6 +305,7 @@ func GenerateTemplate() string {
 # You can override any value here or use environment variables.
 
 ` + string(data) + `
+
 # Environment variables that can be used:
 # OPENAI_API_KEY - OpenAI API key
 # DEEPWIKI_MODEL - OpenAI model name
