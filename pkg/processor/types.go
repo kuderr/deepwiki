@@ -50,12 +50,14 @@ type ProcessingOptions struct {
 	SkipEmptyChunks bool `json:"skipEmptyChunks"` // Skip chunks with no meaningful content
 
 	// Token counting
-	CountTokens bool   `json:"countTokens"` // Count tokens for each chunk
-	TokenModel  string `json:"tokenModel"`  // Model to use for token counting (default: "cl100k_base")
+	CountTokens bool `json:"countTokens"` // Count tokens for each chunk
 
 	// Performance options
 	Concurrent bool `json:"concurrent"` // Process documents concurrently
 	MaxWorkers int  `json:"maxWorkers"` // Maximum worker goroutines
+
+	// File size limits by content type (in bytes)
+	MaxFileSizeLimits map[ContentType]int64 `json:"maxFileSizeLimits"` // Content type specific size limits
 }
 
 // DefaultProcessingOptions returns default processing options
@@ -71,9 +73,16 @@ func DefaultProcessingOptions() *ProcessingOptions {
 		MaxChunkWords:       500,
 		SkipEmptyChunks:     true,
 		CountTokens:         true,
-		TokenModel:          "cl100k_base",
 		Concurrent:          true,
 		MaxWorkers:          4,
+		MaxFileSizeLimits: map[ContentType]int64{
+			ContentTypeCode:          1024 * 1024 * 2, // 2MB for code files
+			ContentTypeDocumentation: 1024 * 1024 * 5, // 5MB for documentation
+			ContentTypeConfiguration: 1024 * 512,      // 512KB for config files
+			ContentTypeData:          1024 * 256,      // 256KB for data files
+			ContentTypeTest:          1024 * 1024 * 1, // 1MB for test files
+			ContentTypeUnknown:       1024 * 1024 * 1, // 1MB for unknown files
+		},
 	}
 }
 

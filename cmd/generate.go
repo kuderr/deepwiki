@@ -258,18 +258,9 @@ func runGenerate(cmd *cobra.Command, args []string) error {
 	cliManager.StartPhase("Phase 2", "Processing and chunking files", len(scanResult.Files))
 	fmt.Println("📝 Phase 2: Processing and chunking files...")
 
-	processingOptions := &processor.ProcessingOptions{
-		ChunkSize:           cfg.Processing.ChunkSize,
-		ChunkOverlap:        50,
-		MaxChunkWords:       500,
-		MinChunkWords:       10,
-		MaxChunks:           0,
-		Concurrent:          true,
-		MaxWorkers:          4,
-		CountTokens:         true,
-		NormalizeWhitespace: true,
-		RemoveComments:      false,
-	}
+	processingOptions := processor.DefaultProcessingOptions()
+	processingOptions.ChunkSize = cfg.Processing.ChunkSize
+	processingOptions.ChunkOverlap = cfg.Processing.ChunkOverlap
 
 	textProcessor := processor.NewTextProcessor(processingOptions)
 	processingResult, err := textProcessor.ProcessFiles(scanResult.Files)

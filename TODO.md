@@ -56,6 +56,7 @@ Go CLI tool reimplementation of deepwiki for local directory documentation gener
 - [ ] **Layer separation** by services/dbs and stuff ?
   - Better file layering in packages: interfaces, structs/types, implementation, tests
   - Use services as entrypoint to packages as in pkg/embeddings/search_service.go
+- [ ] **Language types** DRY language types, per format callbacks and stuff
 
 ### Medium Priority TODOs
 

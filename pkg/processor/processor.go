@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io"
 	"os"
+	"path/filepath"
 	"regexp"
 	"strings"
 	"sync"
@@ -452,6 +453,40 @@ func (tp *TextProcessor) removeComments(content, language string) string {
 	return content
 }
 
+// detectContentType determines the content type based on file extension and path
+func (tp *TextProcessor) detectContentType(filePath string) ContentType {
+	ext := filepath.Ext(filePath)
+	fileName := strings.ToLower(filepath.Base(filePath))
+
+	// Check for test files first (by naming pattern)
+	if strings.Contains(fileName, "test") || strings.Contains(fileName, "spec") {
+		return ContentTypeTest
+	}
+
+	// Check by extension
+	switch ext {
+	case ".md", ".txt", ".rst", ".adoc", ".org":
+		return ContentTypeDocumentation
+	case ".json", ".yaml", ".yml", ".toml", ".ini", ".cfg", ".conf", ".xml", ".env", ".properties":
+		return ContentTypeConfiguration
+	case ".go", ".py", ".js", ".ts", ".java", ".cpp", ".c", ".h", ".hpp", ".rs", ".jsx", ".tsx",
+		".php", ".swift", ".cs", ".rb", ".kt", ".scala", ".clj", ".hs", ".ml", ".fs", ".elm",
+		".dart", ".jl", ".html", ".css", ".scss", ".sass", ".less", ".vue", ".svelte", ".sh",
+		".bash", ".zsh", ".fish", ".ps1", ".bat", ".cmd":
+		return ContentTypeCode
+	case ".csv", ".tsv", ".sql", ".db", ".sqlite", ".sqlite3":
+		return ContentTypeData
+	default:
+		// Check for special files without extensions
+		switch fileName {
+		case "dockerfile", "makefile", "rakefile", "gemfile", "guardfile":
+			return ContentTypeConfiguration
+		default:
+			return ContentTypeUnknown
+		}
+	}
+}
+
 // readFileContent reads file content and handles encoding
 func (tp *TextProcessor) readFileContent(filePath string) ([]byte, error) {
 	file, err := os.Open(filePath)
@@ -466,10 +501,18 @@ func (tp *TextProcessor) readFileContent(filePath string) ([]byte, error) {
 		return nil, err
 	}
 
-	if info.Size() > int64(
-		tp.options.MaxChunkWords*10,
-	) { // TODO: Use more accurate file size limits based on content type
-		return nil, fmt.Errorf("file too large: %d bytes", info.Size())
+	// Determine content type and get appropriate size limit
+	contentType := tp.detectContentType(filePath)
+	sizeLimit := tp.options.MaxFileSizeLimits[contentType]
+
+	// Fall back to default if content type not configured
+	if sizeLimit == 0 {
+		sizeLimit = int64(tp.options.MaxChunkWords * 10)
+	}
+
+	if info.Size() > sizeLimit {
+		return nil, fmt.Errorf("file too large: %d bytes (limit: %d bytes for %s files)",
+			info.Size(), sizeLimit, contentType)
 	}
 
 	// Read content
