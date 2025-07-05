@@ -12,6 +12,7 @@ func TestProviderType_String(t *testing.T) {
 	}{
 		{ProviderOpenAI, "openai"},
 		{ProviderAnthropic, "anthropic"},
+		{ProviderOllama, "ollama"},
 		{ProviderType("unknown"), "unknown"},
 	}
 
@@ -45,6 +46,13 @@ func TestDefaultConfig(t *testing.T) {
 			apiKey:      "test-anthropic-key",
 			wantModel:   "claude-3-5-sonnet-20241022",
 			wantBaseURL: "https://api.anthropic.com/v1",
+		},
+		{
+			name:        "Ollama default config",
+			provider:    ProviderOllama,
+			apiKey:      "", // Ollama doesn't require API key
+			wantModel:   "llama3.1",
+			wantBaseURL: "http://localhost:11434",
 		},
 	}
 

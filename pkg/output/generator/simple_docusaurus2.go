@@ -159,7 +159,6 @@ func (sdg *SimpleDocusaurus2Generator) generateIntro(
 		content.WriteString("Start here for the most important information about this project.\n\n")
 		for _, item := range items {
 			content.WriteString(fmt.Sprintf("- [%s](./%s)\n", item.Title, item.FileName))
-
 		}
 		content.WriteString("\n")
 	}

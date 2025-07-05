@@ -11,6 +11,7 @@ type ProviderType string
 const (
 	ProviderOpenAI    ProviderType = "openai"
 	ProviderAnthropic ProviderType = "anthropic"
+	ProviderOllama    ProviderType = "ollama"
 )
 
 // Message represents a chat message
@@ -142,6 +143,9 @@ func DefaultConfig(provider ProviderType, apiKey string) *Config {
 	case ProviderAnthropic:
 		base.Model = "claude-3-5-sonnet-20241022"
 		base.BaseURL = "https://api.anthropic.com/v1"
+	case ProviderOllama:
+		base.Model = "llama3.1"
+		base.BaseURL = "http://localhost:11434"
 	}
 
 	return base

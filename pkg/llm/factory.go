@@ -9,6 +9,7 @@ func GetSupportedProviders() []ProviderType {
 	return []ProviderType{
 		ProviderOpenAI,
 		ProviderAnthropic,
+		ProviderOllama,
 	}
 }
 
@@ -26,6 +27,11 @@ func ValidateConfig(config *Config) error {
 	case ProviderOpenAI, ProviderAnthropic:
 		if config.APIKey == "" {
 			return fmt.Errorf("API key is required for provider %s", config.Provider)
+		}
+	case ProviderOllama:
+		// Ollama doesn't require API key
+		if config.BaseURL == "" {
+			return fmt.Errorf("base_url is required for Ollama provider")
 		}
 	case "":
 		return fmt.Errorf("provider type is required")

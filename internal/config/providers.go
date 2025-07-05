@@ -16,7 +16,7 @@ type ProviderConfig struct {
 
 // LLMConfig contains LLM provider configuration
 type LLMConfig struct {
-	Provider       string  `yaml:"provider"` // "openai" or "anthropic"
+	Provider       string  `yaml:"provider"` // "openai", "anthropic", or "ollama"
 	APIKey         string  `yaml:"api_key"`
 	Model          string  `yaml:"model"`
 	MaxTokens      int     `yaml:"max_tokens"`
@@ -85,6 +85,8 @@ func (c *LLMConfig) ToLLMConfig() (*llm.Config, error) {
 		providerType = llm.ProviderOpenAI
 	case "anthropic":
 		providerType = llm.ProviderAnthropic
+	case "ollama":
+		providerType = llm.ProviderOllama
 	default:
 		return nil, fmt.Errorf("unsupported LLM provider: %s", c.Provider)
 	}
@@ -109,6 +111,8 @@ func (c *LLMConfig) ToLLMConfig() (*llm.Config, error) {
 			config.Model = "gpt-4o"
 		case llm.ProviderAnthropic:
 			config.Model = "claude-3-5-sonnet-20241022"
+		case llm.ProviderOllama:
+			config.Model = "llama3.1"
 		}
 	}
 
@@ -118,6 +122,8 @@ func (c *LLMConfig) ToLLMConfig() (*llm.Config, error) {
 			config.BaseURL = "https://api.openai.com/v1"
 		case llm.ProviderAnthropic:
 			config.BaseURL = "https://api.anthropic.com/v1"
+		case llm.ProviderOllama:
+			config.BaseURL = "http://localhost:11434"
 		}
 	}
 

@@ -118,7 +118,8 @@ export VOYAGE_API_KEY="your-voyage-key"           # For Voyage AI embeddings
 # Provider Selection
 export DEEPWIKI_LLM_PROVIDER="openai"             # or "anthropic"
 export DEEPWIKI_EMBEDDING_PROVIDER="ollama"       # or "openai" or "voyage"
-export OLLAMA_BASE_URL="http://localhost:11434"   # For Ollama (optional)
+export DEEPWIKI_LLM_BASE_URL="http://localhost:11434"
+export DEEPWIKI_EMBEDDING_BASE_URL="http://localhost:11434"
 ```
 
 ## Configuration

@@ -34,51 +34,201 @@ filters:
     - .py
     - .js
     - .ts
+    - .jsx
+    - .tsx
     - .java
     - .cpp
     - .c
     - .h
     - .hpp
-    - .rs
-    - .jsx
-    - .tsx
-    - .html
-    - .css
-    - .php
-    - .swift
     - .cs
-    - .md
-    - .txt
-    - .rst
-    - .json
+    - .php
+    - .rb
+    - .rs
+    - .swift
+    - .kt
+    - .scala
+    - .clj
+    - .hs
+    - .ml
+    - .fs
+    - .dart
+    - .lua
+    - .r
+    - .R
+    - .m
+    - .mm
+    - .pl
+    - .sh
+    - .bash
+    - .zsh
+    - .fish
+    - .ps1
+    - .bat
+    - .cmd
+    - .html
+    - .htm
+    - .css
+    - .scss
+    - .sass
+    - .less
+    - .vue
+    - .svelte
     - .yaml
     - .yml
+    - .json
+    - .toml
+    - .ini
+    - .cfg
+    - .conf
+    - .xml
+    - .proto
+    - .graphql
+    - .gql
+    - .md
+    - .mdx
+    - .txt
+    - .rst
+    - .org
+    - .tex
+    - .adoc
+    - .sql
+    - .psql
+    - .mysql
+    - .dockerfile
+    - .makefile
+    - .mk
+    - .gradle
+    - .maven
+    - .ant
   exclude_dirs:
     - node_modules
-    - .git
-    - dist
-    - build
-    - target
-    - .next
-    - __pycache__
+    - vendor
     - .venv
     - venv
-    - vendor
+    - env
+    - .env
+    - virtualenv
+    - __pycache__
+    - .tox
+    - site-packages
+    - .bundle
+    - gems
     - .cargo
+    - target
+    - .gradle
+    - .mvn
+    - dist
+    - build
+    - out
     - bin
     - obj
+    - lib
+    - .build
+    - cmake-build-debug
+    - cmake-build-release
+    - .git
+    - .svn
+    - .hg
+    - .bzr
+    - .idea
+    - .vscode
+    - .vs
+    - .eclipse
+    - .settings
+    - .project
+    - .classpath
+    - .factorypath
+    - tmp
+    - temp
+    - .tmp
+    - .temp
+    - cache
+    - .cache
+    - .next
+    - .nuxt
+    - .angular
+    - .turbo
+    - logs
+    - log
+    - .logs
+    - data
+    - .data
+    - backup
+    - backups
+    - test
+    - tests
+    - __tests__
+    - spec
+    - .pytest_cache
+    - coverage
+    - .nyc_output
+    - htmlcov
+    - docs
+    - doc
+    - .docs
+    - documentation
+    - wiki
+    - .DS_Store
+    - Thumbs.db
+    - Desktop.ini
   exclude_files:
     - "*.min.js"
+    - "*.min.css"
+    - "*.bundle.js"
+    - "*.chunk.js"
     - "*.pyc"
+    - "*.pyo"
     - "*.class"
-    - package-lock.json
-    - yarn.lock
+    - "*.jar"
+    - "*.war"
+    - "*.ear"
     - "*.exe"
     - "*.dll"
     - "*.so"
     - "*.dylib"
     - "*.a"
     - "*.o"
+    - "*.obj"
+    - "*.lib"
+    - "*.exp"
+    - "*.pdb"
+    - package-lock.json
+    - yarn.lock
+    - pnpm-lock.yaml
+    - composer.lock
+    - Gemfile.lock
+    - Pipfile.lock
+    - poetry.lock
+    - cargo.lock
+    - go.sum
+    - "*.generated.*"
+    - "*.gen.*"
+    - "*_generated.go"
+    - "*_gen.go"
+    - "*.pb.go"
+    - "*.pb.cc"
+    - "*.pb.h"
+    - "*_pb2.py"
+    - "*_pb2_grpc.py"
+    - "*.swp"
+    - "*.swo"
+    - "*~"
+    - .#*
+    - "#*#"
+    - .*.rej
+    - .*.orig
+    - .DS_Store
+    - Thumbs.db
+    - desktop.ini
+    - "*.lnk"
+    - "*.log"
+    - "*.tmp"
+    - "*.temp"
+    - "*.bak"
+    - "*.backup"
+    - core
+    - "*.dump"
 output:
   format: markdown
   directory: ./docs
@@ -94,9 +244,21 @@ logging:
   add_source: false
   time_format: 2006-01-02T15:04:05Z07:00
 # Environment variables that can be used:
+# LLM Provider Configuration:
+# DEEPWIKI_LLM_PROVIDER - LLM provider (openai, anthropic, ollama)
 # OPENAI_API_KEY - OpenAI API key
-# DEEPWIKI_MODEL - OpenAI model name
-# DEEPWIKI_EMBEDDING_MODEL - OpenAI embedding model name
+# ANTHROPIC_API_KEY - Anthropic API key
+# DEEPWIKI_LLM_BASE_URL - Base URL
+# DEEPWIKI_LLM_MODEL - LLM model name
+#
+# Embedding Provider Configuration:
+# DEEPWIKI_EMBEDDING_PROVIDER - Embedding provider (openai, voyage, ollama)
+# DEEPWIKI_EMBEDDING_MODEL - Embedding model name
+# OPENAI_API_KEY - OpenAI API key (also used for embeddings)
+# VOYAGE_API_KEY - Voyage AI API key
+# DEEPWIKI_EMBEDDING_BASE_URL - Base URL
+#
+# Output Configuration:
 # DEEPWIKI_OUTPUT_DIR - Output directory
 # DEEPWIKI_FORMAT - Output format (markdown, json)
 # DEEPWIKI_LANGUAGE - Output language (English/en, Russian/ru)

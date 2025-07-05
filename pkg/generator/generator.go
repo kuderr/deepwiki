@@ -42,7 +42,6 @@ func (g *WikiGenerator) GenerateWikiStructure(
 ) (*WikiStructure, error) {
 	g.logger.Info("Starting wiki structure generation",
 		"project", options.ProjectName,
-		"fileTree", fileTree,
 		"language", options.Language)
 
 	start := time.Now()
