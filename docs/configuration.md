@@ -29,26 +29,82 @@ DeepWiki CLI automatically searches for configuration files in these locations:
 # DeepWiki CLI Configuration File
 # All settings are optional - defaults will be used for missing values
 
-# OpenAI API Configuration
-openai:
-  # Required: Your OpenAI API key
-  api_key: "${OPENAI_API_KEY}"
+# Provider Configuration
+providers:
+  # LLM Provider Configuration
+  llm:
+    # Provider type: "openai", "anthropic", or "ollama"
+    provider: "openai"
 
-  # The main model for content generation
-  # Options: gpt-4o, gpt-4o-mini, gpt-4-turbo, gpt-4, gpt-3.5-turbo
-  model: "gpt-4o"
+    # API key (required for OpenAI and Anthropic)
+    api_key: "${OPENAI_API_KEY}"
 
-  # Model for embedding generation
-  # Options: text-embedding-3-large, text-embedding-3-small, text-embedding-ada-002
-  embedding_model: "text-embedding-3-small"
+    # Model name
+    # OpenAI: gpt-4o, gpt-4o-mini, gpt-4-turbo, gpt-4, gpt-3.5-turbo
+    # Anthropic: claude-3-5-sonnet-20241022, claude-3-haiku-20240307
+    # Ollama: llama3.1, llama3.2, codellama, mistral, etc.
+    model: "gpt-4o"
 
-  # Maximum tokens per API request
-  # Range: 1-32768 (depending on model)
-  max_tokens: 4000
+    # Maximum tokens per API request
+    # Range: 1-32768 (depending on model)
+    max_tokens: 4000
 
-  # Temperature for generation (creativity vs consistency)
-  # Range: 0.0-2.0 (0.0 = deterministic, 2.0 = very creative)
-  temperature: 0.1
+    # Temperature for generation (creativity vs consistency)
+    # Range: 0.0-2.0 (0.0 = deterministic, 2.0 = very creative)
+    temperature: 0.1
+
+    # Request timeout (duration string like "3m")
+    request_timeout: "3m"
+
+    # Maximum retry attempts
+    max_retries: 3
+
+    # Retry delay (duration string like "1s")
+    retry_delay: "1s"
+
+    # Rate limiting (requests per second)
+    rate_limit_rps: 2.0
+
+    # Custom base URL (for Ollama or custom OpenAI-compatible endpoints)
+    # OpenAI: https://api.openai.com/v1 (default)
+    # Anthropic: https://api.anthropic.com/v1 (default)
+    # Ollama: http://localhost:11434 (default)
+    base_url: ""
+
+  # Embedding Provider Configuration
+  embedding:
+    # Provider type: "openai", "voyage", or "ollama"
+    provider: "openai"
+
+    # API key (required for OpenAI and Voyage)
+    api_key: "${OPENAI_API_KEY}"
+
+    # Model name
+    # OpenAI: text-embedding-3-large, text-embedding-3-small, text-embedding-ada-002
+    # Voyage: voyage-3-large, voyage-3-small
+    # Ollama: nomic-embed-text, all-minilm, etc.
+    model: "text-embedding-3-small"
+
+    # Request timeout (duration string like "30s")
+    request_timeout: "30s"
+
+    # Maximum retry attempts
+    max_retries: 3
+
+    # Retry delay (duration string like "1s")
+    retry_delay: "1s"
+
+    # Rate limiting (requests per second)
+    rate_limit_rps: 10.0
+
+    # Custom base URL (for Ollama)
+    # OpenAI: https://api.openai.com/v1 (default)
+    # Voyage: https://api.voyageai.com/v1 (default)
+    # Ollama: http://localhost:11434 (default)
+    base_url: ""
+
+    # Embedding dimensions (auto-detected if not specified)
+    dimensions: 0
 
 # Text Processing Configuration
 processing:
@@ -349,61 +405,27 @@ logging:
 
   # Time format for logs (Go time format)
   time_format: "2006-01-02 15:04:05"
-
-# Rate Limiting Configuration (Advanced)
-rate_limiting:
-  # Requests per second for OpenAI API
-  requests_per_second: 2
-
-  # Maximum burst size
-  burst_size: 5
-
-  # Retry configuration
-  max_retries: 3
-  retry_delay: "1s"
-  max_retry_delay: "30s"
-
-# Caching Configuration (Advanced)
-cache:
-  # Enable caching
-  enabled: true
-
-  # Cache directory
-  directory: "./.deepwiki-cache"
-
-  # Maximum cache age
-  max_age: "24h"
-
-  # Maximum cache size
-  max_size: "100MB"
-
-# Advanced Processing Configuration
-advanced:
-  # Maximum concurrent workers
-  max_workers: 4
-
-  # Memory limit for processing (in MB)
-  memory_limit: 512
-
-  # Enable garbage collection optimization
-  gc_optimization: true
-
-  # Batch size for processing
-  batch_size: 10
 ```
 
 ## Environment Variables
 
 All configuration options can be overridden using environment variables with the `DEEPWIKI_` prefix:
 
-### OpenAI Configuration
+### Provider Configuration
 
 ```bash
-export OPENAI_API_KEY="sk-your-api-key"
-export DEEPWIKI_MODEL="gpt-4o"
-export DEEPWIKI_EMBEDDING_MODEL="text-embedding-3-small"
-export DEEPWIKI_MAX_TOKENS="4000"
-export DEEPWIKI_TEMPERATURE="0.1"
+# LLM Provider Configuration
+export DEEPWIKI_LLM_PROVIDER="openai"        # or "anthropic" or "ollama"
+export OPENAI_API_KEY="sk-your-api-key"      # for OpenAI
+export ANTHROPIC_API_KEY="sk-ant-api-key"    # for Anthropic
+export DEEPWIKI_LLM_BASE_URL="http://localhost:11434"
+export DEEPWIKI_LLM_MODEL="gpt-4o"           # model name
+
+# Embedding Provider Configuration
+export DEEPWIKI_EMBEDDING_PROVIDER="openai"   # or "voyage" or "ollama"
+export VOYAGE_API_KEY="pa-your-voyage-key"    # for Voyage AI
+export DEEPWIKI_EMBEDDING_MODEL="text-embedding-3-small"  # model name
+export DEEPWIKI_EMBEDDING_BASE_URL="http://localhost:11434"
 ```
 
 ### Output Configuration
@@ -472,16 +494,57 @@ All configuration can be overridden with command line flags:
 ### Minimal Configuration
 
 ```yaml
-openai:
-  api_key: "${OPENAI_API_KEY}"
+# OpenAI Configuration
+providers:
+  llm:
+    provider: "openai"
+    api_key: "${OPENAI_API_KEY}"
+  embedding:
+    provider: "openai"
+    api_key: "${OPENAI_API_KEY}"
+```
+
+### Ollama Configuration (Local AI)
+
+```yaml
+# Use Ollama for both LLM and embeddings (completely offline)
+providers:
+  llm:
+    provider: "ollama"
+    model: "llama3.1"
+    base_url: "http://localhost:11434"
+  embedding:
+    provider: "ollama"
+    model: "nomic-embed-text"
+    base_url: "http://localhost:11434"
+```
+
+### Hybrid Configuration
+
+```yaml
+# Use Claude for LLM and Ollama for embeddings (cost-effective)
+providers:
+  llm:
+    provider: "anthropic"
+    api_key: "${ANTHROPIC_API_KEY}"
+    model: "claude-3-5-sonnet-20241022"
+  embedding:
+    provider: "ollama"
+    model: "nomic-embed-text"
+    base_url: "http://localhost:11434"
 ```
 
 ### Development Configuration
 
 ```yaml
-openai:
-  api_key: "${OPENAI_API_KEY}"
-  model: "gpt-4o-mini" # Faster, cheaper for development
+providers:
+  llm:
+    provider: "openai"
+    api_key: "${OPENAI_API_KEY}"
+    model: "gpt-4o-mini" # Faster, cheaper for development
+  embedding:
+    provider: "ollama" # Free local embeddings
+    model: "nomic-embed-text"
 
 output:
   directory: "./dev-docs"
@@ -489,18 +552,21 @@ output:
 logging:
   level: "debug" # Detailed logging
   format: "text"
-
-cache:
-  enabled: true # Speed up repeated runs
 ```
 
 ### Production Configuration
 
 ```yaml
-openai:
-  api_key: "${OPENAI_API_KEY}"
-  model: "gpt-4o" # High quality
-  temperature: 0.1 # Consistent output
+providers:
+  llm:
+    provider: "openai"
+    api_key: "${OPENAI_API_KEY}"
+    model: "gpt-4o" # High quality
+    temperature: 0.1 # Consistent output
+  embedding:
+    provider: "openai"
+    api_key: "${OPENAI_API_KEY}"
+    model: "text-embedding-3-small"
 
 output:
   directory: "./docs"
@@ -520,10 +586,6 @@ processing:
 logging:
   level: "info"
   format: "json" # Structured logs for production
-
-cache:
-  enabled: true
-  max_age: "1h" # Fresh cache
 ```
 
 ### Multi-Language Project Configuration
@@ -575,18 +637,152 @@ openai:
 processing:
   chunk_size: 300 # Smaller chunks
   max_files: 800 # Limit file count
+```
 
-advanced:
-  max_workers: 8 # More concurrent processing
-  memory_limit: 1024 # Higher memory limit
-  batch_size: 20 # Larger batches
+## Ollama Setup and Configuration
 
-cache:
-  enabled: true
-  max_age: "6h" # Longer cache
+### Installing Ollama
 
-rate_limiting:
-  requests_per_second: 5 # Faster API calls (if your plan allows)
+```bash
+# macOS/Linux
+curl -fsSL https://ollama.ai/install.sh | sh
+
+# Windows
+# Download and install from https://ollama.ai
+
+# Verify installation
+ollama --version
+```
+
+### Setting Up Models
+
+```bash
+# Pull LLM models for text generation
+ollama pull llama3.1        # Meta's Llama 3.1 (recommended)
+ollama pull llama3.2        # Latest Llama 3.2
+ollama pull codellama       # Code-focused model
+ollama pull mistral         # Mistral 7B model
+
+# Pull embedding models
+ollama pull nomic-embed-text    # Recommended for embeddings
+ollama pull all-minilm          # Alternative embedding model
+
+# List available models
+ollama list
+
+# Check model info
+ollama show llama3.1
+```
+
+### Ollama Configuration Options
+
+```yaml
+providers:
+  llm:
+    provider: "ollama"
+    model: "llama3.1"
+    base_url: "http://localhost:11434" # Default Ollama URL
+    max_tokens: 4000
+    temperature: 0.1
+    request_timeout: "5m" # Longer timeout for local processing
+    max_retries: 2
+    rate_limit_rps: 1.0 # Lower rate for local processing
+
+  embedding:
+    provider: "ollama"
+    model: "nomic-embed-text"
+    base_url: "http://localhost:11434"
+    request_timeout: "2m"
+    max_retries: 2
+    rate_limit_rps: 5.0
+```
+
+### Remote Ollama Configuration
+
+```yaml
+# If running Ollama on a different machine
+providers:
+  llm:
+    provider: "ollama"
+    model: "llama3.1"
+    base_url: "http://192.168.1.100:11434" # Remote Ollama server
+
+  embedding:
+    provider: "ollama"
+    model: "nomic-embed-text"
+    base_url: "http://192.168.1.100:11434"
+```
+
+### Model Recommendations
+
+| Use Case             | LLM Model      | Embedding Model    | Memory Required |
+| -------------------- | -------------- | ------------------ | --------------- |
+| General purpose      | `llama3.1`     | `nomic-embed-text` | 8GB+            |
+| Code documentation   | `codellama`    | `nomic-embed-text` | 8GB+            |
+| Resource constrained | `llama3.2`     | `all-minilm`       | 4GB+            |
+| High quality         | `llama3.1:70b` | `nomic-embed-text` | 40GB+           |
+
+### Performance Tuning
+
+```yaml
+providers:
+  llm:
+    provider: "ollama"
+    model: "llama3.1"
+    request_timeout: "10m" # Increase for complex generations
+    max_retries: 1 # Reduce retries for faster failure
+    rate_limit_rps: 0.5 # Lower rate for stability
+
+processing:
+  chunk_size: 250 # Smaller chunks for faster processing
+  max_files: 500 # Limit files for memory usage
+```
+
+### Troubleshooting Ollama
+
+#### Common Issues
+
+```bash
+# Check Ollama service status
+ollama ps
+
+# Restart Ollama service
+sudo systemctl restart ollama  # Linux
+brew services restart ollama   # macOS
+
+# Check available models
+ollama list
+
+# Test model directly
+ollama run llama3.1 "Hello, how are you?"
+
+# Check Ollama logs
+journalctl -u ollama          # Linux
+brew services info ollama     # macOS
+```
+
+#### Configuration Issues
+
+```yaml
+# Issue: Connection refused
+# Solution: Ensure Ollama is running and base_url is correct
+providers:
+  llm:
+    provider: "ollama"
+    base_url: "http://localhost:11434"  # Check this URL
+
+# Issue: Model not found
+# Solution: Pull the model first
+# ollama pull llama3.1
+
+# Issue: Slow performance
+# Solution: Adjust timeouts and reduce concurrency
+providers:
+  llm:
+    provider: "ollama"
+    request_timeout: "10m"
+    rate_limit_rps: 0.5
+
 ```
 
 ### CI/CD Configuration

@@ -10,23 +10,23 @@ import (
 	"time"
 
 	"github.com/kuderr/deepwiki/internal/prompts"
-	"github.com/kuderr/deepwiki/pkg/openai"
+	"github.com/kuderr/deepwiki/pkg/llm"
 	"github.com/kuderr/deepwiki/pkg/rag"
 	"github.com/kuderr/deepwiki/pkg/scanner"
 )
 
 // WikiGenerator generates wiki structures and content
 type WikiGenerator struct {
-	openaiClient openai.Client
+	llmProvider  llm.Provider
 	ragRetriever rag.DocumentRetriever
 	xmlParser    *XMLParser
 	logger       *slog.Logger
 }
 
 // NewWikiGenerator creates a new wiki generator
-func NewWikiGenerator(client openai.Client, retriever rag.DocumentRetriever, logger *slog.Logger) *WikiGenerator {
+func NewWikiGenerator(llmProvider llm.Provider, retriever rag.DocumentRetriever, logger *slog.Logger) *WikiGenerator {
 	return &WikiGenerator{
-		openaiClient: client,
+		llmProvider:  llmProvider,
 		ragRetriever: retriever,
 		xmlParser:    NewXMLParser(),
 		logger:       logger.With("component", "generator"),
@@ -42,7 +42,6 @@ func (g *WikiGenerator) GenerateWikiStructure(
 ) (*WikiStructure, error) {
 	g.logger.Info("Starting wiki structure generation",
 		"project", options.ProjectName,
-		"fileTree", fileTree,
 		"language", options.Language)
 
 	start := time.Now()
@@ -63,20 +62,20 @@ func (g *WikiGenerator) GenerateWikiStructure(
 
 	g.logger.Debug("Generated structure prompt", "length", len(prompt))
 
-	// Call OpenAI API
-	messages := []openai.Message{
+	// Call LLM API
+	messages := []llm.Message{
 		{
 			Role:    "user",
 			Content: prompt,
 		},
 	}
 
-	response, err := g.openaiClient.ChatCompletion(ctx, messages, openai.ChatCompletionOptions{
+	response, err := g.llmProvider.ChatCompletion(ctx, messages, llm.ChatCompletionOptions{
 		MaxTokens:   4000,
 		Temperature: 0.1,
 	})
 	if err != nil {
-		return nil, fmt.Errorf("failed to call OpenAI API for structure generation: %w", err)
+		return nil, fmt.Errorf("failed to call LLM API for structure generation: %w", err)
 	}
 
 	// Parse the XML response
@@ -141,20 +140,20 @@ func (g *WikiGenerator) GeneratePageContent(
 		return fmt.Errorf("failed to generate content prompt for page %s: %w", page.ID, err)
 	}
 
-	// Call OpenAI API
-	messages := []openai.Message{
+	// Call LLM API
+	messages := []llm.Message{
 		{
 			Role:    "user",
 			Content: prompt,
 		},
 	}
 
-	response, err := g.openaiClient.ChatCompletion(ctx, messages, openai.ChatCompletionOptions{
+	response, err := g.llmProvider.ChatCompletion(ctx, messages, llm.ChatCompletionOptions{
 		MaxTokens:   4000,
 		Temperature: 0.1,
 	})
 	if err != nil {
-		return fmt.Errorf("failed to call OpenAI API for page content generation: %w", err)
+		return fmt.Errorf("failed to call LLM API for page content generation: %w", err)
 	}
 
 	// Update the page with generated content

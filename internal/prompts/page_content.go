@@ -68,8 +68,6 @@ Requirements:
 
 7. **IMPORTANT: Generate ALL content in {{.Language}} language** - This includes all text, explanations, comments, and documentation. The entire page must be written in {{.Language}}.
 
-8. **NEVER** write conclusions or summaries for whole page.
-
 Write comprehensive, developer-focused documentation that thoroughly explains this aspect of the project.
 `
 

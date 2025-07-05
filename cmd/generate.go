@@ -13,7 +13,6 @@ import (
 	"github.com/kuderr/deepwiki/internal/logging"
 	"github.com/kuderr/deepwiki/pkg/embeddings"
 	"github.com/kuderr/deepwiki/pkg/generator"
-	"github.com/kuderr/deepwiki/pkg/openai"
 	"github.com/kuderr/deepwiki/pkg/output"
 	outputgen "github.com/kuderr/deepwiki/pkg/output/generator"
 	"github.com/kuderr/deepwiki/pkg/processor"
@@ -29,7 +28,6 @@ var (
 	outputDir    string
 	format       string
 	language     string
-	openaiKey    string
 	model        string
 	excludeDirs  string
 	excludeFiles string
@@ -120,10 +118,12 @@ func runGenerate(cmd *cobra.Command, args []string) error {
 		}
 	}
 
-	// Validate OpenAI API key
-	if cfg.OpenAI.APIKey == "" {
-		genLogger.ErrorContext(ctx, "OpenAI API key is required")
-		return fmt.Errorf("OpenAI API key is required. Set --openai-key flag or OPENAI_API_KEY environment variable")
+	// Validate LLM provider configuration
+	if cfg.Providers.LLM.APIKey == "" {
+		genLogger.ErrorContext(ctx, "LLM provider API key is required")
+		return fmt.Errorf(
+			"LLM provider API key is required. Set the appropriate environment variable (OPENAI_API_KEY or ANTHROPIC_API_KEY)",
+		)
 	}
 
 	genLogger.InfoContext(ctx, "starting documentation generation",
@@ -139,11 +139,13 @@ func runGenerate(cmd *cobra.Command, args []string) error {
 		fmt.Printf("  Output Dir: %s\n", cfg.Output.Directory)
 		fmt.Printf("  Format: %s\n", cfg.Output.Format)
 		fmt.Printf("  Language: %s\n", cfg.Output.Language.String())
-		fmt.Printf("  Model: %s\n", cfg.OpenAI.Model)
-		fmt.Printf("  Embedding Model: %s\n", cfg.OpenAI.EmbeddingModel)
+		fmt.Printf("  LLM Provider: %s\n", cfg.Providers.LLM.Provider)
+		fmt.Printf("  LLM Model: %s\n", cfg.Providers.LLM.Model)
+		fmt.Printf("  Embedding Provider: %s\n", cfg.Providers.Embedding.Provider)
+		fmt.Printf("  Embedding Model: %s\n", cfg.Providers.Embedding.Model)
 		fmt.Printf("  Chunk Size: %d\n", cfg.Processing.ChunkSize)
-		fmt.Printf("  Max Tokens: %d\n", cfg.OpenAI.MaxTokens)
-		fmt.Printf("  Temperature: %.1f\n", cfg.OpenAI.Temperature)
+		fmt.Printf("  Max Tokens: %d\n", cfg.Providers.LLM.MaxTokens)
+		fmt.Printf("  Temperature: %.1f\n", cfg.Providers.LLM.Temperature)
 		if len(cfg.Filters.ExcludeDirs) > 0 {
 			fmt.Printf("  Exclude Dirs: %v\n", cfg.Filters.ExcludeDirs)
 		}
@@ -238,22 +240,18 @@ func runGenerate(cmd *cobra.Command, args []string) error {
 	cliManager := output.NewCLIManager(genLogger.Logger, verbose, false, dryRun)
 	cliManager.StartOperation(filepath.Base(projectPath), cfg.Output.Directory)
 
-	// Initialize OpenAI client
-	openaiConfig := &openai.Config{
-		APIKey:         cfg.OpenAI.APIKey,
-		Model:          cfg.OpenAI.Model,
-		EmbeddingModel: cfg.OpenAI.EmbeddingModel,
-		MaxTokens:      cfg.OpenAI.MaxTokens,
-		Temperature:    float64(cfg.OpenAI.Temperature),
-		RequestTimeout: 3 * 60 * time.Second,
-		MaxRetries:     5,
-		RetryDelay:     1 * time.Second,
-		RateLimitRPS:   10,
-	}
-	openaiClient, err := openai.NewClient(openaiConfig)
+	// Initialize LLM provider
+	llmProvider, err := cfg.GetLLMProvider()
 	if err != nil {
-		genLogger.LogError(ctx, "failed to initialize OpenAI client", err)
-		return fmt.Errorf("failed to initialize OpenAI client: %w", err)
+		genLogger.LogError(ctx, "failed to initialize LLM provider", err)
+		return fmt.Errorf("failed to initialize LLM provider: %w", err)
+	}
+
+	// Initialize embedding provider
+	embeddingProvider, err := cfg.GetEmbeddingProvider()
+	if err != nil {
+		genLogger.LogError(ctx, "failed to initialize embedding provider", err)
+		return fmt.Errorf("failed to initialize embedding provider: %w", err)
 	}
 
 	// Phase 2: Text Processing and Chunking
@@ -289,9 +287,9 @@ func runGenerate(cmd *cobra.Command, args []string) error {
 	fmt.Println("🧠 Phase 3: Generating embeddings...")
 
 	embeddingConfig := embeddings.DefaultEmbeddingConfig()
-	embeddingConfig.Model = cfg.OpenAI.EmbeddingModel
+	embeddingConfig.Model = cfg.Providers.Embedding.Model
 
-	embeddingGenerator := embeddings.NewOpenAIEmbeddingGenerator(openaiClient, embeddingConfig)
+	embeddingGenerator := embeddings.NewEmbeddingProviderGenerator(embeddingProvider, embeddingConfig)
 
 	// Collect all chunk texts for embedding
 	var chunkTexts []string
@@ -392,7 +390,7 @@ func runGenerate(cmd *cobra.Command, args []string) error {
 	cliManager.StartPhase("Phase 5", "Generating wiki structure", 1)
 	fmt.Println("🏗️  Phase 5: Generating wiki structure...")
 
-	wikiGenerator := generator.NewWikiGenerator(openaiClient, ragRetriever, genLogger.Logger)
+	wikiGenerator := generator.NewWikiGenerator(llmProvider, ragRetriever, genLogger.Logger)
 
 	progressTracker := generator.NewConsoleProgressTracker(genLogger.Logger)
 
@@ -473,11 +471,9 @@ func overrideConfigWithFlags(cfg *config.Config, cmd *cobra.Command) {
 			fmt.Printf("Warning: Invalid language flag '%s', using default. %s\n", language, err.Error())
 		}
 	}
-	if openaiKey != "" {
-		cfg.OpenAI.APIKey = openaiKey
-	}
+
 	if model != "" {
-		cfg.OpenAI.Model = model
+		cfg.Providers.LLM.Model = model
 	}
 	if chunkSize > 0 {
 		cfg.Processing.ChunkSize = chunkSize
@@ -508,8 +504,7 @@ func init() {
 		StringVarP(&format, "format", "f", "markdown", "Output format: markdown, json, docusaurus2, docusaurus3, simple-docusaurus2, simple-docusaurus3")
 	generateCmd.Flags().
 		StringVarP(&language, "language", "l", "en", "Language for generation: English/en, Russian/ru")
-	generateCmd.Flags().StringVar(&openaiKey, "openai-key", "", "OpenAI API key (or use OPENAI_API_KEY env var)")
-	generateCmd.Flags().StringVarP(&model, "model", "m", "gpt-4o", "OpenAI model to use")
+	generateCmd.Flags().StringVarP(&model, "model", "m", "", "LLM model to use for doc generation")
 	generateCmd.Flags().StringVar(&excludeDirs, "exclude-dirs", "", "Comma-separated list of directories to exclude")
 	generateCmd.Flags().StringVar(&excludeFiles, "exclude-files", "", "Comma-separated patterns for files to exclude")
 	generateCmd.Flags().IntVar(&chunkSize, "chunk-size", 350, "Text chunk size for embeddings")
@@ -517,7 +512,4 @@ func init() {
 	generateCmd.Flags().BoolVarP(&verbose, "verbose", "v", false, "Verbose output")
 	generateCmd.Flags().
 		BoolVar(&dryRun, "dry-run", false, "Show what would be done without actually generating documentation")
-
-	// Mark required flags
-	// Note: OpenAI key will be checked in the run function to allow env var
 }

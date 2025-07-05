@@ -4,26 +4,33 @@
 
 DeepWiki CLI is a powerful Go-based command-line tool that automatically generates comprehensive, structured documentation for your local projects using AI. It analyzes your codebase, understands the architecture, and creates detailed wiki-style documentation with minimal manual effort.
 
-[![Go Version](https://img.shields.io/badge/go-1.21+-blue.svg)](https://golang.org)
-[![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
-[![Test Coverage](https://img.shields.io/badge/coverage-95%25-brightgreen.svg)](#testing)
+[![Go Version](https://img.shields.io/badge/go-1.24+-blue.svg)](https://golang.org)
+[![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/kuderr/deepwiki)
 
 ## ✨ Features
 
 ### ✅ **Complete Documentation Generation Pipeline**
 
 - **Multi-language support**: Go, Python, JavaScript, TypeScript, Java, C++, and 40+ more
-- **AI-Powered Analysis**: Uses GPT-4 for intelligent code understanding and documentation
+- **AI-Powered Analysis**: Uses GPT-4, Claude, or other LLMs for intelligent code understanding
 - **Structured Output**: Generates organized wiki pages with clear hierarchy and navigation
 - **Multiple Formats**: Markdown and JSON output with customizable templates
 
+### ✅ **Flexible Provider Architecture**
+
+- **Multiple LLM Providers**: OpenAI (GPT-4o, GPT-3.5-turbo) and Anthropic (Claude 3.5 Sonnet/Haiku)
+- **Multiple Embedding Providers**: OpenAI, Voyage AI, and **Local Ollama** support
+- **Mix & Match**: Use Claude for LLM + local Ollama for embeddings to minimize costs
+- **Local-First Option**: Full offline capability with Ollama embeddings
+- **Cost Optimization**: Choose providers based on your budget and privacy needs
+
 ### ✅ **Advanced Processing Capabilities**
 
-- **Vector Embeddings**: Semantic search using OpenAI embeddings for relevant code discovery
+- **Vector Embeddings**: Semantic search with multiple embedding providers
 - **RAG System**: Retrieval-Augmented Generation for accurate, contextual documentation
 - **Concurrent Processing**: Optimized performance with configurable worker pools
 - **Memory Management**: Efficient processing of large codebases with memory limits
-- **Intelligent Caching**: Speed up repeated operations with smart caching
+- **Local Embeddings**: Run embeddings locally with Ollama - no API costs!
 
 ### ✅ **Production-Ready Features**
 
@@ -60,7 +67,30 @@ deepwiki-cli generate /path/to/project
 deepwiki-cli generate --output-dir ./docs --language ja
 ```
 
-### 2. Configuration
+### 2. Configuration Examples
+
+```bash
+# Use Claude LLM + local Ollama embeddings (cost-effective)
+export ANTHROPIC_API_KEY="your-key"
+export DEEPWIKI_LLM_PROVIDER="anthropic"
+export DEEPWIKI_EMBEDDING_PROVIDER="ollama"
+deepwiki-cli generate
+
+# Use OpenAI for everything (simple setup)
+export OPENAI_API_KEY="your-key"
+export DEEPWIKI_LLM_PROVIDER="openai"
+export DEEPWIKI_EMBEDDING_PROVIDER="openai"
+deepwiki-cli generate
+
+# Use Voyage AI for high-quality embeddings
+export OPENAI_API_KEY="your-llm-key"
+export VOYAGE_API_KEY="your-embedding-key"
+export DEEPWIKI_LLM_PROVIDER="openai"
+export DEEPWIKI_EMBEDDING_PROVIDER="voyage"
+deepwiki-cli generate
+```
+
+### 3. Advanced Configuration
 
 ```bash
 # Create configuration template
@@ -73,16 +103,23 @@ deepwiki-cli config validate
 deepwiki-cli generate --config my-config.yaml
 ```
 
-### 3. Environment Setup
+### 4. Environment Setup
 
 ```bash
-# Set OpenAI API key
-export OPENAI_API_KEY="your-api-key-here"
+# LLM Provider Setup (choose one)
+export OPENAI_API_KEY="your-openai-key"           # For OpenAI GPT models
+export ANTHROPIC_API_KEY="your-anthropic-key"     # For Claude models
 
-# Optional: Configure other settings
-export DEEPWIKI_MODEL="gpt-4o"
-export DEEPWIKI_LANGUAGE="en"
-export DEEPWIKI_FORMAT="markdown"
+# Embedding Provider Setup (choose one)
+export OPENAI_API_KEY="your-openai-key"           # For OpenAI embeddings
+export VOYAGE_API_KEY="your-voyage-key"           # For Voyage AI embeddings
+# Ollama doesn't need API key, just make sure it's running locally
+
+# Provider Selection
+export DEEPWIKI_LLM_PROVIDER="openai"             # or "anthropic"
+export DEEPWIKI_EMBEDDING_PROVIDER="ollama"       # or "openai" or "voyage"
+export DEEPWIKI_LLM_BASE_URL="http://localhost:11434"
+export DEEPWIKI_EMBEDDING_BASE_URL="http://localhost:11434"
 ```
 
 ## Configuration
@@ -90,12 +127,25 @@ export DEEPWIKI_FORMAT="markdown"
 ### Example Configuration File
 
 ```yaml
-openai:
-  api_key: "${OPENAI_API_KEY}"
-  model: "gpt-4o"
-  embedding_model: "text-embedding-3-small"
-  max_tokens: 4000
-  temperature: 0.1
+# Provider Configuration
+providers:
+  llm:
+    provider: "openai" # "openai" or "anthropic"
+    api_key: "${OPENAI_API_KEY}"
+    model: "gpt-4o"
+    max_tokens: 4000
+    temperature: 0.1
+    request_timeout: "3m"
+    max_retries: 3
+    rate_limit_rps: 2.0
+
+  embedding:
+    provider: "ollama" # "openai", "voyage", or "ollama"
+    model: "nomic-embed-text"
+    base_url: "http://localhost:11434"
+    request_timeout: "30s"
+    max_retries: 3
+    rate_limit_rps: 10.0
 
 processing:
   chunk_size: 350
@@ -116,6 +166,67 @@ logging:
   level: "info"
   format: "text"
   output: "stderr"
+```
+
+### Provider Options
+
+#### LLM Providers
+
+**OpenAI:**
+
+```yaml
+providers:
+  llm:
+    provider: "openai"
+    api_key: "${OPENAI_API_KEY}"
+    model: "gpt-4o" # or "gpt-4o-mini", "gpt-3.5-turbo"
+    base_url: "https://api.openai.com/v1"
+```
+
+**Anthropic:**
+
+```yaml
+providers:
+  llm:
+    provider: "anthropic"
+    api_key: "${ANTHROPIC_API_KEY}"
+    model: "claude-3-5-sonnet-20241022" # or "claude-3-5-haiku-20241022"
+    base_url: "https://api.anthropic.com/v1"
+```
+
+#### Embedding Providers
+
+**OpenAI Embeddings:**
+
+```yaml
+providers:
+  embedding:
+    provider: "openai"
+    api_key: "${OPENAI_API_KEY}"
+    model: "text-embedding-3-small" # or "text-embedding-3-large"
+    dimensions: 1536
+```
+
+**Voyage AI Embeddings:**
+
+```yaml
+providers:
+  embedding:
+    provider: "voyage"
+    api_key: "${VOYAGE_API_KEY}"
+    model: "voyage-3-large" # or "voyage-3.5-lite", "voyage-code-3"
+    dimensions: 1024
+```
+
+**Ollama Local Embeddings:**
+
+```yaml
+providers:
+  embedding:
+    provider: "ollama"
+    model: "nomic-embed-text" # or "mxbai-embed-large", "all-minilm"
+    base_url: "http://localhost:11434"
+    dimensions: 768
 ```
 
 ### CLI Options
@@ -224,15 +335,32 @@ deepwiki/
 ├── internal/
 │   ├── config/            # Configuration management
 │   ├── logging/           # Structured logging (slog)
-│   └── prompts/           # AI prompt templates (future)
+│   └── prompts/           # AI prompt templates
 ├── pkg/
+│   ├── llm/               # LLM provider interfaces
+│   │   ├── openai/        # OpenAI LLM implementation
+│   │   └── anthropic/     # Anthropic LLM implementation
+│   ├── embedding/         # Embedding provider interfaces
+│   │   ├── openai/        # OpenAI embeddings
+│   │   ├── voyage/        # Voyage AI embeddings
+│   │   └── ollama/        # Local Ollama embeddings
 │   ├── scanner/           # File scanning and analysis
-│   ├── embeddings/        # Vector embeddings (future)
-│   ├── generator/         # Documentation generation (future)
-│   └── output/            # Output formatting (future)
+│   ├── embeddings/        # Embedding generation logic
+│   ├── generator/         # Documentation generation
+│   ├── rag/              # RAG system implementation
+│   └── output/            # Output formatting
 ├── examples/              # Example configurations
 └── docs/                  # Generated documentation
 ```
+
+### Provider Architecture
+
+The new separated provider architecture allows for:
+
+- **Independent LLM and Embedding providers**: Mix and match based on your needs
+- **Local embedding support**: Use Ollama for cost-free local embeddings
+- **Easy extensibility**: Add new providers without changing core logic
+- **Cost optimization**: Choose expensive LLMs for generation, cheap/local for embeddings
 
 ## Contributing
 

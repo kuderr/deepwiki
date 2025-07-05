@@ -9,56 +9,56 @@ import (
 	"testing"
 	"time"
 
-	"github.com/kuderr/deepwiki/pkg/openai"
+	"github.com/kuderr/deepwiki/pkg/llm"
 	"github.com/kuderr/deepwiki/pkg/rag"
 	"github.com/kuderr/deepwiki/pkg/scanner"
 )
 
-// MockOpenAIClient implements the openai.Client interface for testing
-type MockOpenAIClient struct{}
+// MockLLMProvider implements the llm.Provider interface for testing
+type MockLLMProvider struct{}
 
-func (m *MockOpenAIClient) ChatCompletion(
+func (m *MockLLMProvider) ChatCompletion(
 	ctx context.Context,
-	messages []openai.Message,
-	opts ...openai.ChatCompletionOptions,
-) (*openai.ChatCompletionResponse, error) {
-	return &openai.ChatCompletionResponse{
-		Choices: []openai.Choice{
-			{Message: openai.Message{Content: "test response"}},
+	messages []llm.Message,
+	opts ...llm.ChatCompletionOptions,
+) (*llm.ChatCompletionResponse, error) {
+	return &llm.ChatCompletionResponse{
+		Choices: []llm.Choice{
+			{Message: llm.Message{Content: "test response"}},
 		},
 	}, nil
 }
 
-func (m *MockOpenAIClient) ChatCompletionStream(
+func (m *MockLLMProvider) ChatCompletionStream(
 	ctx context.Context,
-	messages []openai.Message,
-	handler openai.StreamHandler,
-	opts ...openai.ChatCompletionOptions,
+	messages []llm.Message,
+	handler llm.StreamHandler,
+	opts ...llm.ChatCompletionOptions,
 ) error {
 	return nil
 }
 
-func (m *MockOpenAIClient) CreateEmbeddings(
-	ctx context.Context,
-	texts []string,
-	opts ...openai.EmbeddingOptions,
-) (*openai.EmbeddingResponse, error) {
-	return nil, nil
-}
-
-func (m *MockOpenAIClient) CountTokens(text string) (int, error) {
+func (m *MockLLMProvider) CountTokens(text string) (int, error) {
 	return len(strings.Fields(text)), nil
 }
 
-func (m *MockOpenAIClient) EstimateCost(promptTokens, completionTokens int) float64 {
+func (m *MockLLMProvider) EstimateCost(promptTokens, completionTokens int) float64 {
 	return 0.0
 }
 
-func (m *MockOpenAIClient) GetUsageStats() openai.TokenCount {
-	return openai.TokenCount{}
+func (m *MockLLMProvider) GetUsageStats() llm.TokenCount {
+	return llm.TokenCount{}
 }
 
-func (m *MockOpenAIClient) ResetUsageStats() {}
+func (m *MockLLMProvider) ResetUsageStats() {}
+
+func (m *MockLLMProvider) GetProviderType() llm.ProviderType {
+	return llm.ProviderOpenAI
+}
+
+func (m *MockLLMProvider) GetModel() string {
+	return "gpt-4o"
+}
 
 // MockRAGRetriever implements the rag.DocumentRetriever interface for testing
 type MockRAGRetriever struct{}
@@ -124,7 +124,7 @@ func (m *MockRAGRetriever) ClearCache() error {
 }
 
 func TestNewWikiGenerator(t *testing.T) {
-	client := &MockOpenAIClient{}
+	client := &MockLLMProvider{}
 	retriever := &MockRAGRetriever{}
 	logger := slog.New(slog.NewTextHandler(os.Stdout, nil))
 

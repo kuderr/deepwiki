@@ -7,27 +7,22 @@ import (
 	"strings"
 
 	"github.com/kuderr/deepwiki/internal/logging"
+	"github.com/kuderr/deepwiki/pkg/embedding"
+	embeddingfactory "github.com/kuderr/deepwiki/pkg/embedding/factory"
+	"github.com/kuderr/deepwiki/pkg/llm"
+	llmfactory "github.com/kuderr/deepwiki/pkg/llm/factory"
 	"github.com/kuderr/deepwiki/pkg/types"
 	"gopkg.in/yaml.v3"
 )
 
 // Config represents the complete configuration for deepwiki-cli
 type Config struct {
-	OpenAI     OpenAIConfig      `yaml:"openai"`
+	Providers  ProviderConfig    `yaml:"providers"`
 	Processing ProcessingConfig  `yaml:"processing"`
 	Filters    FiltersConfig     `yaml:"filters"`
 	Output     OutputConfig      `yaml:"output"`
 	Embeddings EmbeddingsConfig  `yaml:"embeddings"`
 	Logging    logging.LogConfig `yaml:"logging"`
-}
-
-// OpenAIConfig contains OpenAI API configuration
-type OpenAIConfig struct {
-	APIKey         string  `yaml:"api_key"`
-	Model          string  `yaml:"model"`
-	EmbeddingModel string  `yaml:"embedding_model"`
-	MaxTokens      int     `yaml:"max_tokens"`
-	Temperature    float32 `yaml:"temperature"`
 }
 
 // ProcessingConfig contains text processing configuration
@@ -61,13 +56,7 @@ type EmbeddingsConfig struct {
 // DefaultConfig returns a configuration with sensible defaults
 func DefaultConfig() *Config {
 	return &Config{
-		OpenAI: OpenAIConfig{
-			APIKey:         "",
-			Model:          "gpt-4o",
-			EmbeddingModel: "text-embedding-3-small",
-			MaxTokens:      4000,
-			Temperature:    0.1,
-		},
+		Providers: *DefaultProviderConfig(),
 		Processing: ProcessingConfig{
 			ChunkSize:    350,
 			ChunkOverlap: 100,
@@ -75,17 +64,64 @@ func DefaultConfig() *Config {
 		},
 		Filters: FiltersConfig{
 			IncludeExtensions: []string{
-				".go", ".py", ".js", ".ts", ".java", ".cpp", ".c", ".h", ".hpp",
-				".rs", ".jsx", ".tsx", ".html", ".css", ".php", ".swift", ".cs",
-				".md", ".txt", ".rst", ".json", ".yaml", ".yml",
+				// Programming Languages
+				".go", ".py", ".js", ".ts", ".jsx", ".tsx", ".java", ".cpp", ".c", ".h", ".hpp",
+				".cs", ".php", ".rb", ".rs", ".swift", ".kt", ".scala", ".clj", ".hs", ".ml", ".fs",
+				".dart", ".lua", ".r", ".R", ".m", ".mm", ".pl", ".sh", ".bash", ".zsh", ".fish",
+				".ps1", ".bat", ".cmd",
+				// Web Technologies
+				".html", ".htm", ".css", ".scss", ".sass", ".less", ".vue", ".svelte",
+				// Configuration & Data
+				".yaml", ".yml", ".json", ".toml", ".ini", ".cfg", ".conf", ".xml", ".proto",
+				".graphql", ".gql",
+				// Documentation
+				".md", ".mdx", ".txt", ".rst", ".org", ".tex", ".adoc",
+				// Database
+				".sql", ".psql", ".mysql",
+				// Build & CI/CD
+				".dockerfile", ".makefile", ".mk", ".gradle", ".maven", ".ant",
 			},
 			ExcludeDirs: []string{
-				"node_modules", ".git", "dist", "build", "target", ".next",
-				"__pycache__", ".venv", "venv", "vendor", ".cargo", "bin", "obj",
+				// Dependencies
+				"node_modules", "vendor", ".venv", "venv", "env", ".env", "virtualenv",
+				"__pycache__", ".tox", "site-packages", ".bundle", "gems", ".cargo", "target",
+				".gradle", ".mvn",
+				// Build Outputs
+				"dist", "build", "out", "bin", "obj", "lib", ".build", "cmake-build-debug",
+				"cmake-build-release",
+				// Development Tools
+				".git", ".svn", ".hg", ".bzr", ".idea", ".vscode", ".vs", ".eclipse",
+				".settings", ".project", ".classpath", ".factorypath",
+				// Temporary & Cache
+				"tmp", "temp", ".tmp", ".temp", "cache", ".cache", ".next", ".nuxt",
+				".angular", ".turbo",
+				// Logs & Data
+				"logs", "log", ".logs", "data", ".data", "backup", "backups",
+				// Testing (optional)
+				"test", "tests", "__tests__", "spec", ".pytest_cache", "coverage",
+				".nyc_output", "htmlcov",
+				// Documentation (optional)
+				"docs", "doc", ".docs", "documentation", "wiki",
+				// Platform Specific
+				".DS_Store", "Thumbs.db", "Desktop.ini",
 			},
 			ExcludeFiles: []string{
-				"*.min.js", "*.pyc", "*.class", "package-lock.json", "yarn.lock",
-				"*.exe", "*.dll", "*.so", "*.dylib", "*.a", "*.o",
+				// Compiled & Binary Files
+				"*.min.js", "*.min.css", "*.bundle.js", "*.chunk.js", "*.pyc", "*.pyo",
+				"*.class", "*.jar", "*.war", "*.ear", "*.exe", "*.dll", "*.so", "*.dylib",
+				"*.a", "*.o", "*.obj", "*.lib", "*.exp", "*.pdb",
+				// Lock Files
+				"package-lock.json", "yarn.lock", "pnpm-lock.yaml", "composer.lock",
+				"Gemfile.lock", "Pipfile.lock", "poetry.lock", "cargo.lock", "go.sum",
+				// Generated Files
+				"*.generated.*", "*.gen.*", "*_generated.go", "*_gen.go", "*.pb.go",
+				"*.pb.cc", "*.pb.h", "*_pb2.py", "*_pb2_grpc.py",
+				// IDE & Editor Files
+				"*.swp", "*.swo", "*~", ".#*", "#*#", ".*.rej", ".*.orig",
+				// System Files
+				".DS_Store", "Thumbs.db", "desktop.ini", "*.lnk",
+				// Logs & Temporary
+				"*.log", "*.tmp", "*.temp", "*.bak", "*.backup", "core", "*.dump",
 			},
 		},
 		Output: OutputConfig{
@@ -161,16 +197,46 @@ func loadFromFile(config *Config, filename string) error {
 
 // loadFromEnv loads configuration from environment variables
 func loadFromEnv(config *Config) {
-	if apiKey := os.Getenv("OPENAI_API_KEY"); apiKey != "" {
-		config.OpenAI.APIKey = apiKey
+	// LLM Provider configuration
+	if provider := os.Getenv("DEEPWIKI_LLM_PROVIDER"); provider != "" {
+		config.Providers.LLM.Provider = provider
 	}
 
-	if model := os.Getenv("DEEPWIKI_MODEL"); model != "" {
-		config.OpenAI.Model = model
+	if apiKey := os.Getenv("OPENAI_API_KEY"); apiKey != "" && config.Providers.LLM.Provider == "openai" {
+		config.Providers.LLM.APIKey = apiKey
 	}
 
-	if embModel := os.Getenv("DEEPWIKI_EMBEDDING_MODEL"); embModel != "" {
-		config.OpenAI.EmbeddingModel = embModel
+	if apiKey := os.Getenv("ANTHROPIC_API_KEY"); apiKey != "" && config.Providers.LLM.Provider == "anthropic" {
+		config.Providers.LLM.APIKey = apiKey
+	}
+
+	if baseURL := os.Getenv("DEEPWIKI_LLM_BASE_URL"); baseURL != "" {
+		config.Providers.LLM.BaseURL = baseURL
+	}
+
+	if model := os.Getenv("DEEPWIKI_LLM_MODEL"); model != "" {
+		config.Providers.LLM.Model = model
+	}
+
+	// Embedding Provider configuration
+	if provider := os.Getenv("DEEPWIKI_EMBEDDING_PROVIDER"); provider != "" {
+		config.Providers.Embedding.Provider = provider
+	}
+
+	if apiKey := os.Getenv("OPENAI_API_KEY"); apiKey != "" && config.Providers.Embedding.Provider == "openai" {
+		config.Providers.Embedding.APIKey = apiKey
+	}
+
+	if apiKey := os.Getenv("VOYAGE_API_KEY"); apiKey != "" && config.Providers.Embedding.Provider == "voyage" {
+		config.Providers.Embedding.APIKey = apiKey
+	}
+
+	if model := os.Getenv("DEEPWIKI_EMBEDDING_MODEL"); model != "" {
+		config.Providers.Embedding.Model = model
+	}
+
+	if baseURL := os.Getenv("DEEPWIKI_EMBEDDING_BASE_URL"); baseURL != "" {
+		config.Providers.Embedding.BaseURL = baseURL
 	}
 
 	if outputDir := os.Getenv("DEEPWIKI_OUTPUT_DIR"); outputDir != "" {
@@ -200,21 +266,30 @@ func loadFromEnv(config *Config) {
 
 // validateConfig validates the configuration values
 func validateConfig(config *Config) error {
-	// Validate OpenAI configuration
-	if config.OpenAI.Model == "" {
-		return fmt.Errorf("OpenAI model is required")
+	// Validate LLM provider configuration
+	if config.Providers.LLM.Provider == "" {
+		return fmt.Errorf("LLM provider is required")
 	}
 
-	if config.OpenAI.EmbeddingModel == "" {
-		return fmt.Errorf("OpenAI embedding model is required")
+	if config.Providers.LLM.Model == "" {
+		return fmt.Errorf("LLM model is required")
 	}
 
-	if config.OpenAI.MaxTokens <= 0 {
-		return fmt.Errorf("max tokens must be positive")
+	if config.Providers.LLM.MaxTokens <= 0 {
+		return fmt.Errorf("LLM max tokens must be positive")
 	}
 
-	if config.OpenAI.Temperature < 0 || config.OpenAI.Temperature > 2 {
-		return fmt.Errorf("temperature must be between 0 and 2")
+	if config.Providers.LLM.Temperature < 0 || config.Providers.LLM.Temperature > 2 {
+		return fmt.Errorf("LLM temperature must be between 0 and 2")
+	}
+
+	// Validate embedding provider configuration
+	if config.Providers.Embedding.Provider == "" {
+		return fmt.Errorf("embedding provider is required")
+	}
+
+	if config.Providers.Embedding.Model == "" {
+		return fmt.Errorf("embedding model is required")
 	}
 
 	// Validate processing configuration
@@ -286,10 +361,23 @@ func GenerateTemplate() string {
 # You can override any value here or use environment variables.
 
 ` + string(data) + `
+
 # Environment variables that can be used:
+# LLM Provider Configuration:
+# DEEPWIKI_LLM_PROVIDER - LLM provider (openai, anthropic, ollama)
 # OPENAI_API_KEY - OpenAI API key
-# DEEPWIKI_MODEL - OpenAI model name
-# DEEPWIKI_EMBEDDING_MODEL - OpenAI embedding model name
+# ANTHROPIC_API_KEY - Anthropic API key
+# DEEPWIKI_LLM_BASE_URL - Base URL
+# DEEPWIKI_LLM_MODEL - LLM model name
+# 
+# Embedding Provider Configuration:
+# DEEPWIKI_EMBEDDING_PROVIDER - Embedding provider (openai, voyage, ollama)
+# DEEPWIKI_EMBEDDING_MODEL - Embedding model name
+# OPENAI_API_KEY - OpenAI API key (also used for embeddings)
+# VOYAGE_API_KEY - Voyage AI API key
+# DEEPWIKI_EMBEDDING_BASE_URL - Base URL
+# 
+# Output Configuration:
 # DEEPWIKI_OUTPUT_DIR - Output directory
 # DEEPWIKI_FORMAT - Output format (markdown, json)
 # DEEPWIKI_LANGUAGE - Output language (English/en, Russian/ru)
@@ -298,4 +386,24 @@ func GenerateTemplate() string {
 `
 
 	return template
+}
+
+// GetLLMProvider creates and returns an LLM provider from the configuration
+func (c *Config) GetLLMProvider() (llm.Provider, error) {
+	llmConfig, err := c.Providers.LLM.ToLLMConfig()
+	if err != nil {
+		return nil, fmt.Errorf("invalid LLM configuration: %w", err)
+	}
+
+	return llmfactory.NewLLMProvider(llmConfig)
+}
+
+// GetEmbeddingProvider creates and returns an embedding provider from the configuration
+func (c *Config) GetEmbeddingProvider() (embedding.Provider, error) {
+	embeddingConfig, err := c.Providers.Embedding.ToEmbeddingConfig()
+	if err != nil {
+		return nil, fmt.Errorf("invalid embedding configuration: %w", err)
+	}
+
+	return embeddingfactory.NewEmbeddingProvider(embeddingConfig)
 }

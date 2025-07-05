@@ -13,17 +13,24 @@ func TestDefaultConfig(t *testing.T) {
 		t.Fatal("DefaultConfig returned nil")
 	}
 
-	// Test OpenAI defaults
-	if config.OpenAI.Model != "gpt-4o" {
-		t.Errorf("Expected default model 'gpt-4o', got '%s'", config.OpenAI.Model)
+	// Test LLM provider defaults
+	if config.Providers.LLM.Provider != "openai" {
+		t.Errorf("Expected default LLM provider 'openai', got '%s'", config.Providers.LLM.Provider)
 	}
 
-	if config.OpenAI.EmbeddingModel != "text-embedding-3-small" {
-		t.Errorf("Expected default embedding model 'text-embedding-3-small', got '%s'", config.OpenAI.EmbeddingModel)
+	if config.Providers.LLM.Model != "gpt-4o" {
+		t.Errorf("Expected default LLM model 'gpt-4o', got '%s'", config.Providers.LLM.Model)
 	}
 
-	if config.OpenAI.MaxTokens != 4000 {
-		t.Errorf("Expected default max tokens 4000, got %d", config.OpenAI.MaxTokens)
+	if config.Providers.Embedding.Model != "text-embedding-3-small" {
+		t.Errorf(
+			"Expected default embedding model 'text-embedding-3-small', got '%s'",
+			config.Providers.Embedding.Model,
+		)
+	}
+
+	if config.Providers.LLM.MaxTokens != 4000 {
+		t.Errorf("Expected default max tokens 4000, got %d", config.Providers.LLM.MaxTokens)
 	}
 
 	// Test Processing defaults
@@ -80,8 +87,8 @@ func TestLoadConfig_NoFile(t *testing.T) {
 	}
 
 	// Should have default values
-	if config.OpenAI.Model != "gpt-4o" {
-		t.Errorf("Expected default model, got '%s'", config.OpenAI.Model)
+	if config.Providers.LLM.Model != "gpt-4o" {
+		t.Errorf("Expected default model, got '%s'", config.Providers.LLM.Model)
 	}
 }
 
@@ -95,10 +102,15 @@ func TestLoadConfig_FromFile(t *testing.T) {
 
 	configFile := filepath.Join(tempDir, "test-config.yaml")
 	configContent := `
-openai:
-  model: "gpt-3.5-turbo"
-  max_tokens: 2000
-  temperature: 0.5
+providers:
+  llm:
+    provider: "openai"
+    model: "gpt-3.5-turbo"
+    max_tokens: 2000
+    temperature: 0.5
+  embedding:
+    provider: "openai"
+    model: "text-embedding-3-small"
 
 processing:
   chunk_size: 500
@@ -124,12 +136,12 @@ logging:
 	}
 
 	// Verify values from file
-	if config.OpenAI.Model != "gpt-3.5-turbo" {
-		t.Errorf("Expected model 'gpt-3.5-turbo', got '%s'", config.OpenAI.Model)
+	if config.Providers.LLM.Model != "gpt-3.5-turbo" {
+		t.Errorf("Expected model 'gpt-3.5-turbo', got '%s'", config.Providers.LLM.Model)
 	}
 
-	if config.OpenAI.MaxTokens != 2000 {
-		t.Errorf("Expected max tokens 2000, got %d", config.OpenAI.MaxTokens)
+	if config.Providers.LLM.MaxTokens != 2000 {
+		t.Errorf("Expected max tokens 2000, got %d", config.Providers.LLM.MaxTokens)
 	}
 
 	if config.Processing.ChunkSize != 500 {
@@ -152,11 +164,11 @@ logging:
 func TestLoadConfig_EnvironmentVariables(t *testing.T) {
 	// Set environment variables
 	originalAPIKey := os.Getenv("OPENAI_API_KEY")
-	originalModel := os.Getenv("DEEPWIKI_MODEL")
+	originalModel := os.Getenv("DEEPWIKI_LLM_MODEL")
 	originalFormat := os.Getenv("DEEPWIKI_FORMAT")
 
 	os.Setenv("OPENAI_API_KEY", "test-api-key")
-	os.Setenv("DEEPWIKI_MODEL", "gpt-4-turbo")
+	os.Setenv("DEEPWIKI_LLM_MODEL", "gpt-4-turbo")
 	os.Setenv("DEEPWIKI_FORMAT", "json")
 
 	// Restore original values after test
@@ -167,9 +179,9 @@ func TestLoadConfig_EnvironmentVariables(t *testing.T) {
 			os.Unsetenv("OPENAI_API_KEY")
 		}
 		if originalModel != "" {
-			os.Setenv("DEEPWIKI_MODEL", originalModel)
+			os.Setenv("DEEPWIKI_LLM_MODEL", originalModel)
 		} else {
-			os.Unsetenv("DEEPWIKI_MODEL")
+			os.Unsetenv("DEEPWIKI_LLM_MODEL")
 		}
 		if originalFormat != "" {
 			os.Setenv("DEEPWIKI_FORMAT", originalFormat)
@@ -185,12 +197,12 @@ func TestLoadConfig_EnvironmentVariables(t *testing.T) {
 	}
 
 	// Verify environment variables were loaded
-	if config.OpenAI.APIKey != "test-api-key" {
-		t.Errorf("Expected API key 'test-api-key', got '%s'", config.OpenAI.APIKey)
+	if config.Providers.LLM.APIKey != "test-api-key" {
+		t.Errorf("Expected API key 'test-api-key', got '%s'", config.Providers.LLM.APIKey)
 	}
 
-	if config.OpenAI.Model != "gpt-4-turbo" {
-		t.Errorf("Expected model 'gpt-4-turbo', got '%s'", config.OpenAI.Model)
+	if config.Providers.LLM.Model != "gpt-4-turbo" {
+		t.Errorf("Expected model 'gpt-4-turbo', got '%s'", config.Providers.LLM.Model)
 	}
 
 	if config.Output.Format != "json" {
@@ -209,7 +221,7 @@ func TestValidateConfig_Valid(t *testing.T) {
 
 func TestValidateConfig_InvalidModel(t *testing.T) {
 	config := DefaultConfig()
-	config.OpenAI.Model = ""
+	config.Providers.LLM.Model = ""
 
 	err := validateConfig(config)
 	if err == nil {
@@ -219,7 +231,7 @@ func TestValidateConfig_InvalidModel(t *testing.T) {
 
 func TestValidateConfig_InvalidTemperature(t *testing.T) {
 	config := DefaultConfig()
-	config.OpenAI.Temperature = 3.0 // Too high
+	config.Providers.LLM.Temperature = 3.0 // Too high
 
 	err := validateConfig(config)
 	if err == nil {
@@ -269,7 +281,7 @@ func TestValidateConfig_InvalidLanguage(t *testing.T) {
 
 func TestSaveConfig(t *testing.T) {
 	config := DefaultConfig()
-	config.OpenAI.Model = "test-model"
+	config.Providers.LLM.Model = "test-model"
 
 	// Create temporary file
 	tempDir, err := os.MkdirTemp("", "deepwiki-save-test-*")
@@ -297,8 +309,8 @@ func TestSaveConfig(t *testing.T) {
 		t.Fatalf("Failed to load saved config: %v", err)
 	}
 
-	if loadedConfig.OpenAI.Model != "test-model" {
-		t.Errorf("Expected model 'test-model', got '%s'", loadedConfig.OpenAI.Model)
+	if loadedConfig.Providers.LLM.Model != "test-model" {
+		t.Errorf("Expected model 'test-model', got '%s'", loadedConfig.Providers.LLM.Model)
 	}
 }
 
@@ -310,8 +322,8 @@ func TestGenerateTemplate(t *testing.T) {
 	}
 
 	// Should contain YAML content
-	if !contains(template, "openai:") {
-		t.Error("Template should contain 'openai:' section")
+	if !contains(template, "providers:") {
+		t.Error("Template should contain 'providers:' section")
 	}
 
 	if !contains(template, "processing:") {

@@ -6,29 +6,29 @@ import (
 	"strings"
 	"time"
 
-	"github.com/kuderr/deepwiki/pkg/openai"
+	"github.com/kuderr/deepwiki/pkg/embedding"
 )
 
-// OpenAIEmbeddingGenerator implements EmbeddingGenerator using OpenAI API
-type OpenAIEmbeddingGenerator struct {
-	client openai.Client
-	config *EmbeddingConfig
+// EmbeddingProviderGenerator implements EmbeddingGenerator using any embedding provider
+type EmbeddingProviderGenerator struct {
+	provider embedding.Provider
+	config   *EmbeddingConfig
 }
 
-// NewOpenAIEmbeddingGenerator creates a new OpenAI embedding generator
-func NewOpenAIEmbeddingGenerator(client openai.Client, config *EmbeddingConfig) *OpenAIEmbeddingGenerator {
+// NewEmbeddingProviderGenerator creates a new embedding generator with any provider
+func NewEmbeddingProviderGenerator(provider embedding.Provider, config *EmbeddingConfig) *EmbeddingProviderGenerator {
 	if config == nil {
 		config = DefaultEmbeddingConfig()
 	}
 
-	return &OpenAIEmbeddingGenerator{
-		client: client,
-		config: config,
+	return &EmbeddingProviderGenerator{
+		provider: provider,
+		config:   config,
 	}
 }
 
 // GenerateEmbedding generates an embedding for a single text
-func (g *OpenAIEmbeddingGenerator) GenerateEmbedding(text string) ([]float32, error) {
+func (g *EmbeddingProviderGenerator) GenerateEmbedding(text string) ([]float32, error) {
 	if len(strings.TrimSpace(text)) == 0 {
 		return nil, fmt.Errorf("empty text provided")
 	}
@@ -51,7 +51,7 @@ func (g *OpenAIEmbeddingGenerator) GenerateEmbedding(text string) ([]float32, er
 	// Create embedding request - note: single text needs to be in a slice
 	texts := []string{text}
 
-	response, err := g.client.CreateEmbeddings(ctx, texts)
+	response, err := g.provider.CreateEmbeddings(ctx, texts)
 	if err != nil {
 		return nil, fmt.Errorf("failed to generate embedding: %v", err)
 	}
@@ -71,7 +71,7 @@ func (g *OpenAIEmbeddingGenerator) GenerateEmbedding(text string) ([]float32, er
 }
 
 // GenerateBatchEmbeddings generates embeddings for multiple texts
-func (g *OpenAIEmbeddingGenerator) GenerateBatchEmbeddings(texts []string) ([][]float32, error) {
+func (g *EmbeddingProviderGenerator) GenerateBatchEmbeddings(texts []string) ([][]float32, error) {
 	if len(texts) == 0 {
 		return nil, fmt.Errorf("no texts provided")
 	}
@@ -130,16 +130,16 @@ func (g *OpenAIEmbeddingGenerator) GenerateBatchEmbeddings(texts []string) ([][]
 }
 
 // processBatch processes a single batch of texts
-func (g *OpenAIEmbeddingGenerator) processBatch(texts []string) ([][]float32, error) {
+func (g *EmbeddingProviderGenerator) processBatch(texts []string) ([][]float32, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), time.Duration(g.config.Timeout)*time.Second)
 	defer cancel()
 
-	var response *openai.EmbeddingResponse
+	var response *embedding.EmbeddingResponse
 	var err error
 
 	// Retry logic
 	for attempt := 0; attempt <= g.config.MaxRetries; attempt++ {
-		response, err = g.client.CreateEmbeddings(ctx, texts)
+		response, err = g.provider.CreateEmbeddings(ctx, texts)
 		if err == nil {
 			break
 		}
@@ -174,27 +174,34 @@ func (g *OpenAIEmbeddingGenerator) processBatch(texts []string) ([][]float32, er
 }
 
 // GetModel returns the embedding model name
-func (g *OpenAIEmbeddingGenerator) GetModel() string {
+func (g *EmbeddingProviderGenerator) GetModel() string {
+	if g.provider != nil {
+		return g.provider.GetModel()
+	}
 	return g.config.Model
 }
 
 // GetDimensions returns the embedding dimensions
-func (g *OpenAIEmbeddingGenerator) GetDimensions() int {
+func (g *EmbeddingProviderGenerator) GetDimensions() int {
+	if g.provider != nil {
+		return g.provider.GetDimensions()
+	}
 	return g.config.Dimensions
 }
 
 // GetMaxTokens returns the maximum tokens for embedding
-func (g *OpenAIEmbeddingGenerator) GetMaxTokens() int {
+func (g *EmbeddingProviderGenerator) GetMaxTokens() int {
+	if g.provider != nil {
+		return g.provider.GetMaxTokens()
+	}
 	return g.config.ChunkSize
 }
 
 // EstimateTokens estimates the number of tokens in text
-func (g *OpenAIEmbeddingGenerator) EstimateTokens(text string) int {
-	// Use the OpenAI client's token counting if available
-	if g.client != nil {
-		if count, err := g.client.CountTokens(text); err == nil {
-			return count
-		}
+func (g *EmbeddingProviderGenerator) EstimateTokens(text string) int {
+	// Use the provider's token counting if available
+	if g.provider != nil {
+		return g.provider.EstimateTokens(text)
 	}
 
 	// TODO: Implement fallback token counting using tiktoken-go when client is unavailable
@@ -202,7 +209,12 @@ func (g *OpenAIEmbeddingGenerator) EstimateTokens(text string) int {
 }
 
 // SplitTextForEmbedding splits text into chunks that fit within token limits
-func (g *OpenAIEmbeddingGenerator) SplitTextForEmbedding(text string, maxTokens int) []string {
+func (g *EmbeddingProviderGenerator) SplitTextForEmbedding(text string, maxTokens int) []string {
+	// Use provider's method if available
+	if g.provider != nil {
+		return g.provider.SplitTextForEmbedding(text, maxTokens)
+	}
+
 	if g.EstimateTokens(text) <= maxTokens {
 		return []string{text}
 	}
@@ -248,7 +260,7 @@ func (g *OpenAIEmbeddingGenerator) SplitTextForEmbedding(text string, maxTokens 
 }
 
 // splitBySentences splits text by sentences to fit within token limits
-func (g *OpenAIEmbeddingGenerator) splitBySentences(text string, maxTokens int) []string {
+func (g *EmbeddingProviderGenerator) splitBySentences(text string, maxTokens int) []string {
 	// Simple sentence splitting by periods, exclamation marks, and question marks
 	sentences := strings.FieldsFunc(text, func(c rune) bool {
 		return c == '.' || c == '!' || c == '?'
@@ -291,7 +303,7 @@ func (g *OpenAIEmbeddingGenerator) splitBySentences(text string, maxTokens int) 
 }
 
 // splitByWords splits text by words to fit within token limits
-func (g *OpenAIEmbeddingGenerator) splitByWords(text string, maxTokens int) []string {
+func (g *EmbeddingProviderGenerator) splitByWords(text string, maxTokens int) []string {
 	words := strings.Fields(text)
 	if len(words) == 0 {
 		return nil
@@ -325,7 +337,7 @@ func (g *OpenAIEmbeddingGenerator) splitByWords(text string, maxTokens int) []st
 }
 
 // ValidateConfig validates the embedding configuration
-func (g *OpenAIEmbeddingGenerator) ValidateConfig() error {
+func (g *EmbeddingProviderGenerator) ValidateConfig() error {
 	if g.config.Model == "" {
 		return fmt.Errorf("embedding model not specified")
 	}
@@ -364,7 +376,7 @@ func (g *OpenAIEmbeddingGenerator) ValidateConfig() error {
 }
 
 // GetModelInfo returns information about the current model
-func (g *OpenAIEmbeddingGenerator) GetModelInfo() map[string]interface{} {
+func (g *EmbeddingProviderGenerator) GetModelInfo() map[string]interface{} {
 	info := map[string]interface{}{
 		"model":      g.config.Model,
 		"dimensions": g.config.Dimensions,

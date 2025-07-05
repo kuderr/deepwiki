@@ -4,3 +4,5 @@ node_modules/
 
 # default binary
 deepwiki-cli
+# local config
+.deepwiki.yaml
