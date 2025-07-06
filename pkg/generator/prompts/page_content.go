@@ -78,10 +78,26 @@ If you need to mention a topic that belongs to an entry in <other_pages>, replac
 2. **No duplication**: if another page covers a topic, replace with with md link.
 3. **Skip build/lint/CI chatter** unless this page’s title implies it.
 4. **Mermaid validity** required; diagrams must compile.
-5. **Length target**: 600–1200 words.
+5. **Length target**: <=1200 words.
 6. **Language**: all prose, code comments, tables in **{{.Language}}**.
 7. All page requirements must comply with <page_description>. If you need to go beyond this, insert a link to another page instead of duplicating.
 8. **Output**: return only valid markdown syntax content
+9. **Ensure technical accuracy** - base all content on actual source code
+   - Don't assume functionality not shown in the files
+   - Don't make up information not based on the relevant files.
+   - Don't make up recommendations not based on the relevant files
+   - Explain what the code actually does, not what it might do
+   - Include error handling and edge cases when visible
+10. **Clarity and Conciseness:** Use clear, professional, and concise technical language suitable for other developers working on or learning about the project. Avoid unnecessary jargon, but use correct technical terms where appropriate.
+11. **Include comprehensive code snippets** with proper syntax highlighting:
+   - Show key functions, classes, and configurations
+   - Include usage examples where relevant
+   - Use appropriate language tags (go, python, javascript, etc.)
+12. **Use extensive Mermaid diagrams** throughout the page:
+   - Use flowchart TD for process flows and architecture
+   - Use sequenceDiagram for interactions and API calls
+   - Use classDiagram for object relationships and data structures
+   - Use graph LR for dependencies and connections
 
 # BEFORE RETURNING
 **Self-check** before output:

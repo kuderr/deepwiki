@@ -29,31 +29,48 @@ All pages assume diagrams are required.
 # OUTPUT  (return exactly this XML)
 <wiki_structure>
   <title>{{.ProjectName}} Documentation</title>
-  <description>One-sentence project + wiki purpose.</description>
+  <description>Brief description of the project and this wiki</description>
   <pages>
-    <!-- repeat -->
     <page>
-      <id>kebab-case-id</id>
-      <title>Page Title (<= 6 words)</title>
+      <id>unique-kebab-case-id</id>
+      <title>Page Title</title>
+      <description>Brief description of what this page covers</description>
+
       <importance>high|medium|low</importance>
       <parent_id>optional-parent-id</parent_id>
-
-      <!-- WHY this page exists; max 25 words; user-visible -->
-      <description>…</description>
     </page>
+    <!-- More pages... -->
   </pages>
 </wiki_structure>
 
 # RULES
-1. **Root = core**: only high-importance pages at root (Overview, Architecture, Core APIs, Data Models).
-   Move configs, CI, linting, deployment under a single low-importance subtree (e.g. Operations/Tooling).
+1. Depending on a project create a structured wiki covering all essential aspects, which you consider necessary:
+    - **Overview and Introduction**: Project purpose, key features, getting started
+    - **System Architecture**: High-level design, components, data flow
+    - **Core Features**: Main functionality, use cases, examples
+    - **Data Management**: Storage, processing, models, schemas
+    - **Components and Modules**: Detailed breakdown of major components
+    - **API and Services**: External interfaces, endpoints, integration points
+    - **Deployment and Configuration**: Setup, environment, deployment strategies
+    - **Development and Extension**: Contributing, customization, plugin development
+    - **Operations/Tooling**: configuration, local development, ci, linting, tests
 2. **Zero duplication**: a topic appears once; cross-link elsewhere.
 3. **Compact depth**: 2 levels preferred; 3 only if essential.
 4. **Language**: titles, descriptions, notes in **{{.Language}}**.
-5. **Self-check** before output:
+5. Focus on technical documentation that developers would need
+6. Ensure comprehensive coverage without redundancy
+7. When designing the wiki structure, include pages that would benefit from visual diagrams, such as:
+  - Architecture overviews
+  - Data flow descriptions
+  - Component relationships
+  - Process workflows
+  - State machines
+  - Class hierarchies
+
+# BEFORE RETURNING
+**Self-check** before output:
    – every top-level page is high;  
    – no overlap;  
-   – each page has needs_diagram=true.
 `
 
 // RegisterWikiStructurePrompt registers the wiki structure prompt template
