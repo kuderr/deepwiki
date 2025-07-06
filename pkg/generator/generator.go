@@ -192,17 +192,15 @@ func (g *WikiGenerator) GeneratePageContent(
 	relevantFiles := g.formatRelevantFiles(relevantDocs)
 
 	otherPagesSummaries := make([]prompts.PageSummary, 0, len(structure.Pages)-1)
-	for i, other := range structure.Pages {
-		g.logger.Debug("HUI", "page", page, "other", other)
-
+	for _, other := range structure.Pages {
 		if other.ID == page.ID {
 			continue
 		}
 
-		otherPagesSummaries[i] = prompts.PageSummary{
+		otherPagesSummaries = append(otherPagesSummaries, prompts.PageSummary{
 			Title:       other.Title,
 			Description: other.Description,
-		}
+		})
 	}
 
 	// Prepare prompt data
@@ -221,8 +219,6 @@ func (g *WikiGenerator) GeneratePageContent(
 	if err != nil {
 		return fmt.Errorf("failed to generate content prompt for page %s: %w", page.ID, err)
 	}
-
-	g.logger.Info("Generated page prompt", "prompt", prompt)
 
 	// Call LLM API
 	messages := []llm.Message{

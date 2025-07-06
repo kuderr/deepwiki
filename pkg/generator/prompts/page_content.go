@@ -61,14 +61,14 @@ Generate everything in **{{.Language}}** and include diagrams.
 
 # Registry of already-covered pages (do not repeat)
 <other_pages>
-	<pages>
+  <pages>
 	{{range $page := .OtherPages }}
-		<page>
-			<title>$page.Title</title>
-			<description>$page.Description</description>
+    <page>
+      <title>{{$page.Title}}</title>
+      <description>{{$page.Description}}</description>
     </page>
 	{{end}}
-	</pages>
+  </pages>
 </other_pages>
 
 If you need to mention a topic that belongs to an entry in <other_pages>, replace detailed text with md link.
@@ -81,6 +81,7 @@ If you need to mention a topic that belongs to an entry in <other_pages>, replac
 5. **Length target**: 600–1200 words.
 6. **Language**: all prose, code comments, tables in **{{.Language}}**.
 7. All page requirements must comply with <page_description>. If you need to go beyond this, insert a link to another page instead of duplicating.
+8. **Output**: return only valid markdown syntax content
 
 # BEFORE RETURNING
 **Self-check** before output:
