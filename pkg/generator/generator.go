@@ -9,7 +9,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/kuderr/deepwiki/internal/prompts"
+	"github.com/kuderr/deepwiki/pkg/generator/prompts"
 	"github.com/kuderr/deepwiki/pkg/llm"
 	"github.com/kuderr/deepwiki/pkg/rag"
 	"github.com/kuderr/deepwiki/pkg/scanner"
@@ -31,151 +31,6 @@ func NewWikiGenerator(llmProvider llm.Provider, retriever rag.DocumentRetriever,
 		xmlParser:    NewXMLParser(),
 		logger:       logger.With("component", "generator"),
 	}
-}
-
-// GenerateWikiStructure generates the overall wiki structure for a project
-func (g *WikiGenerator) GenerateWikiStructure(
-	ctx context.Context,
-	fileTree string,
-	readmeContent string,
-	options GenerationOptions,
-) (*WikiStructure, error) {
-	g.logger.Info("Starting wiki structure generation",
-		"project", options.ProjectName,
-		"language", options.Language)
-
-	start := time.Now()
-
-	// Prepare prompt data
-	promptData := prompts.WikiStructureData{
-		FileTree:    fileTree,
-		ReadmeFile:  readmeContent,
-		ProjectName: options.ProjectName,
-		Language:    options.Language,
-	}
-
-	// Execute the prompt
-	prompt, err := prompts.ExecuteWikiStructurePrompt(promptData)
-	if err != nil {
-		return nil, fmt.Errorf("failed to generate structure prompt: %w", err)
-	}
-
-	g.logger.Debug("Generated structure prompt", "length", len(prompt))
-
-	// Call LLM API
-	messages := []llm.Message{
-		{
-			Role:    "user",
-			Content: prompt,
-		},
-	}
-
-	response, err := g.llmProvider.ChatCompletion(ctx, messages, llm.ChatCompletionOptions{
-		MaxTokens:   4000,
-		Temperature: 0.1,
-	})
-	if err != nil {
-		return nil, fmt.Errorf("failed to call LLM API for structure generation: %w", err)
-	}
-
-	// Parse the XML response
-	structureResponse, err := g.xmlParser.ParseWikiStructure(response.Choices[0].Message.Content)
-	if err != nil {
-		return nil, fmt.Errorf("failed to parse wiki structure response: %w", err)
-	}
-
-	// Convert to WikiStructure
-	structure := g.xmlParser.ConvertToWikiStructure(structureResponse, options)
-
-	g.logger.Info("Wiki structure generated successfully",
-		"pages", len(structure.Pages),
-		"duration", time.Since(start))
-
-	return structure, nil
-}
-
-// GeneratePageContent generates content for a specific wiki page
-func (g *WikiGenerator) GeneratePageContent(
-	ctx context.Context,
-	fileTree string,
-	page *WikiPage,
-	structure *WikiStructure,
-	options GenerationOptions,
-) error {
-	g.logger.Info("Generating content for page", "page", page.Title, "id", page.ID)
-
-	start := time.Now()
-
-	// Retrieve relevant documents for this page using a simple query based on page title
-	retrievalContext := &rag.RetrievalContext{
-		Query:      page.Title + " " + page.Description,
-		QueryType:  rag.QueryTypeHybrid,
-		MaxResults: 20,
-		MinScore:   0.1,
-	}
-
-	relevantDocs, err := g.ragRetriever.RetrieveRelevantDocuments(retrievalContext)
-	if err != nil {
-		return fmt.Errorf("failed to retrieve relevant documents for page %s: %w", page.ID, err)
-	}
-
-	g.logger.Debug("Retrieved relevant documents", "page", page.ID, "docs", len(relevantDocs))
-
-	// Format relevant files for the prompt
-	relevantFiles := g.formatRelevantFiles(relevantDocs)
-
-	// Prepare prompt data
-	promptData := prompts.PageContentData{
-		PageTitle:       page.Title,
-		PageDescription: page.Description,
-		RelevantFiles:   relevantFiles,
-		ProjectName:     options.ProjectName,
-		Language:        options.Language,
-		FileTree:        fileTree,
-	}
-
-	// Execute the prompt
-	prompt, err := prompts.ExecutePageContentPrompt(promptData)
-	if err != nil {
-		return fmt.Errorf("failed to generate content prompt for page %s: %w", page.ID, err)
-	}
-
-	// Call LLM API
-	messages := []llm.Message{
-		{
-			Role:    "user",
-			Content: prompt,
-		},
-	}
-
-	response, err := g.llmProvider.ChatCompletion(ctx, messages, llm.ChatCompletionOptions{
-		MaxTokens:   4000,
-		Temperature: 0.1,
-	})
-	if err != nil {
-		return fmt.Errorf("failed to call LLM API for page content generation: %w", err)
-	}
-
-	// Update the page with generated content
-	page.Content = response.Choices[0].Message.Content
-	page.WordCount = len(strings.Fields(response.Choices[0].Message.Content))
-	page.SourceFiles = len(relevantDocs)
-	page.CreatedAt = time.Now()
-
-	// Extract file paths from relevant documents
-	filePaths := make([]string, len(relevantDocs))
-	for i, doc := range relevantDocs {
-		filePaths[i] = doc.FilePath
-	}
-	page.FilePaths = filePaths
-
-	g.logger.Info("Page content generated successfully",
-		"page", page.ID,
-		"words", page.WordCount,
-		"sources", page.SourceFiles,
-		"duration", time.Since(start))
-
-	return nil
 }
 
 // GenerateWiki generates a complete wiki for the project
@@ -241,6 +96,171 @@ func (g *WikiGenerator) GenerateWiki(
 		"duration", result.ProcessingTime)
 
 	return result, nil
+}
+
+// GenerateWikiStructure generates the overall wiki structure for a project
+func (g *WikiGenerator) GenerateWikiStructure(
+	ctx context.Context,
+	fileTree string,
+	readmeContent string,
+	options GenerationOptions,
+) (*WikiStructure, error) {
+	g.logger.Info("Starting wiki structure generation",
+		"project", options.ProjectName,
+		"language", options.Language,
+	)
+
+	start := time.Now()
+
+	// Prepare prompt data
+	promptData := prompts.WikiStructureData{
+		FileTree:    fileTree,
+		ReadmeFile:  readmeContent,
+		ProjectName: options.ProjectName,
+		Language:    options.Language,
+	}
+
+	// Execute the prompt
+	prompt, err := prompts.ExecuteWikiStructurePrompt(promptData)
+	if err != nil {
+		return nil, fmt.Errorf("failed to generate structure prompt: %w", err)
+	}
+
+	g.logger.Debug("Generated structure prompt", "length", len(prompt))
+
+	// Call LLM API
+	messages := []llm.Message{
+		{
+			Role:    "user",
+			Content: prompt,
+		},
+	}
+
+	response, err := g.llmProvider.ChatCompletion(ctx, messages, llm.ChatCompletionOptions{
+		MaxTokens:   4000,
+		Temperature: 0.1,
+	})
+	if err != nil {
+		return nil, fmt.Errorf("failed to call LLM API for structure generation: %w", err)
+	}
+
+	// Parse the XML response
+	structureResponse, err := g.xmlParser.ParseWikiStructure(response.Choices[0].Message.Content)
+	if err != nil {
+		return nil, fmt.Errorf("failed to parse wiki structure response: %w", err)
+	}
+
+	// Convert to WikiStructure
+	structure := g.xmlParser.ConvertToWikiStructure(structureResponse, options)
+
+	g.logger.Info("Wiki structure generated successfully",
+		"pages", len(structure.Pages),
+		"duration", time.Since(start),
+	)
+
+	return structure, nil
+}
+
+// GeneratePageContent generates content for a specific wiki page
+func (g *WikiGenerator) GeneratePageContent(
+	ctx context.Context,
+	fileTree string,
+	page *WikiPage,
+	structure *WikiStructure,
+	options GenerationOptions,
+) error {
+	g.logger.Info("Generating content for page", "page", page.Title, "id", page.ID)
+
+	start := time.Now()
+
+	// Retrieve relevant documents for this page using a simple query based on page title
+	retrievalContext := &rag.RetrievalContext{
+		Query:      page.Title + " " + page.Description,
+		QueryType:  rag.QueryTypeHybrid,
+		MaxResults: 20,
+		MinScore:   0.1,
+	}
+
+	relevantDocs, err := g.ragRetriever.RetrieveRelevantDocuments(retrievalContext)
+	if err != nil {
+		return fmt.Errorf("failed to retrieve relevant documents for page %s: %w", page.ID, err)
+	}
+
+	g.logger.Debug("Retrieved relevant documents", "page", page.ID, "docs", len(relevantDocs))
+
+	// Format relevant files for the prompt
+	relevantFiles := g.formatRelevantFiles(relevantDocs)
+
+	otherPagesSummaries := make([]prompts.PageSummary, 0, len(structure.Pages)-1)
+	for i, other := range structure.Pages {
+		g.logger.Debug("HUI", "page", page, "other", other)
+
+		if other.ID == page.ID {
+			continue
+		}
+
+		otherPagesSummaries[i] = prompts.PageSummary{
+			Title:       other.Title,
+			Description: other.Description,
+		}
+	}
+
+	// Prepare prompt data
+	promptData := prompts.PageContentData{
+		Title:         page.Title,
+		Description:   page.Description,
+		RelevantFiles: relevantFiles,
+		ProjectName:   options.ProjectName,
+		Language:      options.Language,
+		FileTree:      fileTree,
+		OtherPages:    otherPagesSummaries,
+	}
+
+	// Execute the prompt
+	prompt, err := prompts.ExecutePageContentPrompt(promptData)
+	if err != nil {
+		return fmt.Errorf("failed to generate content prompt for page %s: %w", page.ID, err)
+	}
+
+	g.logger.Info("Generated page prompt", "prompt", prompt)
+
+	// Call LLM API
+	messages := []llm.Message{
+		{
+			Role:    "user",
+			Content: prompt,
+		},
+	}
+
+	response, err := g.llmProvider.ChatCompletion(ctx, messages, llm.ChatCompletionOptions{
+		MaxTokens:   4000,
+		Temperature: 0.1,
+	})
+	if err != nil {
+		return fmt.Errorf("failed to call LLM API for page content generation: %w", err)
+	}
+
+	// Update the page with generated content
+	page.Content = response.Choices[0].Message.Content
+	page.WordCount = len(strings.Fields(response.Choices[0].Message.Content))
+	page.SourceFiles = len(relevantDocs)
+	page.CreatedAt = time.Now()
+
+	// Extract file paths from relevant documents
+	filePaths := make([]string, len(relevantDocs))
+	for i, doc := range relevantDocs {
+		filePaths[i] = doc.FilePath
+	}
+	page.FilePaths = filePaths
+
+	g.logger.Info("Page content generated successfully",
+		"page", page.ID,
+		"words", page.WordCount,
+		"sources", page.SourceFiles,
+		"duration", time.Since(start),
+	)
+
+	return nil
 }
 
 // buildFileTree creates a string representation of the file tree

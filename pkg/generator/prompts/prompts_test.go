@@ -79,12 +79,12 @@ func TestWikiStructurePrompt(t *testing.T) {
 
 func TestPageContentPrompt(t *testing.T) {
 	data := PageContentData{
-		PageTitle:       "Core Architecture",
-		PageDescription: "Overview of the system architecture",
-		RelevantFiles:   "main.go:\npackage main\n\nfunc main() {}\n",
-		ProjectName:     "test-project",
-		Language:        "en",
-		FileTree:        "src/\n  main.go\n",
+		Title:         "Core Architecture",
+		Description:   "Overview of the system architecture",
+		RelevantFiles: "main.go:\npackage main\n\nfunc main() {}\n",
+		ProjectName:   "test-project",
+		Language:      "en",
+		FileTree:      "src/\n  main.go\n",
 	}
 
 	result, err := ExecutePageContentPrompt(data)
