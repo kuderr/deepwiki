@@ -29,12 +29,15 @@ All pages assume diagrams are required.
 # OUTPUT  (return exactly this XML)
 <wiki_structure>
   <title>{{.ProjectName}} Documentation</title>
-  <description>Brief description of the project and this wiki</description>
+  
+  <!-- Generate description -->
+  <description>[Brief description of the project and this wiki]</description>
   <pages>
     <page>
       <id>unique-kebab-case-id</id>
-      <title>Page Title</title>
-      <description>Brief description of what this page covers</description>
+      <title>[Page Title]</title>
+      <!-- Generate description -->
+      <description>[Brief description of what this page covers]</description>
 
       <importance>high|medium|low</importance>
       <parent_id>optional-parent-id</parent_id>
