@@ -1,6 +1,9 @@
 package prompts
 
-import "sync"
+import (
+	"fmt"
+	"sync"
+)
 
 var (
 	defaultManager *TemplateManager
@@ -25,6 +28,7 @@ func initializeDefaultPrompts(tm *TemplateManager) {
 
 	// Register page content prompt
 	if err := RegisterPageContentPrompt(tm); err != nil {
+		fmt.Println(err.Error())
 		panic("failed to register page content prompt: " + err.Error())
 	}
 }
