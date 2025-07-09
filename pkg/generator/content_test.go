@@ -124,22 +124,22 @@ func TestContentProcessor_cleanMarkdownCodeBlocks(t *testing.T) {
 	}{
 		{
 			name:     "simple markdown block",
-			input:    "Text\n````markdown\n# Header\nContent\n````\nMore text",
+			input:    "Text\n```markdown\n# Header\nContent\nMore text",
 			expected: "Text\n# Header\nContent\nMore text",
 		},
 		{
 			name:     "markdown block with whitespace",
-			input:    "Text\n````markdown   \n# Header\nContent\n````\nMore text",
+			input:    "Text\n```markdown   \n# Header\nContent\nMore text",
 			expected: "Text\n# Header\nContent\nMore text",
 		},
 		{
 			name:     "multiple markdown blocks",
-			input:    "Text\n````markdown\nFirst\n````\nMiddle\n````markdown\nSecond\n````\nEnd",
+			input:    "Text\n```markdown\nFirst\nMiddle\n```markdown\nSecond\nEnd",
 			expected: "Text\nFirst\nMiddle\nSecond\nEnd",
 		},
 		{
 			name:     "markdown block with complex content",
-			input:    "Text\n````markdown\n# Header\n\n```go\nfunc test() {}\n```\n\nMore content\n````\nEnd",
+			input:    "Text\n```markdown\n# Header\n\n```go\nfunc test() {}\n```\n\nMore content\nEnd",
 			expected: "Text\n# Header\n\n```go\nfunc test() {}\n```\n\nMore content\nEnd",
 		},
 		{
@@ -149,13 +149,13 @@ func TestContentProcessor_cleanMarkdownCodeBlocks(t *testing.T) {
 		},
 		{
 			name:     "empty markdown block",
-			input:    "Text\n````markdown\n\n````\nMore text",
-			expected: "Text\n\nMore text",
+			input:    "Text\n```markdown\nMore text",
+			expected: "Text\nMore text",
 		},
 		{
 			name:     "markdown block with only whitespace",
-			input:    "Text\n````markdown\n   \n  \n````\nMore text",
-			expected: "Text\n  \nMore text",
+			input:    "Text\n```markdown\n\nMore text",
+			expected: "Text\nMore text",
 		},
 	}
 
@@ -185,14 +185,13 @@ This is thinking content
 that should be removed
 </think>
 
-` + "````markdown" + `
+` + "```markdown" + `
 # Header
 Content here
-` + "````" + `
-
 ` + "```" + `
 
 ` + "```" + `
+
 
 More content`,
 			expected: "Some text\n\n# Header\nContent here\n\nMore content",
@@ -203,12 +202,11 @@ More content`,
 
 <think>Planning this section</think>
 
-` + "````markdown" + `
+` + "```markdown" + `
 ## Section 1
 Some content
-` + "````" + `
-
 ` + "```" + `
+
 ` + "```" + `
 
 Final text`,

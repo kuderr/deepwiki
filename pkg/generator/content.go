@@ -276,11 +276,11 @@ func (cp *ContentProcessor) cleanEmptyCodeBlocks(content string) string {
 	return emptyCodeBlockRegex.ReplaceAllString(content, "")
 }
 
-// cleanMarkdownCodeBlocks removes ````markdown start and end lines but keeps content
+// cleanMarkdownCodeBlocks removes ```markdown start lines
 func (cp *ContentProcessor) cleanMarkdownCodeBlocks(content string) string {
-	// Remove ````markdown wrappers but keep the content inside
-	markdownBlockRegex := regexp.MustCompile("(?s)````markdown\\s*\n(.*?)\n````")
-	return markdownBlockRegex.ReplaceAllString(content, "$1")
+	// Remove ```markdown lines
+	markdownBlockRegex := regexp.MustCompile("(?s)```markdown\\s*\n")
+	return markdownBlockRegex.ReplaceAllString(content, "")
 }
 
 // validateMermaidSyntax performs basic validation of Mermaid diagram syntax
