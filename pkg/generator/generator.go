@@ -17,19 +17,21 @@ import (
 
 // WikiGenerator generates wiki structures and content
 type WikiGenerator struct {
-	llmProvider  llm.Provider
-	ragRetriever rag.DocumentRetriever
-	xmlParser    *XMLParser
-	logger       *slog.Logger
+	llmProvider          llm.Provider
+	ragRetriever         rag.DocumentRetriever
+	xmlParser            *XMLParser
+	logger               *slog.Logger
+	contentPostProcessor *ContentProcessor
 }
 
 // NewWikiGenerator creates a new wiki generator
 func NewWikiGenerator(llmProvider llm.Provider, retriever rag.DocumentRetriever, logger *slog.Logger) *WikiGenerator {
 	return &WikiGenerator{
-		llmProvider:  llmProvider,
-		ragRetriever: retriever,
-		xmlParser:    NewXMLParser(),
-		logger:       logger.With("component", "generator"),
+		llmProvider:          llmProvider,
+		ragRetriever:         retriever,
+		xmlParser:            NewXMLParser(),
+		logger:               logger.With("component", "generator"),
+		contentPostProcessor: NewContentProcessor(),
 	}
 }
 
@@ -237,8 +239,8 @@ func (g *WikiGenerator) GeneratePageContent(
 	}
 
 	// Update the page with generated content
-	page.Content = response.Choices[0].Message.Content
-	page.WordCount = len(strings.Fields(response.Choices[0].Message.Content))
+	page.Content = g.contentPostProcessor.CleanMarkdown(response.Choices[0].Message.Content)
+	page.WordCount = len(strings.Fields(page.Content))
 	page.SourceFiles = len(relevantDocs)
 	page.CreatedAt = time.Now()
 

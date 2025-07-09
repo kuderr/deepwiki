@@ -55,7 +55,6 @@ func (tm *TemplateManager) RegisterTemplate(name, content string) error {
 
 // Execute executes a template with the given data
 func (tm *TemplateManager) Execute(name string, data interface{}) (string, error) {
-
 	tmpl, exists := tm.templates[name]
 	if !exists {
 		return "", fmt.Errorf("template %s not found", name)

@@ -81,7 +81,7 @@ If you need to mention a topic that belongs to an entry in <other_pages>, replac
 5. **Length target**: <=1200 words.
 6. **Language**: all prose, code comments, tables in **{{.Language}}**.
 7. All page requirements must comply with <page_description>. If you need to go beyond this, insert a link to another page instead of duplicating.
-8. **Output**: return only valid markdown syntax content
+8. **Output**: return only valid markdown syntax content. Dont wrap it in any additional tags.
 9. **Ensure technical accuracy** - base all content on actual source code
    - Don't assume functionality not shown in the files
    - Don't make up information not based on the relevant files.

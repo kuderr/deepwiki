@@ -16,6 +16,15 @@ func NewContentProcessor() *ContentProcessor {
 
 // CleanMarkdown cleans and formats markdown content
 func (cp *ContentProcessor) CleanMarkdown(content string) string {
+	// Remove think blocks first
+	content = cp.cleanThinkBlocks(content)
+
+	// Remove markdown code block wrappers
+	content = cp.cleanMarkdownCodeBlocks(content)
+
+	// Remove empty code blocks
+	content = cp.cleanEmptyCodeBlocks(content)
+
 	// Remove excessive whitespace
 	content = cp.normalizeWhitespace(content)
 
@@ -251,6 +260,27 @@ func (cp *ContentProcessor) removeDuplicateEmptyLines(content string) string {
 	// Replace multiple consecutive empty lines with single empty line
 	multipleEmptyLines := regexp.MustCompile(`\n\s*\n\s*\n+`)
 	return multipleEmptyLines.ReplaceAllString(content, "\n\n")
+}
+
+// cleanThinkBlocks removes <think></think> blocks with their content
+func (cp *ContentProcessor) cleanThinkBlocks(content string) string {
+	// Remove <think></think> blocks including their content
+	thinkBlockRegex := regexp.MustCompile(`(?s)<think>.*?</think>`)
+	return thinkBlockRegex.ReplaceAllString(content, "")
+}
+
+// cleanEmptyCodeBlocks removes empty ``` blocks
+func (cp *ContentProcessor) cleanEmptyCodeBlocks(content string) string {
+	// Remove empty code blocks (``` followed by optional language and whitespace, then closing ```)
+	emptyCodeBlockRegex := regexp.MustCompile("(?m)^\\s*```[a-zA-Z0-9]*\\s*\n\\s*```\\s*$")
+	return emptyCodeBlockRegex.ReplaceAllString(content, "")
+}
+
+// cleanMarkdownCodeBlocks removes ```markdown start lines
+func (cp *ContentProcessor) cleanMarkdownCodeBlocks(content string) string {
+	// Remove ```markdown lines
+	markdownBlockRegex := regexp.MustCompile("(?s)```markdown\\s*\n")
+	return markdownBlockRegex.ReplaceAllString(content, "")
 }
 
 // validateMermaidSyntax performs basic validation of Mermaid diagram syntax
