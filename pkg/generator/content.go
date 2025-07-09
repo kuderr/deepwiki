@@ -271,8 +271,8 @@ func (cp *ContentProcessor) cleanThinkBlocks(content string) string {
 
 // cleanEmptyCodeBlocks removes empty ``` blocks
 func (cp *ContentProcessor) cleanEmptyCodeBlocks(content string) string {
-	// Remove empty code blocks (``` followed by optional whitespace and closing ```)
-	emptyCodeBlockRegex := regexp.MustCompile("(?m)^\\s*```\\s*\n\\s*```\\s*$")
+	// Remove empty code blocks (``` followed by optional language and whitespace, then closing ```)
+	emptyCodeBlockRegex := regexp.MustCompile("(?m)^\\s*```[a-zA-Z0-9]*\\s*\n\\s*```\\s*$")
 	return emptyCodeBlockRegex.ReplaceAllString(content, "")
 }
 
