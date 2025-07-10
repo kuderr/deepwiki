@@ -197,11 +197,17 @@ func (l *Logger) LogProgress(ctx context.Context, operation string, current, tot
 	)
 }
 
-// Close closes the logger (if it's writing to a file)
+// Close closes the logger's output if it's writing to a file.
+// It will not close stdout or stderr.
 func (l *Logger) Close() error {
+	if l.output == os.Stdout || l.output == os.Stderr {
+		return nil
+	}
+
 	if closer, ok := l.output.(io.Closer); ok {
 		return closer.Close()
 	}
+
 	return nil
 }
 
