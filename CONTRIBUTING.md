@@ -1,19 +1,19 @@
-# Contributing to DeepWiki CLI
+# Contributing to DeepWiki
 
-Thank you for your interest in contributing to DeepWiki CLI! This document provides guidelines and information for contributors.
+Thank you for your interest in contributing to DeepWiki! This document provides guidelines and information for contributors.
 
 ## 🤝 Ways to Contribute
 
 ### 🐛 Bug Reports
 
-- Report bugs through [GitHub Issues](https://github.com/your-org/deepwiki-cli/issues)
+- Report bugs through [GitHub Issues](https://github.com/kuderr/deepwiki/issues)
 - Include detailed reproduction steps
 - Provide environment information
 - Attach relevant logs and configuration
 
 ### 💡 Feature Requests
 
-- Suggest new features via [GitHub Issues](https://github.com/your-org/deepwiki-cli/issues)
+- Suggest new features via [GitHub Issues](https://github.com/kuderr/deepwiki/issues)
 - Explain the use case and benefits
 - Consider implementation complexity
 - Discuss with maintainers before starting work
@@ -48,11 +48,11 @@ Thank you for your interest in contributing to DeepWiki CLI! This document provi
 ```bash
 # Fork the repository on GitHub
 # Then clone your fork
-git clone https://github.com/YOUR-USERNAME/deepwiki-cli.git
-cd deepwiki-cli
+git clone https://github.com/YOUR-USERNAME/deepwiki.git
+cd deepwiki
 
 # Add upstream remote
-git remote add upstream https://github.com/your-org/deepwiki-cli.git
+git remote add upstream https://github.com/kuderr/deepwiki.git
 ```
 
 2. **Install Dependencies**
@@ -69,7 +69,7 @@ go mod verify
 
 ```bash
 # Build the project
-go build -o deepwiki-cli
+go build -o deepwiki
 
 # Run tests
 go test ./...
@@ -84,8 +84,8 @@ go test ./internal/config/ -v
 ```bash
 # Test basic functionality (requires OPENAI_API_KEY)
 export OPENAI_API_KEY="your-test-key"
-./deepwiki-cli version
-./deepwiki-cli generate --dry-run --verbose
+./deepwiki version
+./deepwiki generate --dry-run --verbose
 ```
 
 ## 📝 Development Workflow
@@ -128,7 +128,7 @@ go test -bench=. ./pkg/output/
 
 # Test with real projects
 export OPENAI_API_KEY="your-key"
-./deepwiki-cli generate --dry-run /path/to/test/project
+./deepwiki generate --dry-run /path/to/test/project
 ```
 
 ### 4. Commit Changes
@@ -164,7 +164,7 @@ git push origin feature/your-feature-name
 Understanding the codebase organization:
 
 ```
-deepwiki-cli/
+deepwiki/
 ├── cmd/                    # CLI commands (Cobra)
 │   ├── root.go            # Root command and global flags
 │   ├── generate.go        # Generate command implementation
@@ -662,7 +662,7 @@ What actually happened
 
 - OS: [e.g., macOS 12.0, Ubuntu 20.04]
 - Go Version: [e.g., 1.21.0]
-- DeepWiki CLI Version: [e.g., 1.0.0]
+- DeepWiki Version: [e.g., 1.0.0]
 - OpenAI Model: [e.g., gpt-4o]
 
 ## Configuration
@@ -731,8 +731,8 @@ We follow [Semantic Versioning](https://semver.org/):
 
 1. **Documentation**: Check the [README](README.md) and [docs/](docs/) first
 2. **Search Issues**: Look for existing issues and discussions
-3. **Ask Questions**: Use [GitHub Discussions](https://github.com/your-org/deepwiki-cli/discussions)
-4. **Report Bugs**: Create a [GitHub Issue](https://github.com/your-org/deepwiki-cli/issues)
+3. **Ask Questions**: Use [GitHub Discussions](https://github.com/kuderr/deepwiki/discussions)
+4. **Report Bugs**: Create a [GitHub Issue](https://github.com/kuderr/deepwiki/issues)
 
 ### Communication Channels
 
@@ -742,7 +742,7 @@ We follow [Semantic Versioning](https://semver.org/):
 
 ## 📜 License
 
-By contributing to DeepWiki CLI, you agree that your contributions will be licensed under the same license as the project (MIT License).
+By contributing to DeepWiki, you agree that your contributions will be licensed under the same license as the project (MIT License).
 
 ## 🙏 Recognition
 
@@ -752,4 +752,4 @@ Contributors will be recognized in:
 - README.md contributors section
 - GitHub contributor graphs
 
-Thank you for contributing to DeepWiki CLI! 🚀
+Thank you for contributing to DeepWiki! 🚀

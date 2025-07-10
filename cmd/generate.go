@@ -54,10 +54,10 @@ The generated documentation can be output in multiple formats (markdown, json)
 and supports multiple languages.
 
 Examples:
-  deepwiki-cli generate
-  deepwiki-cli generate /path/to/project
-  deepwiki-cli generate --output-dir ./docs
-  deepwiki-cli generate --format json --language Russian`,
+  deepwiki generate
+  deepwiki generate /path/to/project
+  deepwiki generate --output-dir ./docs
+  deepwiki generate --format json --language Russian`,
 	Args: cobra.MaximumNArgs(1),
 	RunE: runGenerate,
 }
@@ -492,13 +492,13 @@ func init() {
 	generateCmd.Flags().
 		StringVarP(&outputDir, "output-dir", "o", "./docs", "Output directory for generated documentation")
 	generateCmd.Flags().
-		StringVarP(&format, "format", "f", "markdown", "Output format: markdown, json, docusaurus2, docusaurus3, simple-docusaurus2, simple-docusaurus3")
+		StringVarP(&format, "format", "f", "", "Output format: markdown, json, docusaurus2, docusaurus3, simple-docusaurus2, simple-docusaurus3")
 	generateCmd.Flags().
-		StringVarP(&language, "language", "l", "en", "Language for generation: English/en, Russian/ru")
+		StringVarP(&language, "language", "l", "", "Language for generation: English/en, Russian/ru")
 	generateCmd.Flags().StringVarP(&model, "model", "m", "", "LLM model to use for doc generation")
 	generateCmd.Flags().StringVar(&excludeDirs, "exclude-dirs", "", "Comma-separated list of directories to exclude")
 	generateCmd.Flags().StringVar(&excludeFiles, "exclude-files", "", "Comma-separated patterns for files to exclude")
-	generateCmd.Flags().IntVar(&chunkSize, "chunk-size", 350, "Text chunk size for embeddings")
+	generateCmd.Flags().IntVar(&chunkSize, "chunk-size", 0, "Text chunk size for embeddings")
 	generateCmd.Flags().StringVar(&configFile, "config", "", "Configuration file path")
 	generateCmd.Flags().BoolVarP(&verbose, "verbose", "v", false, "Verbose output")
 	generateCmd.Flags().

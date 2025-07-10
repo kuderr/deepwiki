@@ -12,7 +12,7 @@ import (
 var configCmd = &cobra.Command{
 	Use:   "config",
 	Short: "Configuration management commands",
-	Long:  `Commands for managing deepwiki-cli configuration files.`,
+	Long:  `Commands for managing deepwiki configuration files.`,
 }
 
 // configInitCmd represents the config init command
@@ -25,8 +25,8 @@ This will create a deepwiki.yaml file with all available configuration options
 and their default values. You can then edit this file to customize the behavior.
 
 Examples:
-  deepwiki-cli config init
-  deepwiki-cli config init myconfig.yaml`,
+  deepwiki config init
+  deepwiki config init myconfig.yaml`,
 	Args: cobra.MaximumNArgs(1),
 	RunE: runConfigInit,
 }
@@ -38,8 +38,8 @@ var configValidateCmd = &cobra.Command{
 	Long: `Validate that a configuration file has correct syntax and values.
 
 Examples:
-  deepwiki-cli config validate
-  deepwiki-cli config validate myconfig.yaml`,
+  deepwiki config validate
+  deepwiki config validate myconfig.yaml`,
 	Args: cobra.MaximumNArgs(1),
 	RunE: runConfigValidate,
 }

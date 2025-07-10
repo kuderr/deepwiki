@@ -335,7 +335,7 @@ func TestGenerateTemplate(t *testing.T) {
 	}
 
 	// Should contain comments
-	if !contains(template, "# DeepWiki CLI Configuration File") {
+	if !contains(template, "# DeepWiki Configuration File") {
 		t.Error("Template should contain header comment")
 	}
 

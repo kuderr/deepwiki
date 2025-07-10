@@ -15,7 +15,7 @@ import (
 	"gopkg.in/yaml.v3"
 )
 
-// Config represents the complete configuration for deepwiki-cli
+// Config represents the complete configuration for deepwiki
 type Config struct {
 	Providers  ProviderConfig    `yaml:"providers"`
 	Processing ProcessingConfig  `yaml:"processing"`
@@ -356,7 +356,7 @@ func GenerateTemplate() string {
 	config := DefaultConfig()
 	data, _ := yaml.Marshal(config)
 
-	template := `# DeepWiki CLI Configuration File
+	template := `# DeepWiki Configuration File
 # This file contains default values for all configuration options.
 # You can override any value here or use environment variables.
 

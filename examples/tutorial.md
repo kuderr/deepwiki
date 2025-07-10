@@ -1,6 +1,6 @@
-# DeepWiki CLI Tutorial
+# DeepWiki Tutorial
 
-This tutorial will guide you through using DeepWiki CLI to generate comprehensive documentation for your projects.
+This tutorial will guide you through using DeepWiki to generate comprehensive documentation for your projects.
 
 ## Prerequisites
 
@@ -8,7 +8,7 @@ Before starting, ensure you have:
 
 1. **Go 1.24+** installed
 2. **OpenAI API Key** (get one from [OpenAI Platform](https://platform.openai.com/api-keys))
-3. **DeepWiki CLI** installed
+3. **DeepWiki** installed
 
 ## Tutorial 1: Basic Usage
 
@@ -16,12 +16,12 @@ Before starting, ensure you have:
 
 ```bash
 # Clone and build
-git clone https://github.com/your-org/deepwiki-cli.git
-cd deepwiki-cli
-go build -o deepwiki-cli
+git clone https://github.com/kuderr/deepwiki.git
+cd deepwiki
+go build -o deepwiki
 
 # Or install directly
-go install github.com/your-org/deepwiki-cli@latest
+go install github.com/your-org/deepwiki@latest
 ```
 
 ### Step 2: Set Up Your Environment
@@ -31,7 +31,7 @@ go install github.com/your-org/deepwiki-cli@latest
 export OPENAI_API_KEY="sk-your-actual-api-key-here"
 
 # Verify installation
-./deepwiki-cli version
+./deepwiki version
 ```
 
 ### Step 3: Generate Your First Documentation
@@ -41,7 +41,7 @@ export OPENAI_API_KEY="sk-your-actual-api-key-here"
 cd /path/to/your/project
 
 # Generate documentation (basic)
-./deepwiki-cli generate
+./deepwiki generate
 
 # This will:
 # 1. Scan your project files
@@ -70,7 +70,7 @@ cat docs/wiki-structure.json
 
 ```bash
 # Generate a configuration template
-./deepwiki-cli config init > deepwiki.yaml
+./deepwiki config init > deepwiki.yaml
 
 # Edit the configuration
 vim deepwiki.yaml
@@ -103,17 +103,17 @@ filters:
 
 ```bash
 # Validate your configuration
-./deepwiki-cli config validate deepwiki.yaml
+./deepwiki config validate deepwiki.yaml
 
 # Generate with custom config
-./deepwiki-cli generate --config deepwiki.yaml
+./deepwiki generate --config deepwiki.yaml
 ```
 
 ### Step 3: Use Command Line Overrides
 
 ```bash
 # Override specific settings
-./deepwiki-cli generate \
+./deepwiki generate \
   --output-dir ./custom-docs \
   --language en \
   --model gpt-4o \
@@ -127,14 +127,14 @@ filters:
 
 ```bash
 # See what would be generated without actually doing it
-./deepwiki-cli generate --dry-run --verbose
+./deepwiki generate --dry-run --verbose
 ```
 
 ### Step 2: Filter Large Projects
 
 ```bash
 # For projects with many files, use filtering
-./deepwiki-cli generate \
+./deepwiki generate \
   --exclude-dirs "node_modules,vendor,.git,dist,build" \
   --exclude-files "*.min.js,*.pyc,*.class" \
   --chunk-size 300 \
@@ -145,7 +145,7 @@ filters:
 
 ```bash
 # Use verbose mode to see detailed progress
-./deepwiki-cli generate --verbose
+./deepwiki generate --verbose
 
 # Output will show:
 # - File scanning progress
@@ -161,7 +161,7 @@ filters:
 
 ```bash
 # Generate markdown documentation
-./deepwiki-cli generate --format markdown --output-dir ./markdown-docs
+./deepwiki generate --format markdown --output-dir ./markdown-docs
 ```
 
 Output structure:
@@ -183,7 +183,7 @@ markdown-docs/
 
 ```bash
 # Generate JSON for tool integration
-./deepwiki-cli generate --format json --output-dir ./json-docs
+./deepwiki generate --format json --output-dir ./json-docs
 ```
 
 Output structure:
@@ -228,7 +228,7 @@ output:
 ### Step 2: Generate Multi-Language Documentation
 
 ```bash
-./deepwiki-cli generate \
+./deepwiki generate \
   --config deepwiki-polyglot.yaml \
   --output-dir ./polyglot-docs \
   --verbose
@@ -245,7 +245,7 @@ Create `.git/hooks/pre-commit`:
 # Pre-commit hook to update documentation
 
 echo "Updating documentation..."
-./deepwiki-cli generate \
+./deepwiki generate \
   --output-dir ./docs \
   --format markdown \
   --config .deepwiki.yaml
@@ -283,14 +283,14 @@ jobs:
         with:
           go-version: "1.21"
 
-      - name: Install DeepWiki CLI
-        run: go install github.com/your-org/deepwiki-cli@latest
+      - name: Install DeepWiki
+        run: go install github.com/your-org/deepwiki@latest
 
       - name: Generate Documentation
         env:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
         run: |
-          deepwiki-cli generate \
+          deepwiki generate \
             --output-dir ./docs \
             --format markdown \
             --verbose
@@ -336,7 +336,7 @@ For large codebases:
 
 ```bash
 # Optimize for speed
-./deepwiki-cli generate \
+./deepwiki generate \
   --model gpt-4o-mini \
   --chunk-size 250 \
   --exclude-dirs "tests,docs,examples,vendor" \
@@ -344,7 +344,7 @@ For large codebases:
   --verbose
 
 # Optimize for quality
-./deepwiki-cli generate \
+./deepwiki generate \
   --model gpt-4o \
   --chunk-size 400 \
   --format markdown \
@@ -357,7 +357,7 @@ For large codebases:
 
 ```bash
 # If you hit rate limits, use a slower model or add delays
-./deepwiki-cli generate \
+./deepwiki generate \
   --model gpt-4o-mini \
   --config-rate-limit 1 \
   --verbose
@@ -367,11 +367,11 @@ For large codebases:
 
 ```bash
 # Break large projects into chunks
-./deepwiki-cli generate \
+./deepwiki generate \
   --exclude-dirs "frontend,mobile" \
   --output-dir ./backend-docs
 
-./deepwiki-cli generate \
+./deepwiki generate \
   --include-dirs "frontend" \
   --output-dir ./frontend-docs
 ```
@@ -381,7 +381,7 @@ For large codebases:
 ```bash
 # Reduce memory usage
 export GOMAXPROCS=2
-./deepwiki-cli generate \
+./deepwiki generate \
   --chunk-size 200 \
   --exclude-dirs "large-data-directory" \
   --verbose
@@ -391,7 +391,7 @@ export GOMAXPROCS=2
 
 ```bash
 # Reduce chunk size to avoid token limits
-./deepwiki-cli generate \
+./deepwiki generate \
   --chunk-size 250 \
   --model gpt-4o-mini \
   --verbose
@@ -439,7 +439,7 @@ After completing these tutorials, you should be able to:
 
 1. ✅ Generate basic documentation for any project
 2. ✅ Customize output format and content
-3. ✅ Integrate DeepWiki CLI into your development workflow
+3. ✅ Integrate DeepWiki into your development workflow
 4. ✅ Troubleshoot common issues
 5. ✅ Optimize for performance and cost
 
@@ -453,8 +453,8 @@ After completing these tutorials, you should be able to:
 
 ### Community Resources
 
-- [GitHub Issues](https://github.com/your-org/deepwiki-cli/issues) - Report bugs and request features
-- [Discussions](https://github.com/your-org/deepwiki-cli/discussions) - Ask questions and share tips
-- [Wiki](https://github.com/your-org/deepwiki-cli/wiki) - Additional documentation and examples
+- [GitHub Issues](https://github.com/kuderr/deepwiki/issues) - Report bugs and request features
+- [Discussions](https://github.com/kuderr/deepwiki/discussions) - Ask questions and share tips
+- [Wiki](https://github.com/kuderr/deepwiki/wiki) - Additional documentation and examples
 
 Happy documenting! 🚀📚

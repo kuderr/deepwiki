@@ -293,7 +293,7 @@ func (c *Calculator) Subtract(a, b int) int {
 	codeBlock := "```bash\ngo run main.go\n```"
 	readme := `# Test Project
 
-This is a test project for deepwiki-cli integration testing.
+This is a test project for deepwiki integration testing.
 
 ## Features
 
@@ -361,7 +361,7 @@ func createJavaScriptProject(t *testing.T, dir string) {
 	packageJson := `{
   "name": "test-project",
   "version": "1.0.0",
-  "description": "Test project for deepwiki-cli",
+  "description": "Test project for deepwiki",
   "main": "index.js",
   "scripts": {
     "start": "node index.js",

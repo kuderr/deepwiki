@@ -9,7 +9,7 @@
 ### 1. CLI Interface
 
 ```bash
-deepwiki-cli [flags] [directory]
+deepwiki [flags] [directory]
 
 Flags:
   --output-dir, -o     Output directory for generated docs (default: ./docs)
@@ -234,7 +234,7 @@ Requirements:
 #### Project Structure
 
 ```
-deepwiki-cli/
+deepwiki/
 ├── cmd/
 │   └── root.go           # CLI commands
 ├── pkg/

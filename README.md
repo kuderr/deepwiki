@@ -1,8 +1,8 @@
-# 🤖 DeepWiki CLI
+# 🤖 DeepWiki
 
 **AI-Powered Documentation Generator for Local Codebases**
 
-DeepWiki CLI is a powerful Go-based command-line tool that automatically generates comprehensive, structured documentation for your local projects using AI. It analyzes your codebase, understands the architecture, and creates detailed wiki-style documentation with minimal manual effort.
+DeepWiki is a powerful Go-based command-line tool that automatically generates comprehensive, structured documentation for your local projects using AI. It analyzes your codebase, understands the architecture, and creates detailed wiki-style documentation with minimal manual effort.
 
 [![Go Version](https://img.shields.io/badge/go-1.24+-blue.svg)](https://golang.org)
 [![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/kuderr/deepwiki)
@@ -44,12 +44,18 @@ DeepWiki CLI is a powerful Go-based command-line tool that automatically generat
 
 ```bash
 # Clone and build
-git clone <repository>
-cd deepwiki-cli
-go build -o deepwiki-cli
+git clone https://github.com/kuderr/deepwiki.git
+cd deepwiki
+go build -o deepwiki
 
 # Or install directly
 go install github.com/kuderr/deepwiki@latest
+
+# or use docker
+git clone https://github.com/kuderr/deepwiki.git
+cd deepwiki
+docker build -t deepwiki .
+docker run --rm -it --name deepwiki --network=host -v $(pwd):/src deepwiki generate -v
 ```
 
 ## Quick Start
@@ -58,13 +64,13 @@ go install github.com/kuderr/deepwiki@latest
 
 ```bash
 # Generate docs for current directory
-deepwiki-cli generate
+deepwiki generate
 
 # Generate docs for specific directory
-deepwiki-cli generate /path/to/project
+deepwiki generate /path/to/project
 
 # With custom options
-deepwiki-cli generate --output-dir ./docs --language ja
+deepwiki generate --output-dir ./docs --language ja
 ```
 
 ### 2. Configuration Examples
@@ -74,33 +80,33 @@ deepwiki-cli generate --output-dir ./docs --language ja
 export ANTHROPIC_API_KEY="your-key"
 export DEEPWIKI_LLM_PROVIDER="anthropic"
 export DEEPWIKI_EMBEDDING_PROVIDER="ollama"
-deepwiki-cli generate
+deepwiki generate
 
 # Use OpenAI for everything (simple setup)
 export OPENAI_API_KEY="your-key"
 export DEEPWIKI_LLM_PROVIDER="openai"
 export DEEPWIKI_EMBEDDING_PROVIDER="openai"
-deepwiki-cli generate
+deepwiki generate
 
 # Use Voyage AI for high-quality embeddings
 export OPENAI_API_KEY="your-llm-key"
 export VOYAGE_API_KEY="your-embedding-key"
 export DEEPWIKI_LLM_PROVIDER="openai"
 export DEEPWIKI_EMBEDDING_PROVIDER="voyage"
-deepwiki-cli generate
+deepwiki generate
 ```
 
 ### 3. Advanced Configuration
 
 ```bash
 # Create configuration template
-deepwiki-cli config init
+deepwiki config init
 
 # Validate configuration
-deepwiki-cli config validate
+deepwiki config validate
 
 # Use custom config file
-deepwiki-cli generate --config my-config.yaml
+deepwiki generate --config my-config.yaml
 ```
 
 ### 4. Environment Setup
@@ -232,7 +238,7 @@ providers:
 ### CLI Options
 
 ```bash
-deepwiki-cli generate [flags]
+deepwiki generate [flags]
 
 Flags:
   -o, --output-dir string      Output directory (default "./docs")
@@ -324,7 +330,7 @@ go test ./internal/config -v
 go test ./internal/logging -v
 
 # Test scanner with real project
-OPENAI_API_KEY=dummy ./deepwiki-cli generate --verbose --dry-run
+OPENAI_API_KEY=dummy ./deepwiki generate --verbose --dry-run
 ```
 
 ## Architecture

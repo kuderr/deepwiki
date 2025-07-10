@@ -1,4 +1,4 @@
-# DeepWiki CLI Implementation TODO
+# DeepWiki Implementation TODO
 
 ## Project Overview
 

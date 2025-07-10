@@ -1,17 +1,17 @@
 # Troubleshooting Guide
 
-This guide helps you diagnose and resolve common issues with DeepWiki CLI.
+This guide helps you diagnose and resolve common issues with DeepWiki.
 
 ## Quick Diagnostics
 
 ### 1. Check Installation
 
 ```bash
-# Verify DeepWiki CLI is installed and accessible
-deepwiki-cli version
+# Verify DeepWiki is installed and accessible
+deepwiki version
 
 # Expected output:
-# DeepWiki CLI version 1.0.0
+# DeepWiki version 1.0.0
 # Built with Go 1.24+
 ```
 
@@ -19,17 +19,17 @@ deepwiki-cli version
 
 ```bash
 # Check your configuration
-deepwiki-cli config validate
+deepwiki config validate
 
 # Show resolved configuration (combines all sources)
-deepwiki-cli config validate --show-resolved
+deepwiki config validate --show-resolved
 ```
 
 ### 3. Test with Dry Run
 
 ```bash
 # Preview what would be generated without actually doing it
-deepwiki-cli generate --dry-run --verbose
+deepwiki generate --dry-run --verbose
 ```
 
 ## Common Issues
@@ -51,7 +51,7 @@ Error: OpenAI API key is required. Set --openai-key flag or OPENAI_API_KEY envir
 export OPENAI_API_KEY="sk-your-actual-api-key-here"
 
 # Option 2: Command line flag
-deepwiki-cli generate --openai-key "sk-your-actual-api-key-here"
+deepwiki generate --openai-key "sk-your-actual-api-key-here"
 
 # Option 3: Configuration file
 echo "openai:\n  api_key: \"sk-your-actual-api-key-here\"" > deepwiki.yaml
@@ -62,7 +62,7 @@ echo "openai:\n  api_key: \"sk-your-actual-api-key-here\"" > deepwiki.yaml
 ```bash
 # Test API connectivity
 echo $OPENAI_API_KEY  # Should show your key
-deepwiki-cli generate --dry-run  # Should not show API key error
+deepwiki generate --dry-run  # Should not show API key error
 ```
 
 #### Issue: "Invalid API key"
@@ -103,10 +103,10 @@ Error: HTTP 429 - Rate limit exceeded. Please try again later
 ```bash
 # Option 1: Wait and retry (rate limits reset over time)
 sleep 60
-deepwiki-cli generate
+deepwiki generate
 
 # Option 2: Use a slower request rate
-deepwiki-cli generate --config rate-limited.yaml
+deepwiki generate --config rate-limited.yaml
 ```
 
 Rate-limited configuration (`rate-limited.yaml`):
@@ -134,10 +134,10 @@ Error: This model's maximum context length is 4096 tokens, however you requested
 
 ```bash
 # Option 1: Reduce chunk size
-deepwiki-cli generate --chunk-size 250
+deepwiki generate --chunk-size 250
 
 # Option 2: Use a model with larger context
-deepwiki-cli generate --model gpt-4o  # 128k context
+deepwiki generate --model gpt-4o  # 128k context
 
 # Option 3: Configure in file
 ```
@@ -173,7 +173,7 @@ Error: You exceeded your current quota, please check your plan and billing detai
 2. Use a cheaper model temporarily:
 
 ```bash
-deepwiki-cli generate --model gpt-4o-mini
+deepwiki generate --model gpt-4o-mini
 ```
 
 ### 📁 File System Issues
@@ -199,10 +199,10 @@ chmod 755 /path/to/project
 chmod 755 /path/to/output
 
 # Use a different output directory
-deepwiki-cli generate --output-dir ~/Documents/wiki-docs
+deepwiki generate --output-dir ~/Documents/wiki-docs
 
 # Run with appropriate user permissions
-sudo deepwiki-cli generate  # Use with caution
+sudo deepwiki generate  # Use with caution
 ```
 
 #### Issue: "Directory does not exist"
@@ -220,7 +220,7 @@ Error: directory does not exist: /path/to/project
 ls -la /path/to/project
 
 # Use absolute path
-deepwiki-cli generate $(pwd)
+deepwiki generate $(pwd)
 
 # Create the directory if needed
 mkdir -p /path/to/project
@@ -241,7 +241,7 @@ Warning: Output directory contains existing files
 rm -rf ./docs/*
 
 # Use a new output directory
-deepwiki-cli generate --output-dir ./fresh-docs
+deepwiki generate --output-dir ./fresh-docs
 
 # Or backup existing files
 mv ./docs ./docs-backup
@@ -263,7 +263,7 @@ fatal error: runtime: out of memory
 ```bash
 # Option 1: Reduce memory usage
 export GOMAXPROCS=2  # Limit Go processes
-deepwiki-cli generate \
+deepwiki generate \
   --chunk-size 200 \
   --exclude-dirs "large-directory" \
   --max-files 500
@@ -309,10 +309,10 @@ free -h  # Linux
 vm_stat | grep free  # macOS
 
 # Monitor memory usage during execution
-top -p $(pgrep deepwiki-cli)
+top -p $(pgrep deepwiki)
 
 # Use smaller batches
-deepwiki-cli generate \
+deepwiki generate \
   --chunk-size 150 \
   --exclude-dirs "tests,docs,examples" \
   --verbose
@@ -331,10 +331,10 @@ deepwiki-cli generate \
 
 ```bash
 # Option 1: Use faster model
-deepwiki-cli generate --model gpt-4o-mini
+deepwiki generate --model gpt-4o-mini
 
 # Option 2: Reduce scope
-deepwiki-cli generate \
+deepwiki generate \
   --exclude-dirs "tests,docs,vendor" \
   --max-files 200
 
@@ -371,7 +371,7 @@ rate_limiting:
 
 ```bash
 # Monitor token usage
-deepwiki-cli generate --verbose  # Shows token counts
+deepwiki generate --verbose  # Shows token counts
 
 # Use cost-effective configuration
 ```
@@ -411,15 +411,15 @@ Generated 0 pages
 
 ```bash
 # Check file filtering
-deepwiki-cli generate --dry-run --verbose
+deepwiki generate --dry-run --verbose
 
 # Verify include extensions
-deepwiki-cli generate \
+deepwiki generate \
   --include-extensions ".go,.py,.js,.md" \
   --dry-run
 
 # Remove overly restrictive exclusions
-deepwiki-cli generate \
+deepwiki generate \
   --exclude-dirs "node_modules" \
   --exclude-files "*.min.js"
 ```
@@ -457,7 +457,7 @@ Error: Invalid UTF-8 in file: binary.exe
 
 ```bash
 # Add binary file exclusions
-deepwiki-cli generate \
+deepwiki generate \
   --exclude-files "*.png,*.jpg,*.gif,*.exe,*.dll,*.so"
 ```
 
@@ -525,13 +525,13 @@ Warning: Configuration file not found, using defaults
 
 ```bash
 # Create configuration file
-deepwiki-cli config init > deepwiki.yaml
+deepwiki config init > deepwiki.yaml
 
 # Use specific config file
-deepwiki-cli generate --config /path/to/config.yaml
+deepwiki generate --config /path/to/config.yaml
 
 # Check search paths
-deepwiki-cli config validate --verbose
+deepwiki config validate --verbose
 ```
 
 #### Issue: "Invalid configuration"
@@ -546,7 +546,7 @@ Error: invalid configuration: temperature must be between 0.0 and 2.0, got 3.0
 
 ```bash
 # Validate configuration
-deepwiki-cli config validate deepwiki.yaml
+deepwiki config validate deepwiki.yaml
 
 # Fix common validation errors:
 # - temperature: 0.0-2.0
@@ -575,7 +575,7 @@ ping api.openai.com
 
 # Use longer timeout
 export HTTP_TIMEOUT=120
-deepwiki-cli generate
+deepwiki generate
 
 # Check proxy settings
 echo $HTTP_PROXY
@@ -620,13 +620,13 @@ export SSL_VERIFY=false
 
 ```bash
 # Check if files were actually processed
-deepwiki-cli generate --verbose --dry-run
+deepwiki generate --verbose --dry-run
 
 # Verify API responses
-deepwiki-cli generate --verbose  # Shows API calls
+deepwiki generate --verbose  # Shows API calls
 
 # Try different model
-deepwiki-cli generate --model gpt-4o
+deepwiki generate --model gpt-4o
 ```
 
 #### Issue: "Malformed markdown/JSON"
@@ -640,14 +640,14 @@ deepwiki-cli generate --model gpt-4o
 
 ```bash
 # Use lower temperature for more consistent output
-deepwiki-cli generate --temperature 0.0
+deepwiki generate --temperature 0.0
 
 # Check API responses in verbose mode
-deepwiki-cli generate --verbose
+deepwiki generate --verbose
 
 # Regenerate specific pages
 rm -rf docs/pages/problematic-page.md
-deepwiki-cli generate
+deepwiki generate
 ```
 
 ## Debugging Techniques
@@ -656,7 +656,7 @@ deepwiki-cli generate
 
 ```bash
 # Maximum verbosity
-deepwiki-cli generate --verbose
+deepwiki generate --verbose
 
 # Debug-level logging in config
 ```
@@ -673,10 +673,10 @@ logging:
 
 ```bash
 # See what would be processed without API calls
-deepwiki-cli generate --dry-run --verbose
+deepwiki generate --dry-run --verbose
 
 # Check file discovery
-deepwiki-cli generate --dry-run | grep "Files found:"
+deepwiki generate --dry-run | grep "Files found:"
 ```
 
 ### 3. Test API Connectivity
@@ -697,7 +697,7 @@ curl -H "Authorization: Bearer $OPENAI_API_KEY" \
 
 ```bash
 # Monitor during execution
-top -p $(pgrep deepwiki-cli)
+top -p $(pgrep deepwiki)
 
 # Check disk space
 df -h
@@ -713,7 +713,7 @@ netstat -an | grep :443
 go build -tags debug
 
 # Run with profiling
-deepwiki-cli generate --profile cpu
+deepwiki generate --profile cpu
 
 # Analyze profile
 go tool pprof cpu.prof
@@ -727,7 +727,7 @@ Before asking for help, collect this information:
 
 ```bash
 # Version information
-deepwiki-cli version
+deepwiki version
 
 # System information
 go version
@@ -735,10 +735,10 @@ uname -a  # Linux/macOS
 systeminfo  # Windows
 
 # Configuration
-deepwiki-cli config validate --show-resolved
+deepwiki config validate --show-resolved
 
 # Error logs
-deepwiki-cli generate --verbose 2>&1 | tee debug.log
+deepwiki generate --verbose 2>&1 | tee debug.log
 ```
 
 ### 2. Create Minimal Reproduction
@@ -754,14 +754,14 @@ echo "# Test Project" > README.md
 
 # Test with minimal config
 export OPENAI_API_KEY="your-key"
-deepwiki-cli generate --verbose
+deepwiki generate --verbose
 ```
 
 ### 3. Report Issues
 
 When reporting issues, include:
 
-1. **Environment**: OS, Go version, DeepWiki CLI version
+1. **Environment**: OS, Go version, DeepWiki version
 2. **Configuration**: Your configuration file (redact API key)
 3. **Command**: Exact command that failed
 4. **Error**: Complete error message and logs
@@ -769,9 +769,9 @@ When reporting issues, include:
 
 ### 4. Community Resources
 
-- **GitHub Issues**: [Report bugs and request features](https://github.com/your-org/deepwiki-cli/issues)
-- **Discussions**: [Ask questions and share tips](https://github.com/your-org/deepwiki-cli/discussions)
-- **Wiki**: [Additional documentation](https://github.com/your-org/deepwiki-cli/wiki)
+- **GitHub Issues**: [Report bugs and request features](https://github.com/kuderr/deepwiki/issues)
+- **Discussions**: [Ask questions and share tips](https://github.com/kuderr/deepwiki/discussions)
+- **Wiki**: [Additional documentation](https://github.com/kuderr/deepwiki/wiki)
 
 ## Prevention Best Practices
 
@@ -779,13 +779,13 @@ When reporting issues, include:
 
 ```bash
 # Always test with dry run first
-deepwiki-cli generate --dry-run
+deepwiki generate --dry-run
 
 # Test with small subset
-deepwiki-cli generate --max-files 10 --verbose
+deepwiki generate --max-files 10 --verbose
 
 # Use development configuration
-deepwiki-cli generate --config dev-config.yaml
+deepwiki generate --config dev-config.yaml
 ```
 
 ### 2. Monitor Resource Usage
@@ -795,7 +795,7 @@ deepwiki-cli generate --config dev-config.yaml
 ulimit -v 1000000  # 1GB virtual memory limit
 
 # Monitor API usage
-deepwiki-cli generate --verbose | grep "Tokens used:"
+deepwiki generate --verbose | grep "Tokens used:"
 ```
 
 ### 3. Backup and Version Control
@@ -812,11 +812,11 @@ git commit -m "Add DeepWiki configuration"
 ### 4. Regular Maintenance
 
 ```bash
-# Update DeepWiki CLI regularly
-go install github.com/your-org/deepwiki-cli@latest
+# Update DeepWiki regularly
+go install github.com/kuderr/deepwiki@latest
 
 # Review and update configuration
-deepwiki-cli config validate
+deepwiki config validate
 ```
 
-This troubleshooting guide should help you resolve most common issues with DeepWiki CLI. If you encounter an issue not covered here, please report it on our GitHub issues page.
+This troubleshooting guide should help you resolve most common issues with DeepWiki. If you encounter an issue not covered here, please report it on our GitHub issues page.

@@ -1,6 +1,6 @@
 # Configuration Guide
 
-DeepWiki CLI offers flexible configuration through multiple sources with a clear precedence order.
+DeepWiki offers flexible configuration through multiple sources with a clear precedence order.
 
 ## Configuration Sources (Precedence Order)
 
@@ -13,7 +13,7 @@ DeepWiki CLI offers flexible configuration through multiple sources with a clear
 
 ### File Locations
 
-DeepWiki CLI automatically searches for configuration files in these locations:
+DeepWiki automatically searches for configuration files in these locations:
 
 1. `--config` flag specified file
 2. `deepwiki.yaml` in current directory
@@ -26,7 +26,7 @@ DeepWiki CLI automatically searches for configuration files in these locations:
 ### Complete Configuration Reference
 
 ```yaml
-# DeepWiki CLI Configuration File
+# DeepWiki Configuration File
 # All settings are optional - defaults will be used for missing values
 
 # Provider Configuration
@@ -821,13 +821,13 @@ cache:
 
 ```bash
 # Validate specific file
-deepwiki-cli config validate deepwiki.yaml
+deepwiki config validate deepwiki.yaml
 
 # Validate current configuration
-deepwiki-cli config validate
+deepwiki config validate
 
 # Validate and show resolved configuration
-deepwiki-cli config validate --show-resolved
+deepwiki config validate --show-resolved
 ```
 
 ### Common Validation Errors
@@ -879,4 +879,4 @@ Error: OpenAI API key is required - set OPENAI_API_KEY or openai.api_key
 - Regular review and update of exclusion patterns
 - Test configuration changes in development first
 
-This comprehensive configuration guide should help you customize DeepWiki CLI for your specific needs and environments.
+This comprehensive configuration guide should help you customize DeepWiki for your specific needs and environments.
