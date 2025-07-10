@@ -1,6 +1,7 @@
 *.db
 node_modules/
 .docusaurus/
+.DS_Store
 
 # default binary
 deepwiki-cli
